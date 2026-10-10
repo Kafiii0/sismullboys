@@ -584,14 +584,14 @@ export default function CompressionPage() {
 
           <div className="p-4 rounded-xl bg-[#0F0F17] border border-white/10">
             <div className="text-[11px] font-mono text-zinc-400">PSNR OBJEKTIF</div>
-            <div className="text-2xl font-bold font-mono text-emerald-400 mt-1">{metrics.psnr} dB</div>
-            <div className="text-[10px] text-emerald-500/80 mt-1">MSE = {metrics.mse} (Lolos &gt; 35dB)</div>
+            <div className="text-2xl font-bold font-mono text-red-400 mt-1">{metrics.psnr} dB</div>
+            <div className="text-[10px] text-red-500/80 mt-1">MSE = {metrics.mse} (Lolos &gt; 35dB)</div>
           </div>
 
           <div className="p-4 rounded-xl bg-[#0F0F17] border border-white/10">
             <div className="text-[11px] font-mono text-zinc-400">SSIM INDEX (ASLI)</div>
-            <div className="text-2xl font-bold font-mono text-sky-400 mt-1">{metrics.ssim}</div>
-            <div className="text-[10px] text-sky-500/80 mt-1">Wang et al. (2004) &gt; 0.90</div>
+            <div className="text-2xl font-bold font-mono text-rose-400 mt-1">{metrics.ssim}</div>
+            <div className="text-[10px] text-rose-500/80 mt-1">Wang et al. (2004) &gt; 0.90</div>
           </div>
 
           <div className="p-4 rounded-xl bg-[#0F0F17] border border-white/10">
@@ -608,7 +608,7 @@ export default function CompressionPage() {
 
           <div className="p-4 rounded-xl bg-[#0F0F17] border border-white/10">
             <div className="text-[11px] font-mono text-zinc-400">AKURASI TEKS OCR</div>
-            <div className="text-2xl font-bold font-mono text-purple-400 mt-1">{metrics.ocrRetention}%</div>
+            <div className="text-2xl font-bold font-mono text-red-400 mt-1">{metrics.ocrRetention}%</div>
             <div className="text-[10px] text-zinc-400 mt-1">Fidelitas Tepi Font Audit</div>
           </div>
         </div>
@@ -623,7 +623,7 @@ export default function CompressionPage() {
               </span>
             </div>
             <p className="text-xs text-zinc-400 font-sans">
-              Menggeser slider Q menskalakan matriks kuantisasi ISO 10918-1. Koefisien nol hasil kuantisasi mencapai <strong className="text-emerald-400">{metrics.zeroRatio}%</strong> dari total 134.400 koefisien, memaksimalkan efisiensi RLE dan Huffman.
+              Menggeser slider Q menskalakan matriks kuantisasi ISO 10918-1. Koefisien nol hasil kuantisasi mencapai <strong className="text-red-400">{metrics.zeroRatio}%</strong> dari total 134.400 koefisien, memaksimalkan efisiensi RLE dan Huffman.
             </p>
           </div>
 
@@ -778,7 +778,7 @@ export default function CompressionPage() {
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-mono font-semibold text-emerald-300">
+                <div className="text-xs font-mono font-semibold text-rose-300">
                   Kuantisasi ⌊F(u,v) / Q(u,v)⌉
                 </div>
                 <div className="grid grid-cols-8 gap-1 p-2 rounded-xl bg-black/50 border border-white/5 font-mono text-[9px] text-center">
@@ -786,14 +786,14 @@ export default function CompressionPage() {
                     row.map((val, c) => (
                       <div 
                         key={`q-${r}-${c}`} 
-                        className={`p-1 rounded ${val === 0 ? 'text-zinc-600 bg-white/[0.01]' : 'text-emerald-300 bg-emerald-950/40 font-bold'}`}
+                        className={`p-1 rounded ${val === 0 ? 'text-zinc-600 bg-white/[0.01]' : 'text-rose-300 bg-red-950/40 font-bold'}`}
                       >
                         {val}
                       </div>
                     ))
                   )}
                 </div>
-                <div className="text-[10px] text-emerald-400 font-mono">
+                <div className="text-[10px] text-red-400 font-mono">
                   Koefisien AC bernilai 0 siap dipadatkan oleh RLE & Huffman
                 </div>
               </div>
@@ -826,7 +826,7 @@ export default function CompressionPage() {
                             ? 'bg-amber-500/30 text-amber-200 font-bold' 
                             : val === 0 
                             ? 'text-zinc-600 bg-white/[0.02]' 
-                            : 'text-emerald-400 bg-emerald-950/40 font-semibold'
+                            : 'text-rose-300 bg-red-950/40 font-semibold'
                         }`}
                         title={`Index ${idx}: ${val}`}
                       >
@@ -842,10 +842,10 @@ export default function CompressionPage() {
                 {/* Pasangan RLE */}
                 <div className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-semibold text-emerald-300">
+                    <span className="text-xs font-mono font-semibold text-rose-300">
                       Pasangan Run-Length Encoding (RLE)
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950/60 text-rose-300 border border-red-500/30">
                       {blockMatrix.rle.length} Simbol Terbentuk
                     </span>
                   </div>
@@ -856,7 +856,7 @@ export default function CompressionPage() {
                         className={`px-2 py-0.5 rounded ${
                           item.isEOB 
                             ? 'bg-rose-950/60 text-rose-300 border border-rose-500/40 font-bold' 
-                            : 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/20'
+                            : 'bg-red-950/40 text-rose-300 border border-red-500/20'
                         }`}
                       >
                         {item.isEOB ? '[EOB]' : `(Run:${item.run}, Val:${item.val})`}
@@ -884,7 +884,7 @@ export default function CompressionPage() {
                   <div className="flex items-center gap-3 text-xs font-mono text-zinc-400">
                     <span>Total Simbol: <strong className="text-white">{huffmanStats.totalSymbols}</strong></span>
                     <span>Unik: <strong className="text-amber-400">{huffmanStats.uniqueSymbols}</strong></span>
-                    <span>Rata-rata: <strong className="text-emerald-400">{huffmanStats.avgCodeLength} bit/simbol</strong></span>
+                    <span>Rata-rata: <strong className="text-red-400">{huffmanStats.avgCodeLength} bit/simbol</strong></span>
                   </div>
                 </div>
 
@@ -920,7 +920,7 @@ export default function CompressionPage() {
                     <span className="text-xs font-mono font-semibold text-white">
                       Kurva Kualitas: PSNR (dB) & SSIM vs Faktor Kualitas Q
                     </span>
-                    <span className="text-[10px] font-mono text-emerald-400">Hasil Uji Empiris</span>
+                    <span className="text-[10px] font-mono text-red-400">Hasil Uji Empiris</span>
                   </div>
 
                   <div className="h-48 w-full flex items-end justify-between gap-2 pt-6 pb-2 px-2 border-b border-l border-white/10 font-mono text-[10px]">
@@ -947,7 +947,7 @@ export default function CompressionPage() {
                   </div>
                   <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
                     <span>Ambang Batas Audit: &gt; 35 dB (Q &ge; 50)</span>
-                    <span className="text-sky-400">SSIM Optimal: 0.941 pada Q=65</span>
+                    <span className="text-rose-400">SSIM Optimal: 0.941 pada Q=65</span>
                   </div>
                 </div>
 
@@ -1000,11 +1000,11 @@ export default function CompressionPage() {
                     <div>
                       <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
                         <span>Google WebP Lossy (Browser Native)</span>
-                        <span className="text-sky-300">{comparisonData.webp.sizeKb} KB</span>
+                        <span className="text-zinc-300">{comparisonData.webp.sizeKb} KB</span>
                       </div>
                       <div className="w-full h-3 rounded-full bg-white/5 overflow-hidden">
                         <div 
-                          className="h-full bg-sky-600/80 rounded-full transition-all"
+                          className="h-full bg-zinc-600 rounded-full transition-all"
                           style={{ width: `${Math.min(100, (parseFloat(comparisonData.webp.sizeKb) / parseFloat(metrics.originalSizeKb)) * 100)}%` }}
                         />
                       </div>
@@ -1027,7 +1027,7 @@ export default function CompressionPage() {
                 <Table className="w-3.5 h-3.5 text-red-500" />
                 <span>Pengujian Empiris vs Standar Industri (Q = {qualityQ})</span>
               </h4>
-              <span className="text-[10px] font-mono text-emerald-400">
+              <span className="text-[10px] font-mono text-red-400">
                 Data Nyata Browser Engine
               </span>
             </div>
@@ -1050,22 +1050,22 @@ export default function CompressionPage() {
                       <span>MUNINN 2D-DCT 8x8</span>
                     </td>
                     <td className="py-2.5 px-3 text-white">{comparisonData.muninn.sizeKb} KB</td>
-                    <td className="py-2.5 px-3 text-emerald-400">{comparisonData.muninn.psnr} dB</td>
-                    <td className="py-2.5 px-3 text-sky-400">{comparisonData.muninn.ssim}</td>
+                    <td className="py-2.5 px-3 text-red-400">{comparisonData.muninn.psnr} dB</td>
+                    <td className="py-2.5 px-3 text-rose-400">{comparisonData.muninn.ssim}</td>
                     <td className="py-2.5 px-3 text-amber-300">Native Dual-Domain (Koefisien Tengah DCT)</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 px-3">Standar JPEG Baseline</td>
                     <td className="py-2.5 px-3">{comparisonData.jpeg.sizeKb} KB</td>
-                    <td className="py-2.5 px-3 text-emerald-400/80">{comparisonData.jpeg.psnr} dB</td>
-                    <td className="py-2.5 px-3 text-sky-400/80">{comparisonData.jpeg.ssim}</td>
+                    <td className="py-2.5 px-3 text-zinc-300">{comparisonData.jpeg.psnr} dB</td>
+                    <td className="py-2.5 px-3 text-zinc-300">{comparisonData.jpeg.ssim}</td>
                     <td className="py-2.5 px-3 text-zinc-400">Memerlukan dekompresi penuh untuk penyisipan</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 px-3">Google WebP Lossy</td>
                     <td className="py-2.5 px-3">{comparisonData.webp.sizeKb} KB</td>
-                    <td className="py-2.5 px-3 text-emerald-400/80">{comparisonData.webp.psnr} dB</td>
-                    <td className="py-2.5 px-3 text-sky-400/80">{comparisonData.webp.ssim}</td>
+                    <td className="py-2.5 px-3 text-zinc-300">{comparisonData.webp.psnr} dB</td>
+                    <td className="py-2.5 px-3 text-zinc-300">{comparisonData.webp.ssim}</td>
                     <td className="py-2.5 px-3 text-zinc-400">Kompleksitas transformasi intra-prediksi tinggi</td>
                   </tr>
                 </tbody>

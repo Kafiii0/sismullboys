@@ -196,12 +196,12 @@ export default function EvaluationPage() {
         <div className="rounded-2xl bg-[#0F0F17] border border-white/10 p-6 mb-12 shadow-2xl">
           <div className="flex items-center justify-between pb-4 border-b border-white/[0.08] mb-4">
             <div className="flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-emerald-400" />
+              <Cpu className="w-4 h-4 text-red-400" />
               <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
                 Pemetaan Materi Kuliah Sistem Multimedia (Silabus CBK2CAB3)
               </h2>
             </div>
-            <span className="text-[11px] font-mono text-emerald-400">
+            <span className="text-[11px] font-mono text-red-400">
               Bobot Penilaian: 20 Poin
             </span>
           </div>
@@ -239,7 +239,7 @@ export default function EvaluationPage() {
                 Tabel Metrik Evaluasi & Target Capaian Aktual
               </h2>
             </div>
-            <span className="text-[11px] font-mono text-emerald-400">
+            <span className="text-[11px] font-mono text-red-400">
               Metrik Matematis Baku
             </span>
           </div>
@@ -261,9 +261,9 @@ export default function EvaluationPage() {
                     <td className="py-3 px-3 font-semibold text-white">{row.module}</td>
                     <td className="py-3 px-3 text-amber-300">{row.metric}</td>
                     <td className="py-3 px-3 text-zinc-400 font-sans">{row.target}</td>
-                    <td className="py-3 px-3 text-emerald-300">{row.actual}</td>
+                    <td className="py-3 px-3 text-rose-300">{row.actual}</td>
                     <td className="py-3 px-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-red-950/80 text-red-300 border border-red-500/30 text-[10px]">
                         {row.status}
                       </span>
                     </td>
@@ -301,7 +301,7 @@ export default function EvaluationPage() {
                   </p>
                 </div>
                 <div className="pt-2 border-t border-white/5">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-semibold">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-300 font-semibold">
                     {rm.status}
                   </span>
                 </div>

@@ -342,7 +342,7 @@ export default function StudioPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] font-mono">
-                  <span className={`px-2 py-0.5 rounded ${isRedacted ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30' : 'bg-red-950/80 text-red-300 border border-red-500/30'}`}>
+                  <span className={`px-2 py-0.5 rounded ${isRedacted ? 'bg-red-950/80 text-red-200 border border-red-500/30' : 'bg-red-950/80 text-red-400 border border-red-500/30'}`}>
                     {isRedacted ? 'TEREDAKSI AMAN' : 'DATA MENTAH SENSITIF'}
                   </span>
                 </div>
@@ -401,7 +401,7 @@ export default function StudioPage() {
 
                 <div className="p-3 rounded-xl bg-black/40 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <span className="text-emerald-400 font-semibold">H1 (Redacted State): </span>
+                    <span className="text-rose-400 font-semibold">H1 (Redacted State): </span>
                     <span className="text-zinc-300 break-all select-all font-mono text-[11px]">
                       {redactedHash || '(Terapkan redaksi untuk menghitung H1 = SHA-256(H0 + Redacted))'}
                     </span>
@@ -413,7 +413,7 @@ export default function StudioPage() {
             <div className="rounded-2xl bg-[#0F0F17] border border-white/10 p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-sky-400" />
+                  <Volume2 className="w-4 h-4 text-red-400" />
                   <span className="text-xs font-mono font-semibold text-white">
                     PENGOLAHAN AUDIO INSIDEN (WEB AUDIO API)
                   </span>

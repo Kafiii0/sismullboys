@@ -66,7 +66,7 @@ export default function ReconToolPage() {
       VERIFIED: 'bg-red-600/20 text-red-400 border-red-500/40',
       LIKELY: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
       POSSIBLE: 'bg-zinc-700/40 text-zinc-300 border-zinc-600/40',
-      PATCHED: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+      PATCHED: 'bg-zinc-800 text-zinc-300 border-zinc-700/50',
     };
     const icons = {
       VERIFIED: <Bug className="w-3 h-3" />,
@@ -89,7 +89,7 @@ export default function ReconToolPage() {
       HIGH: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
       MEDIUM: 'bg-amber-500/12 text-amber-400 border-amber-500/30',
       LOW: 'bg-zinc-700/40 text-zinc-300 border-zinc-600/40',
-      INFO: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+      INFO: 'bg-zinc-800 text-zinc-300 border-zinc-700/50',
     };
     return (
       <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${s[severity] || s.LOW}`}>
@@ -176,8 +176,8 @@ export default function ReconToolPage() {
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl sm:text-3xl font-extrabold text-white">{result.summary.securityScore}</span>
                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded border ${
-                      result.summary.grade === 'A+' || result.summary.grade === 'A' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
-                      result.summary.grade === 'B' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' :
+                      result.summary.grade === 'A+' || result.summary.grade === 'A' ? 'bg-zinc-800 text-zinc-200 border-zinc-700' :
+                      result.summary.grade === 'B' ? 'bg-zinc-800/80 text-zinc-400 border-zinc-700/50' :
                       result.summary.grade === 'C' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
                       'bg-red-500/10 text-red-400 border-red-500/30'
                     }`}>{result.summary.grade}</span>
@@ -236,7 +236,7 @@ export default function ReconToolPage() {
                     {result.summary.serverSoftware}
                   </span>
                   {result.deepRecon?.waf?.detected && (
-                    <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                    <span className="text-[10px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
                       WAF: {result.deepRecon.waf.name}
                     </span>
                   )}
@@ -360,7 +360,7 @@ export default function ReconToolPage() {
                             <div className={`p-3 rounded-lg border text-xs font-mono ${
                               cve.verification.status === 'VERIFIED' ? 'bg-red-950/20 border-red-500/20 text-red-300' :
                               cve.verification.status === 'LIKELY' ? 'bg-orange-950/15 border-orange-500/15 text-orange-300' :
-                              cve.verification.status === 'PATCHED' ? 'bg-emerald-950/15 border-emerald-500/15 text-emerald-300' :
+                              cve.verification.status === 'PATCHED' ? 'bg-zinc-900 border-zinc-700/50 text-zinc-300' :
                               'bg-zinc-900/50 border-white/[0.04] text-zinc-400'
                             }`}>
                               <span className="font-bold text-[10px] uppercase tracking-wider block mb-1 opacity-70">Verification Evidence</span>
@@ -460,13 +460,13 @@ export default function ReconToolPage() {
                     
                     <div className="p-5 rounded-2xl bg-[#121217] border border-white/[0.08] space-y-3">
                       <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-blue-400" /> WAF / CDN Detection
+                        <Shield className="w-4 h-4 text-red-400" /> WAF / CDN Detection
                       </h3>
                       {result.deepRecon.waf.detected ? (
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <ShieldCheck className="w-5 h-5 text-blue-400" />
-                            <span className="text-sm font-semibold text-blue-300">{result.deepRecon.waf.name}</span>
+                            <ShieldCheck className="w-5 h-5 text-red-400" />
+                            <span className="text-sm font-semibold text-rose-300">{result.deepRecon.waf.name}</span>
                             <span className="text-[10px] font-mono text-zinc-400 bg-white/[0.04] px-2 py-0.5 rounded">
                               {result.deepRecon.waf.confidence}% confidence
                             </span>
@@ -491,7 +491,7 @@ export default function ReconToolPage() {
                             {result.deepRecon.cors.vulnerable ? (
                               <><XCircle className="w-5 h-5 text-red-400" /><span className="text-sm font-semibold text-red-300">Misconfigured — Permissive CORS</span></>
                             ) : (
-                              <><CheckCircle2 className="w-5 h-5 text-emerald-400" /><span className="text-sm font-semibold text-emerald-300">Properly Restricted</span></>
+                              <><CheckCircle2 className="w-5 h-5 text-zinc-300" /><span className="text-sm font-semibold text-zinc-300">Properly Restricted</span></>
                             )}
                           </div>
                           <div className="text-[11px] font-mono text-zinc-400 space-y-0.5">
@@ -553,8 +553,8 @@ export default function ReconToolPage() {
                     </h3>
 
                     {result.deepRecon.exposedEndpoints.length === 0 ? (
-                      <div className="text-sm text-emerald-400 flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4" /> No sensitive endpoints exposed. Good perimeter hygiene.
+                      <div className="text-sm text-zinc-300 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-red-500" /> No sensitive endpoints exposed. Good perimeter hygiene.
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
@@ -616,7 +616,7 @@ export default function ReconToolPage() {
                           All ({result.resolvedHosts.length})
                         </button>
                         <button onClick={() => setStatusFilter('LIVE')}
-                          className={`px-3 py-1.5 rounded-lg transition-colors ${statusFilter === 'LIVE' ? 'bg-emerald-500/20 text-emerald-400 font-semibold' : 'text-zinc-400 hover:text-white'}`}>
+                          className={`px-3 py-1.5 rounded-lg transition-colors ${statusFilter === 'LIVE' ? 'bg-red-500/20 text-red-400 font-semibold' : 'text-zinc-400 hover:text-white'}`}>
                           Live ({result.summary.liveHostsCount})
                         </button>
                         <button onClick={() => setStatusFilter('STALE')}
@@ -649,9 +649,9 @@ export default function ReconToolPage() {
                               <td className="py-3.5 px-4 font-mono text-zinc-300">{host.ip}</td>
                               <td className="py-3.5 px-4">
                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium ${
-                                  host.isLive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
+                                  host.isLive ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
                                 }`}>
-                                  <span className={`w-1.5 h-1.5 rounded-full ${host.isLive ? 'bg-emerald-500' : 'bg-zinc-500'}`} />
+                                  <span className={`w-1.5 h-1.5 rounded-full ${host.isLive ? 'bg-red-500' : 'bg-zinc-500'}`} />
                                   {host.status}
                                 </span>
                               </td>
@@ -676,7 +676,7 @@ export default function ReconToolPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-white">SPF Record</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                          result.emailSecurity.hasSpf ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'
+                          result.emailSecurity.hasSpf ? 'bg-zinc-800 text-zinc-300 border-zinc-700/50' : 'bg-red-500/10 text-red-400 border-red-500/30'
                         }`}>{result.emailSecurity.hasSpf ? 'Found' : 'Missing'}</span>
                       </div>
                       <div className="font-mono text-[11px] text-zinc-300 p-3 bg-black/40 rounded-lg break-all border border-white/[0.04]">
@@ -688,7 +688,7 @@ export default function ReconToolPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-white">DMARC Policy</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                          result.emailSecurity.hasDmarc ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'
+                          result.emailSecurity.hasDmarc ? 'bg-zinc-800 text-zinc-300 border-zinc-700/50' : 'bg-red-500/10 text-red-400 border-red-500/30'
                         }`}>{result.emailSecurity.hasDmarc ? 'Found' : 'Missing'}</span>
                       </div>
                       <div className="font-mono text-[11px] text-zinc-300 p-3 bg-black/40 rounded-lg break-all border border-white/[0.04]">
@@ -700,7 +700,7 @@ export default function ReconToolPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-white">DKIM Selector</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                          result.emailSecurity.hasDkim ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                          result.emailSecurity.hasDkim ? 'bg-zinc-800 text-zinc-300 border-zinc-700/50' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
                         }`}>{result.emailSecurity.hasDkim ? 'Found' : 'Not Found'}</span>
                       </div>
                       <p className="text-[11px] text-zinc-400">

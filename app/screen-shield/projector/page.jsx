@@ -78,7 +78,7 @@ export default function ProjectorOutputPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-[11px] font-mono text-zinc-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-red-400" />
             <span>Pindahkan tab/jendela ini ke Layar Proyektor HDMI (Monitor 2)</span>
           </div>
         </div>

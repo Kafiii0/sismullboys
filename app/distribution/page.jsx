@@ -35,9 +35,9 @@ export default function DistributionPage() {
   };
 
   const renditions = {
-    '1080p': { label: '1080p FHD (Audit Master)', bitrate: '6,500 kbps', res: '1920x1080', fps: '30 fps', color: 'text-emerald-400' },
-    '720p': { label: '720p HD (Standard Web)', bitrate: '2,400 kbps', res: '1280x720', fps: '30 fps', color: 'text-sky-400' },
-    '360p': { label: '360p SD (Mobile Low-Band)', bitrate: '650 kbps', res: '640x360', fps: '24 fps', color: 'text-amber-400' }
+    '1080p': { label: '1080p FHD (Audit Master)', bitrate: '6,500 kbps', res: '1920x1080', fps: '30 fps', color: 'text-red-400' },
+    '720p': { label: '720p HD (Standard Web)', bitrate: '2,400 kbps', res: '1280x720', fps: '30 fps', color: 'text-rose-400' },
+    '360p': { label: '360p SD (Mobile Low-Band)', bitrate: '650 kbps', res: '640x360', fps: '24 fps', color: 'text-zinc-400' }
   };
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function DistributionPage() {
           <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 mb-2">
             <Link href="/" className="hover:text-red-400">MUNINN</Link>
             <span>/</span>
-            <span className="text-sky-400 font-semibold">MODUL 4: DISTRIBUSI HLS ADAPTIF & VERIFIKATOR KLIEN</span>
+            <span className="text-red-400 font-semibold">MODUL 4: DISTRIBUSI HLS ADAPTIF & VERIFIKATOR KLIEN</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -99,13 +99,13 @@ export default function DistributionPage() {
             <div className="rounded-2xl bg-[#0F0F17] border border-white/10 p-5 space-y-4 shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse" />
                   <span className="text-xs font-mono font-semibold text-white">
                     HLS ADAPTIVE PLAYER (RFC 8216 STANDARD)
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-[11px] font-mono">
-                  <span className="px-2 py-0.5 rounded bg-sky-950/80 text-sky-300 border border-sky-500/30">
+                  <span className="px-2 py-0.5 rounded bg-red-950/80 text-red-300 border border-red-500/30">
                     AKTIF: {activeRendition} ({renditions[activeRendition].bitrate})
                   </span>
                 </div>
@@ -126,11 +126,11 @@ export default function DistributionPage() {
                 <div className="flex flex-col items-center justify-center pointer-events-none">
                   {isPlaying ? (
                     <div className="flex items-center gap-1.5 h-12">
-                      <div className="w-1.5 bg-sky-400 h-8 animate-bounce" />
+                      <div className="w-1.5 bg-red-600 h-8 animate-bounce" />
                       <div className="w-1.5 bg-red-500 h-12 animate-pulse" />
-                      <div className="w-1.5 bg-amber-400 h-6 animate-bounce" />
-                      <div className="w-1.5 bg-sky-400 h-10 animate-pulse" />
-                      <div className="w-1.5 bg-emerald-400 h-7 animate-bounce" />
+                      <div className="w-1.5 bg-rose-500 h-6 animate-bounce" />
+                      <div className="w-1.5 bg-red-400 h-10 animate-pulse" />
+                      <div className="w-1.5 bg-rose-400 h-7 animate-bounce" />
                     </div>
                   ) : (
                     <div className="p-4 rounded-full bg-white/10 text-white">
@@ -154,7 +154,7 @@ export default function DistributionPage() {
                   </div>
 
                   <div className="flex items-center gap-3 text-[11px]">
-                    <span className="text-zinc-400">Buffer: <strong className="text-emerald-400">{bufferHealth.toFixed(1)}s</strong></span>
+                    <span className="text-zinc-400">Buffer: <strong className="text-red-400">{bufferHealth.toFixed(1)}s</strong></span>
                     <span className="text-zinc-400">QoS Rebuffer: <strong className={rebufferCount > 0 ? 'text-amber-400' : 'text-zinc-400'}>{rebufferCount}x</strong></span>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export default function DistributionPage() {
                       onClick={() => setNetworkProfile(key)}
                       className={`p-2.5 rounded-xl text-left border text-xs transition-all ${
                         networkProfile === key
-                          ? 'bg-sky-950/40 border-sky-500 text-white shadow-md'
+                          ? 'bg-red-950/40 border-red-500 text-white shadow-md'
                           : 'bg-white/[0.02] border-white/[0.05] text-zinc-400 hover:bg-white/[0.05]'
                       }`}
                     >
@@ -244,7 +244,7 @@ export default function DistributionPage() {
             <div className="rounded-2xl bg-[#0F0F17] border border-white/10 p-6 space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <ShieldCheck className="w-4 h-4 text-red-400" />
                   <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
                     Portal Verifikasi Independen Bukti Klien
                   </h3>
@@ -253,11 +253,11 @@ export default function DistributionPage() {
 
               <div className={`p-4 rounded-xl border flex items-start gap-3 ${
                 verifierStatus === 'authentic'
-                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                  : 'bg-red-950/40 border-red-500/40 text-red-300'
+                  ? 'bg-red-950/40 border-red-500/40 text-red-200'
+                  : 'bg-red-950/70 border-red-500 text-red-300'
               }`}>
                 {verifierStatus === 'authentic' ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 ) : (
                   <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                 )}
@@ -280,26 +280,26 @@ export default function DistributionPage() {
               <div className="space-y-2 text-xs font-mono">
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
                   <span>1. Dekripsi Payload AES-256-GCM:</span>
-                  <span className="text-emerald-400 font-bold">SUKSES (AEAD TAG OK)</span>
+                  <span className="text-red-400 font-bold">SUKSES (AEAD TAG OK)</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
                   <span>2. Rantai Kustodi SHA-256 (H0..H4):</span>
-                  <span className={`font-bold ${verifierStatus === 'authentic' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`font-bold ${verifierStatus === 'authentic' ? 'text-red-400' : 'text-zinc-500'}`}>
                     {verifierStatus === 'authentic' ? '5/5 TERVERIFIKASI' : 'GAGAL DI H2'}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
                   <span>3. Tanda Tangan ECDSA P-256:</span>
-                  <span className={`font-bold ${verifierStatus === 'authentic' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`font-bold ${verifierStatus === 'authentic' ? 'text-red-400' : 'text-zinc-500'}`}>
                     {verifierStatus === 'authentic' ? 'VALID (INVESTIGATOR)' : 'INVALID'}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-between">
                   <span>4. Ekstraksi DCT Watermark:</span>
-                  <span className="text-amber-300 font-bold">{extractedRecipient}</span>
+                  <span className="text-rose-300 font-bold">{extractedRecipient}</span>
                 </div>
               </div>
 
@@ -308,7 +308,7 @@ export default function DistributionPage() {
                   onClick={() => setVerifierStatus('authentic')}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-mono font-semibold transition-all ${
                     verifierStatus === 'authentic'
-                      ? 'bg-emerald-600 text-white shadow-md'
+                      ? 'bg-red-700 text-white shadow-md'
                       : 'bg-white/[0.05] text-zinc-400 hover:bg-white/[0.1]'
                   }`}
                 >

@@ -304,7 +304,7 @@ export default function SecurityPage() {
           <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 mb-2">
             <Link href="/" className="hover:text-red-400">MUNINN</Link>
             <span>/</span>
-            <span className="text-emerald-400 font-semibold">MODUL 3: KEAMANAN, WATERMARK & RANTAI KUSTODI</span>
+            <span className="text-red-400 font-semibold">MODUL 3: KEAMANAN, WATERMARK & RANTAI KUSTODI</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -330,16 +330,16 @@ export default function SecurityPage() {
         <div className={`mb-8 p-5 rounded-2xl border flex flex-col md:flex-row items-center justify-between gap-4 transition-all ${
           isTampered
             ? 'bg-red-950/40 border-red-500 shadow-xl shadow-red-950/50'
-            : 'bg-emerald-950/30 border-emerald-500/40 shadow-xl shadow-emerald-950/30'
+            : 'bg-red-950/20 border-red-500/40 shadow-xl shadow-red-950/20'
         }`}>
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${isTampered ? 'bg-red-600/30 text-red-400 border border-red-500/40' : 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40'}`}>
+            <div className={`p-3 rounded-xl ${isTampered ? 'bg-red-600/30 text-red-400 border border-red-500/40' : 'bg-red-600/20 text-red-400 border border-red-500/40'}`}>
               {isTampered ? <ShieldAlert className="w-7 h-7" /> : <ShieldCheck className="w-7 h-7" />}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className={`text-xs uppercase font-mono px-2 py-0.5 rounded font-bold ${
-                  isTampered ? 'bg-red-600 text-white' : 'bg-emerald-600 text-white'
+                  isTampered ? 'bg-red-600 text-white' : 'bg-red-700 text-white'
                 }`}>
                   {isTampered ? 'STATUS: TAMPERED' : 'STATUS: VALID & OTENTIK'}
                 </span>
@@ -360,7 +360,7 @@ export default function SecurityPage() {
             {isTampered ? (
               <button
                 onClick={restoreChain}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-semibold transition-all shadow-md"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-mono font-semibold transition-all shadow-md"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Pulihkan Rantai Kustodi Asli</span>
@@ -400,7 +400,7 @@ export default function SecurityPage() {
                     Eksplorasi Rantai Kustodi (SHA-256 Hash Chain)
                   </h3>
                 </div>
-                <span className="text-[11px] font-mono text-emerald-400">
+                <span className="text-[11px] font-mono text-red-400">
                   WebCrypto RFC 6234
                 </span>
               </div>
@@ -411,7 +411,7 @@ export default function SecurityPage() {
                 <div className="p-3.5 rounded-xl bg-black/40 border border-white/5 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-zinc-300">H0: RAW INGESTION DIGEST</span>
-                    <span className="text-[10px] text-emerald-400 flex items-center gap-1">
+                    <span className="text-[10px] text-red-400 flex items-center gap-1">
                       <Check className="w-3 h-3" /> TERKUNCI
                     </span>
                   </div>
@@ -429,7 +429,7 @@ export default function SecurityPage() {
                 }`}>
                   <div className="flex items-center justify-between">
                     <span className="font-bold">H1: REDACTED CANVAS DIGEST</span>
-                    <span className={`text-[10px] flex items-center gap-1 ${isTampered && tamperedStage === 'stage1' ? 'text-red-400 font-bold' : 'text-emerald-400'}`}>
+                    <span className={`text-[10px] flex items-center gap-1 ${isTampered && tamperedStage === 'stage1' ? 'text-red-400 font-bold' : 'text-rose-400'}`}>
                       {isTampered && tamperedStage === 'stage1' ? <><X className="w-3 h-3" /> TAMPERED (AVALANCHE)</> : <><Check className="w-3 h-3" /> TERKUNCI</>}
                     </span>
                   </div>
@@ -447,7 +447,7 @@ export default function SecurityPage() {
                 }`}>
                   <div className="flex items-center justify-between">
                     <span className="font-bold">H2: DCT COMPRESSED PAYLOAD</span>
-                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-emerald-400'}`}>
+                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-rose-400'}`}>
                       {isTampered ? <><X className="w-3 h-3" /> RANTAI TERPUTUS</> : <><Check className="w-3 h-3" /> TERKUNCI</>}
                     </span>
                   </div>
@@ -465,7 +465,7 @@ export default function SecurityPage() {
                 }`}>
                   <div className="flex items-center justify-between">
                     <span className="font-bold">H3: WATERMARKED EVIDENCE BUNDLE</span>
-                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-emerald-400'}`}>
+                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-rose-400'}`}>
                       {isTampered ? <><X className="w-3 h-3" /> INTEGRITAS GAGAL</> : <><Check className="w-3 h-3" /> TERKUNCI</>}
                     </span>
                   </div>
@@ -483,7 +483,7 @@ export default function SecurityPage() {
                 }`}>
                   <div className="flex items-center justify-between">
                     <span className="font-bold">H4: FINAL AES-256-GCM MANIFEST DIGEST</span>
-                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-emerald-400'}`}>
+                    <span className={`text-[10px] flex items-center gap-1 ${isTampered ? 'text-red-400 font-bold' : 'text-rose-400'}`}>
                       {isTampered ? <><X className="w-3 h-3" /> SIGNATURE MISMATCH</> : <><Check className="w-3 h-3" /> TERKUNCI</>}
                     </span>
                   </div>
@@ -552,21 +552,21 @@ export default function SecurityPage() {
 
                   <div className="flex items-center justify-between">
                     <span className="text-zinc-400">Bitstream Terekstrak:</span>
-                    <span className={`text-[10px] truncate max-w-[180px] ${watermarkState.ber === 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <span className={`text-[10px] truncate max-w-[180px] ${watermarkState.ber === 0 ? 'text-rose-400' : 'text-red-400'}`}>
                       {watermarkState.extractedPreview}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between pt-1 border-t border-white/5">
                     <span className="text-zinc-400">Bit Error Rate (BER):</span>
-                    <span className={`font-bold ${watermarkState.ber === 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <span className={`font-bold ${watermarkState.ber === 0 ? 'text-rose-400' : 'text-red-400'}`}>
                       {watermarkState.ber.toFixed(3)} ({watermarkState.bitErrors} bit salah)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-zinc-400">Status Robustness:</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${watermarkState.ber === 0 ? 'bg-emerald-950 text-emerald-300' : 'bg-red-950 text-red-300'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${watermarkState.ber === 0 ? 'bg-red-950 text-red-300' : 'bg-red-950 text-red-400'}`}>
                       {watermarkState.status}
                     </span>
                   </div>
@@ -585,12 +585,12 @@ export default function SecurityPage() {
             <div className="rounded-2xl bg-[#0F0F17] border border-white/10 p-6 space-y-4 shadow-xl">
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-emerald-400" />
+                  <Lock className="w-4 h-4 text-red-400" />
                   <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
                     WebCrypto AES-256-GCM & ECDSA
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-emerald-400">
+                <span className="text-[10px] font-mono text-red-400">
                   Client-Side AEAD
                 </span>
               </div>
@@ -605,7 +605,7 @@ export default function SecurityPage() {
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-zinc-500 pt-1">
                     <span>IV (96-bit): {cryptoState.ivHex.substring(0, 16)}...</span>
-                    <span>Waktu: <strong className="text-emerald-400">{cryptoState.encryptTimeMs} ms</strong></span>
+                    <span>Waktu: <strong className="text-red-400">{cryptoState.encryptTimeMs} ms</strong></span>
                   </div>
                 </div>
 
@@ -613,7 +613,7 @@ export default function SecurityPage() {
                 <div className="p-3 rounded-xl bg-black/50 border border-white/5 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-zinc-400 uppercase">GCM Auth Tag (128-bit):</span>
-                    <span className={`text-[10px] font-bold ${cryptoState.gcmTagValid ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <span className={`text-[10px] font-bold ${cryptoState.gcmTagValid ? 'text-red-400' : 'text-zinc-500'}`}>
                       {cryptoState.gcmTagValid ? 'TAG VALID (AUTHENTIC)' : 'TAG MISMATCH (CORRUPTED)'}
                     </span>
                   </div>
@@ -623,7 +623,7 @@ export default function SecurityPage() {
 
                   <div className="pt-2 border-t border-white/5 flex items-center justify-between">
                     <span className="text-[10px] text-zinc-400 uppercase">Tanda Tangan ECDSA P-256:</span>
-                    <span className={`text-[10px] font-bold ${cryptoState.ecdsaVerified ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <span className={`text-[10px] font-bold ${cryptoState.ecdsaVerified ? 'text-red-400' : 'text-zinc-500'}`}>
                       {cryptoState.ecdsaVerified ? 'VERIFIED (SHA-256)' : 'SIGNATURE REJECTED'}
                     </span>
                   </div>

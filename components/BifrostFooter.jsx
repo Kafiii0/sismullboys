@@ -17,7 +17,7 @@ export default function BifrostFooter() {
             </p>
             <div className="pt-2">
               <span className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-md">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse"></span>
                 Telkom University &bull; Sistem Multimedia (CBK2CAB3)
               </span>
             </div>

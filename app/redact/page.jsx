@@ -836,7 +836,7 @@ export default function RedactStudioPage() {
                         {aiResult.processing_time_ms !== undefined && (
                           <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${
                             aiResult.cache_hit 
-                              ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/40' 
+                              ? 'bg-red-950/80 text-red-400 border-red-700/40' 
                               : 'bg-zinc-800 text-zinc-300 border-zinc-700'
                           }`}>
                             {aiResult.cache_hit ? `⚡ ${aiResult.processing_time_ms}ms (Cache Hit)` : `🔍 ${(aiResult.processing_time_ms / 1000).toFixed(2)}s (AI Scan)`}
@@ -864,7 +864,7 @@ export default function RedactStudioPage() {
 
                         <div className="text-zinc-400 text-[10px]">Kartu ID-1:</div>
 
-                        <div className="font-bold text-emerald-400">
+                        <div className="font-bold text-red-400">
 
                           {aiResult.card_info?.detected ? 'FOUND (1.586 Ratio)' : 'None'}
 
@@ -876,7 +876,7 @@ export default function RedactStudioPage() {
 
                         <div className="text-zinc-400 text-[10px]">Layar HP/WA:</div>
 
-                        <div className="font-bold text-emerald-400">
+                        <div className="font-bold text-red-400">
 
                           {aiResult.whatsapp_detected ? 'DETECTED' : 'None'}
 
@@ -901,13 +901,13 @@ export default function RedactStudioPage() {
                     {aiResult.ocr_telemetry && (
                       <div className="p-2.5 rounded-lg bg-red-950/20 border border-red-500/20 flex flex-wrap items-center justify-between gap-2 text-[11px]">
                         <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
                           <span className="font-bold text-red-400">{aiResult.ocr_telemetry.engine} Engine:</span>
                           <span className="text-zinc-300">{aiResult.ocr_telemetry.total_texts_detected} Teks Teranalisis</span>
                         </div>
                         <div className="flex items-center gap-3 text-zinc-400 text-[10px]">
-                          <span>No. HP (+62): <strong className="text-emerald-400 font-mono">{aiResult.ocr_telemetry.phone_numbers_detected}</strong></span>
-                          <span>Timestamp: <strong className="text-cyan-400 font-mono">{aiResult.ocr_telemetry.timestamps_detected}</strong></span>
+                          <span>No. HP (+62): <strong className="text-red-400 font-mono">{aiResult.ocr_telemetry.phone_numbers_detected}</strong></span>
+                          <span>Timestamp: <strong className="text-rose-400 font-mono">{aiResult.ocr_telemetry.timestamps_detected}</strong></span>
                           {aiResult.ocr_telemetry.nik_detected > 0 && (
                             <span>NIK: <strong className="text-amber-400 font-mono">{aiResult.ocr_telemetry.nik_detected}</strong></span>
                           )}
@@ -1409,7 +1409,7 @@ export default function RedactStudioPage() {
 
                       <span className="text-zinc-400">Perangkat Kamera:</span>
 
-                      <span className={stripExif ? 'text-emerald-400 font-bold' : 'text-zinc-200'}>
+                      <span className={stripExif ? 'text-red-400 font-bold' : 'text-zinc-200'}>
 
                         {stripExif ? '[PURGED]' : (aiResult?.exif_metadata?.Model || 'Tidak ada metadata')}
 
@@ -1421,7 +1421,7 @@ export default function RedactStudioPage() {
 
                       <span className="text-zinc-400">Koordinat GPS:</span>
 
-                      <span className={stripExif ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                      <span className={stripExif ? 'text-red-400 font-bold' : 'text-amber-400'}>
 
                         {stripExif ? '[ZEROED - PURGED]' : (aiResult?.exif_metadata?.GPS_Telemetry || 'Tidak ada GPS')}
 
@@ -1433,7 +1433,7 @@ export default function RedactStudioPage() {
 
                       <span className="text-zinc-400">Timestamp Asli:</span>
 
-                      <span className={stripExif ? 'text-emerald-400 font-bold' : 'text-zinc-200'}>
+                      <span className={stripExif ? 'text-red-400 font-bold' : 'text-zinc-200'}>
 
                         {stripExif ? '[STANDARDIZED UTC]' : (aiResult?.exif_metadata?.DateTimeOriginal || 'Standard')}
 
@@ -1471,7 +1471,7 @@ export default function RedactStudioPage() {
 
                     >
 
-                      {copiedHash ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                      {copiedHash ? <Check className="w-4 h-4 text-red-400" /> : <Copy className="w-4 h-4" />}
 
                     </button>
 
@@ -1488,7 +1488,7 @@ export default function RedactStudioPage() {
 
                     <div>
                       <div className="text-[10px] text-zinc-500 mb-1">SHA-256 Sanitized:</div>
-                      <div className="p-2 rounded bg-black/60 border border-white/[0.04] text-[11px] text-emerald-400 break-all select-all">
+                      <div className="p-2 rounded bg-black/60 border border-white/[0.04] text-[11px] text-rose-400 break-all select-all">
                         {aiResult?.sanitized_sha256 || 'Menunggu proses...'}
                       </div>
                     </div>
@@ -1509,9 +1509,9 @@ export default function RedactStudioPage() {
 
       {pasteToast && (
 
-        <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-zinc-900/95 border border-emerald-500/50 text-white text-xs font-mono shadow-2xl shadow-emerald-500/20 backdrop-blur-md">
+        <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-zinc-900/95 border border-red-500/50 text-white text-xs font-mono shadow-2xl shadow-red-500/20 backdrop-blur-md">
 
-          <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+          <div className="w-6 h-6 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0">
 
             <CheckCircle2 className="w-3.5 h-3.5" />
 
@@ -1519,7 +1519,7 @@ export default function RedactStudioPage() {
 
           <div>
 
-            <div className="font-bold text-emerald-300">Clipboard Terdeteksi</div>
+            <div className="font-bold text-red-300">Clipboard Terdeteksi</div>
 
             <div className="text-[11px] text-zinc-400">{pasteToast}</div>
 

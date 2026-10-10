@@ -31,15 +31,15 @@ export default function WitnessShieldPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#08080A] text-zinc-100 selection:bg-emerald-600/30 selection:text-white">
+    <main className="min-h-screen bg-[#08080A] text-zinc-100 selection:bg-red-600/30 selection:text-white">
       <BifrostNavbar />
 
       <section className="relative pt-36 pb-16 md:pt-40 md:pb-20 overflow-hidden border-b border-white/[0.08]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-red-600/10 blur-[150px] rounded-full pointer-events-none" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold uppercase">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs font-bold uppercase">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>APLIKASI DESKTOP WINDOWS</span>
           </div>
@@ -48,11 +48,11 @@ export default function WitnessShieldPage() {
             <img 
               src="/bifrost_cam_logo.png" 
               alt="BIFROST Cam Shield Logo" 
-              className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl border border-emerald-500/40 shadow-2xl shadow-emerald-500/30 bg-black/60 p-1" 
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl border border-red-500/40 shadow-2xl shadow-red-500/30 bg-black/60 p-1" 
             />
             <h1 className="font-grotesk text-3xl sm:text-5xl font-extrabold tracking-tight text-white text-left leading-tight">
               BIFROST{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-500 to-red-600">
                 Witness Cam
               </span>
             </h1>
@@ -66,7 +66,7 @@ export default function WitnessShieldPage() {
             <a
               href="/downloads/BIFROST_Witness_Cam_Windows.zip"
               download
-              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40"
+              className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98] border border-red-400/40"
             >
               <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
               <span>Unduh Witness Cam (.zip)</span>
@@ -95,7 +95,7 @@ export default function WitnessShieldPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           <div className="max-w-2xl space-y-2">
-            <div className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
+            <div className="text-xs font-mono text-red-400 font-bold uppercase tracking-wider">
               FITUR UTAMA
             </div>
             <h2 className="font-grotesk text-2xl sm:text-3xl font-bold text-white tracking-tight">
@@ -108,7 +108,7 @@ export default function WitnessShieldPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="p-5 rounded-2xl bg-[#0D121B] border border-white/[0.08] space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-700/40 text-emerald-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-red-950/80 border border-red-700/40 text-red-400 flex items-center justify-center">
                 <Video className="w-4 h-4" />
               </div>
               <h3 className="font-grotesk text-base font-bold text-white">
@@ -120,7 +120,7 @@ export default function WitnessShieldPage() {
             </div>
 
             <div className="p-5 rounded-2xl bg-[#0D121B] border border-white/[0.08] space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-cyan-950/80 border border-cyan-700/40 text-cyan-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-rose-950/80 border border-rose-700/40 text-rose-400 flex items-center justify-center">
                 <Mic className="w-4 h-4" />
               </div>
               <h3 className="font-grotesk text-base font-bold text-white">
@@ -132,7 +132,7 @@ export default function WitnessShieldPage() {
             </div>
 
             <div className="p-5 rounded-2xl bg-[#0D121B] border border-white/[0.08] space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-700/40 text-emerald-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-red-950/80 border border-red-700/40 text-red-400 flex items-center justify-center">
                 <Sliders className="w-4 h-4" />
               </div>
               <h3 className="font-grotesk text-base font-bold text-white">
@@ -144,7 +144,7 @@ export default function WitnessShieldPage() {
             </div>
 
             <div className="p-5 rounded-2xl bg-[#0D121B] border border-white/[0.08] space-y-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-700/40 text-emerald-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-red-950/80 border border-red-700/40 text-red-400 flex items-center justify-center">
                 <Cpu className="w-4 h-4" />
               </div>
               <h3 className="font-grotesk text-base font-bold text-white">
@@ -163,7 +163,7 @@ export default function WitnessShieldPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="max-w-2xl space-y-2">
-            <div className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">
+            <div className="text-xs font-mono text-red-400 font-bold uppercase tracking-wider">
               HASIL UJI KINERJA
             </div>
             <h2 className="font-grotesk text-2xl sm:text-3xl font-bold text-white tracking-tight">
@@ -180,18 +180,18 @@ export default function WitnessShieldPage() {
                 <thead className="bg-[#101422] text-zinc-300 border-b border-white/[0.08]">
                   <tr>
                     <th className="p-4 font-bold text-white">Fitur yang Diuji</th>
-                    <th className="p-4 font-bold text-emerald-400">Fokus Pengujian</th>
+                    <th className="p-4 font-bold text-rose-400">Fokus Pengujian</th>
                     <th className="p-4 font-bold text-zinc-300">Hasil Pengujian &amp; Efek ke Pengguna</th>
-                    <th className="p-4 font-bold text-cyan-400">Rekomendasi Setelan</th>
+                    <th className="p-4 font-bold text-red-400">Rekomendasi Setelan</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.06] text-zinc-300">
                   {tradeOffs.map((row, idx) => (
                     <tr key={idx} className="hover:bg-white/[0.02]">
                       <td className="p-4 font-bold text-white">{row.parameter}</td>
-                      <td className="p-4 text-emerald-300">{row.multimediaConcept}</td>
+                      <td className="p-4 text-rose-300">{row.multimediaConcept}</td>
                       <td className="p-4 text-zinc-400 font-sans leading-relaxed">{row.impact}</td>
-                      <td className="p-4 font-bold text-cyan-400">{row.verdict}</td>
+                      <td className="p-4 font-bold text-red-400">{row.verdict}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -204,7 +204,7 @@ export default function WitnessShieldPage() {
 
       <section className="py-16 relative">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl p-6 sm:p-10 bg-gradient-to-b from-[#0D1824] to-[#0A0D14] border border-emerald-500/30 space-y-6 shadow-2xl">
+          <div className="rounded-3xl p-6 sm:p-10 bg-gradient-to-b from-[#140F12] to-[#0A0D14] border border-red-500/30 space-y-6 shadow-2xl">
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.08]">
               <div>
@@ -218,7 +218,7 @@ export default function WitnessShieldPage() {
               <a
                 href="/downloads/BIFROST_Witness_Cam_Windows.zip"
                 download
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold uppercase transition-all shadow-lg shrink-0"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold uppercase transition-all shadow-lg shrink-0"
               >
                 <Download className="w-4 h-4" />
                 <span>Unduh ZIP (79.1 MB)</span>
@@ -227,7 +227,7 @@ export default function WitnessShieldPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono text-xs">
               <div className="p-4 rounded-xl bg-black/50 border border-white/[0.06] space-y-2">
-                <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">1</span>
+                <span className="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">1</span>
                 <h4 className="text-white font-bold">Buka Program</h4>
                 <p className="text-zinc-400 font-sans text-xs leading-relaxed">
                   Ekstrak berkas ZIP lalu jalankan <code>BIFROST_Witness_Cam.exe</code>.
@@ -235,18 +235,18 @@ export default function WitnessShieldPage() {
               </div>
 
               <div className="p-4 rounded-xl bg-black/50 border border-white/[0.06] space-y-2">
-                <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">2</span>
+                <span className="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">2</span>
                 <h4 className="text-white font-bold">Pilih Kamera di Meet/Zoom</h4>
                 <p className="text-zinc-400 font-sans text-xs leading-relaxed">
-                  Pada setelan kamera Google Meet atau Zoom, pilih <strong className="text-emerald-400">BIFROST Encrypted Camera</strong>.
+                  Pada setelan kamera Google Meet atau Zoom, pilih <strong className="text-red-400">BIFROST Encrypted Camera</strong>.
                 </p>
               </div>
 
               <div className="p-4 rounded-xl bg-black/50 border border-white/[0.06] space-y-2">
-                <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">3</span>
+                <span className="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">3</span>
                 <h4 className="text-white font-bold">Hubungkan Suara (Opsional)</h4>
                 <p className="text-zinc-400 font-sans text-xs leading-relaxed">
-                  Gunakan kabel audio virtual gratis seperti <a href="https://vb-audio.com/Cable/" target="_blank" rel="noreferrer" className="text-cyan-400 underline">VB-CABLE</a> lalu pilih mikrofon <strong>CABLE Output</strong> di Google Meet.
+                  Gunakan kabel audio virtual gratis seperti <a href="https://vb-audio.com/Cable/" target="_blank" rel="noreferrer" className="text-red-400 underline">VB-CABLE</a> lalu pilih mikrofon <strong>CABLE Output</strong> di Google Meet.
                 </p>
               </div>
             </div>

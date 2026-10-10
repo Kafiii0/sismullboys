@@ -66,8 +66,8 @@ export default function PipelineArchitecture() {
       title: 'Keamanan & Kustodi',
       module: 'Modul 3 (CBK2CAB3)',
       icon: ShieldCheck,
-      color: 'from-emerald-500 to-teal-600',
-      badgeColor: 'border-emerald-500/30 text-emerald-300 bg-emerald-950/40',
+      color: 'from-rose-600 to-red-700',
+      badgeColor: 'border-red-500/30 text-red-300 bg-red-950/40',
       summary: 'Penanaman DCT watermark per penerima, penguncian rantai kustodi SHA-256, tanda tangan ECDSA, dan enkripsi AES-256-GCM.',
       details: [
         'Hitung H2 = SHA-256(H1 + Compressed Bytes)',
@@ -83,8 +83,8 @@ export default function PipelineArchitecture() {
       title: 'Distribusi Adaptif',
       module: 'Modul 4 (CBK2CAB3)',
       icon: Radio,
-      color: 'from-sky-500 to-blue-600',
-      badgeColor: 'border-sky-500/30 text-sky-300 bg-sky-950/40',
+      color: 'from-red-600 to-rose-700',
+      badgeColor: 'border-red-500/30 text-red-300 bg-red-950/40',
       summary: 'Pengemasan HLS RFC 8216 multi-rendisi (1080p, 720p, 360p) dengan tautan bertanda tangan berkedaluwarsa.',
       details: [
         'Tiga rendisi adaptif: 1080p FHD (6.5Mbps), 720p HD (2.5Mbps), 360p SD (650kbps)',
@@ -99,8 +99,8 @@ export default function PipelineArchitecture() {
       title: 'Penyajian & Verifikasi',
       module: 'Verification Layer',
       icon: CheckCircle2,
-      color: 'from-indigo-500 to-purple-600',
-      badgeColor: 'border-indigo-500/30 text-indigo-300 bg-indigo-950/40',
+      color: 'from-red-700 to-zinc-800',
+      badgeColor: 'border-red-500/30 text-red-300 bg-red-950/40',
       summary: 'Portal klien mendekripsi bukti dengan kunci resmi, memvalidasi seluruh mata rantai kustodi, dan memunculkan status keaslian.',
       details: [
         'Dekripsi paket AES-256-GCM di peramban klien',

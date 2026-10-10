@@ -58,7 +58,7 @@ export default function WitnessMonitorPage() {
         />
       ) : (
         <div className="flex flex-col items-center justify-center space-y-4 p-8 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 animate-pulse">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 animate-pulse">
             <ShieldCheck className="w-8 h-8" />
           </div>
           <div className="space-y-1">
@@ -77,7 +77,7 @@ export default function WitnessMonitorPage() {
 
       <div className="absolute top-4 right-4 z-50 flex items-center gap-2 opacity-30 hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/10 text-[11px] font-mono text-zinc-300">
-          <span className={`w-2 h-2 rounded-full ${isFeedActive ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+          <span className={`w-2 h-2 rounded-full ${isFeedActive ? 'bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse' : 'bg-zinc-600'}`} />
           <span>{isFeedActive ? 'LIVE BROADCAST FEED' : 'STANDBY'}</span>
         </div>
 

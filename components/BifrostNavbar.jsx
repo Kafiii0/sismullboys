@@ -78,12 +78,12 @@ export default function BifrostNavbar() {
                 onClick={() => setActiveDropdown(activeDropdown === 'programs' ? null : 'programs')}
                 className={`inline-flex items-center gap-1.5 transition-colors py-1 cursor-pointer ${
                   pathname.startsWith('/programs') || pathname === '/witness-shield' || pathname === '/screen-shield'
-                    ? 'text-emerald-400 font-bold'
+                    ? 'text-red-400 font-bold'
                     : 'text-zinc-300 hover:text-white'
                 }`}
               >
                 <span>Programs</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'programs' ? 'rotate-180 text-emerald-400' : 'text-zinc-500'}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'programs' ? 'rotate-180 text-red-400' : 'text-zinc-500'}`} />
               </button>
 
               {activeDropdown === 'programs' && (
@@ -94,7 +94,7 @@ export default function BifrostNavbar() {
                       onClick={closeDropdown}
                       className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                     >
-                      <Video className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <Video className="w-4 h-4 text-red-400 shrink-0" />
                       <span>Witness Cam</span>
                     </Link>
 
@@ -103,7 +103,7 @@ export default function BifrostNavbar() {
                       onClick={closeDropdown}
                       className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                     >
-                      <Monitor className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <Monitor className="w-4 h-4 text-rose-400 shrink-0" />
                       <span>HDMI Shield</span>
                     </Link>
 
@@ -111,10 +111,10 @@ export default function BifrostNavbar() {
                       <Link
                         href="/programs"
                         onClick={closeDropdown}
-                        className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-emerald-300 hover:bg-emerald-950/40 transition-colors"
+                        className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-red-300 hover:bg-red-950/40 transition-colors"
                       >
                         <span className="flex items-center gap-2">
-                          <Download className="w-3.5 h-3.5 text-emerald-400" />
+                          <Download className="w-3.5 h-3.5 text-red-400" />
                           <span>Download .EXE</span>
                         </span>
                         <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
@@ -155,7 +155,7 @@ export default function BifrostNavbar() {
                       onClick={closeDropdown}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                       <span>How It Works</span>
                     </Link>
 
@@ -164,7 +164,7 @@ export default function BifrostNavbar() {
                       onClick={closeDropdown}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                     >
-                      <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <Lock className="w-3.5 h-3.5 text-red-400 shrink-0" />
                       <span>Evidence Custody</span>
                     </Link>
                   </div>
@@ -191,10 +191,10 @@ export default function BifrostNavbar() {
             <Link
               href="/programs"
               onClick={closeDropdown}
-              className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-emerald-950/70 hover:bg-emerald-900/90 text-emerald-300 border border-emerald-500/40 font-semibold text-xs tracking-wider uppercase transition-all shadow-md shadow-emerald-950/50 hover:scale-[1.02] active:scale-[0.98]"
+              className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/30 font-semibold text-xs tracking-wider uppercase transition-all shadow-md shadow-red-950/50 hover:scale-[1.02] active:scale-[0.98]"
               title="Download Desktop Programs (.EXE)"
             >
-              <Download className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-y-0.5 transition-transform" />
+              <Download className="w-3.5 h-3.5 text-red-400 group-hover:translate-y-0.5 transition-transform" />
               <span>Downloads</span>
             </Link>
             <Link
@@ -231,7 +231,7 @@ export default function BifrostNavbar() {
             <div className="border-y border-white/[0.06] py-2 space-y-2">
               <button
                 onClick={() => setMobileProgramsOpen(!mobileProgramsOpen)}
-                className="w-full flex items-center justify-between text-emerald-400 py-1"
+                className="w-full flex items-center justify-between text-red-400 py-1"
               >
                 <span>Programs (.EXE)</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${mobileProgramsOpen ? 'rotate-180' : ''}`} />
@@ -258,7 +258,7 @@ export default function BifrostNavbar() {
                   <Link
                     href="/programs"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-1.5 text-emerald-400 font-bold pt-1"
+                    className="flex items-center gap-1.5 text-red-400 font-bold pt-1"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download Portal (.EXE)</span>
@@ -316,9 +316,9 @@ export default function BifrostNavbar() {
             <Link
               href="/programs"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-md shadow-emerald-600/30"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-200 font-semibold text-xs tracking-wider uppercase transition-all shadow-md shadow-red-950/40"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4 text-red-400" />
               <span>Downloads Portal (.EXE)</span>
             </Link>
             <Link

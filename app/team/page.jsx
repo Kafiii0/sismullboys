@@ -29,7 +29,7 @@ export default function TeamPage() {
       role: 'Lead Modul 3: Keamanan & Kustodi',
       focus: 'WebCrypto AES-256-GCM AEAD, Rantai Kustodi SHA-256 Manifest, Tanda Tangan ECDSA P-256, Robust DCT Watermarking Frekuensi Tengah',
       icon: Shield,
-      color: 'from-emerald-500 to-teal-600'
+      color: 'from-rose-600 to-red-700'
     },
     {
       name: 'Farhan Haidar Ar-Rasyid',
@@ -37,7 +37,7 @@ export default function TeamPage() {
       role: 'Lead Modul 4: Distribusi & Portal Klien',
       focus: 'HLS Multi-Bitrate RFC 8216, Simulasi Throttling Jaringan, Signed Expiring URLs, Portal Verifikasi Keaslian Bukti Independen',
       icon: Radio,
-      color: 'from-sky-500 to-blue-600'
+      color: 'from-red-700 to-zinc-800'
     }
   ];
 
@@ -88,7 +88,7 @@ export default function TeamPage() {
 
                 <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-zinc-400">
                   <span>Telkom University</span>
-                  <span className="text-emerald-400 font-semibold">Tubes CBK2CAB3</span>
+                  <span className="text-red-400 font-semibold">Tubes CBK2CAB3</span>
                 </div>
               </div>
             );

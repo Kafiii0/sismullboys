@@ -86,7 +86,7 @@ export default function VulnTracker() {
                 <div className="p-4 rounded-xl bg-[#141418] border border-white/5 font-sans text-xs space-y-2.5">
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Assessment Status:</span>
-                    <span className="text-emerald-400 font-semibold">Completed & Verified Secure</span>
+                    <span className="text-red-400 font-semibold">Completed & Verified Secure</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Residual Critical Findings:</span>

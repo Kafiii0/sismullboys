@@ -157,9 +157,9 @@ export default function Home() {
 
                 <div className="p-4 rounded-xl bg-[#161821] border border-white/[0.06] space-y-3 font-mono text-xs">
                   
-                  <div className="p-2 rounded bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] flex items-center justify-between">
-                    <span>?? REPUBLIK INDONESIA - KTP</span>
-                    <span className="text-[10px] uppercase font-bold text-emerald-400">Preserved Legal Marker</span>
+                  <div className="p-2 rounded bg-red-950/40 border border-red-500/30 text-red-300 text-[11px] flex items-center justify-between">
+                    <span>🇮🇩 REPUBLIK INDONESIA - KTP</span>
+                    <span className="text-[10px] uppercase font-bold text-red-400">Preserved Legal Marker</span>
                   </div>
 
                   <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
@@ -176,14 +176,14 @@ export default function Home() {
 
                   <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
                     <span className="text-zinc-400">EXIF Geolocation:</span>
-                    <span className={heroRedacted ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                    <span className={heroRedacted ? 'text-red-400 font-bold' : 'text-amber-400'}>
                       {heroRedacted ? '[PURGED - ZEROED]' : '-6.9732, 107.6304'}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
                     <span className="text-zinc-400">Hardware Serial:</span>
-                    <span className={heroRedacted ? 'text-emerald-400 font-bold' : 'text-zinc-300'}>
+                    <span className={heroRedacted ? 'text-red-400 font-bold' : 'text-zinc-300'}>
                       {heroRedacted ? '[STRIPPED]' : 'iPhone15,3 SN#88419'}
                     </span>
                   </div>
@@ -284,16 +284,16 @@ export default function Home() {
 
       <section className="py-20 bg-gradient-to-b from-[#090A0E] via-[#0B0F19] to-[#0A0B0F] relative overflow-hidden border-b border-white/[0.08]">
         
-        <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-cyan-600/10 blur-[140px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-red-600/10 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-rose-600/10 blur-[140px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="rounded-3xl bg-[#0D121F]/90 border border-emerald-500/25 p-8 sm:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl">
+          <div className="rounded-3xl bg-[#0F0D12]/90 border border-red-500/25 p-8 sm:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               
               <div className="lg:col-span-7 space-y-6">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold uppercase">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs font-bold uppercase">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>NATIVE DESKTOP SUITE v2.5</span>
                   </div>
@@ -305,7 +305,7 @@ export default function Home() {
                 <div className="space-y-3">
                   <h2 className="font-grotesk text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
                     BIFROST Witness Cam{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-400">
                       Standalone App
                     </span>
                   </h2>
@@ -316,7 +316,7 @@ export default function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-1">
-                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
+                    <div className="flex items-center gap-2 text-red-400 font-mono text-xs font-bold">
                       <Video className="w-4 h-4" />
                       <span>DirectShow Virtual Cam</span>
                     </div>
@@ -326,7 +326,7 @@ export default function Home() {
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-1">
-                    <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-bold">
+                    <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-bold">
                       <Mic className="w-4 h-4" />
                       <span>DSP Voice Disguiser</span>
                     </div>
@@ -336,7 +336,7 @@ export default function Home() {
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-1">
-                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold">
+                    <div className="flex items-center gap-2 text-red-400 font-mono text-xs font-bold">
                       <ShieldCheck className="w-4 h-4" />
                       <span>YuNet Biometric AI</span>
                     </div>
@@ -346,7 +346,7 @@ export default function Home() {
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-1">
-                    <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-bold">
+                    <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-bold">
                       <Monitor className="w-4 h-4" />
                       <span>Offline &amp; Low Latency</span>
                     </div>
@@ -360,7 +360,7 @@ export default function Home() {
                   <a
                     href="/downloads/BIFROST_Witness_Cam_Windows.zip"
                     download
-                    className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-[0.98] border border-emerald-400/40"
+                    className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98] border border-red-400/40"
                   >
                     <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                     <span>Unduh Versi Desktop (.zip)</span>
@@ -385,34 +385,34 @@ export default function Home() {
               </div>
 
               <div className="lg:col-span-5">
-                <div className="rounded-2xl bg-[#080B12] border border-white/[0.1] p-5 shadow-2xl space-y-4 font-mono text-xs">
+                <div className="rounded-2xl bg-[#0E0A0D] border border-white/[0.1] p-5 shadow-2xl space-y-4 font-mono text-xs">
                   <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
                       <span className="font-bold text-white uppercase text-[11px]">
                         BIFROST Witness Cam Preview
                       </span>
                     </div>
-                    <span className="text-[10px] text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                    <span className="text-[10px] text-red-400 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/30">
                       LIVE DIRECTSHOW
                     </span>
                   </div>
 
                   <div className="relative aspect-video rounded-xl bg-[#04060A] border border-white/[0.08] flex items-center justify-center overflow-hidden p-4 text-center">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#10b98115,transparent_70%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ef444415,transparent_70%)]" />
                     
                     <div className="space-y-3 relative z-10">
                       <img 
                         src="/bifrost_cam_logo.png" 
                         alt="BIFROST Cam Shield Logo" 
-                        className="w-24 h-24 object-contain rounded-2xl mx-auto shadow-2xl shadow-emerald-500/30 border border-emerald-400/40 p-1 bg-black/60 hover:scale-105 transition-transform" 
+                        className="w-24 h-24 object-contain rounded-2xl mx-auto shadow-2xl shadow-red-500/30 border border-red-400/40 p-1 bg-black/60 hover:scale-105 transition-transform" 
                       />
                       <div>
                         <div className="font-bold text-white text-xs tracking-wide">BIFROST Cam Shield</div>
-                        <div className="text-[10px] text-emerald-400 font-mono">Official Application Emblem</div>
+                        <div className="text-[10px] text-red-400 font-mono">Official Application Emblem</div>
                       </div>
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/80 border border-emerald-500/40 text-[10px] text-emerald-300">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/80 border border-red-500/40 text-[10px] text-red-300">
+                        <CheckCircle2 className="w-3 h-3 text-red-400" />
                         <span>Siap dipilih di Google Meet / Zoom</span>
                       </div>
                     </div>
@@ -429,7 +429,7 @@ export default function Home() {
                     </div>
                     <div className="flex justify-between py-1 border-b border-white/[0.04]">
                       <span className="text-zinc-400">Filter Audio:</span>
-                      <span className="text-emerald-400">Pitch Shift &amp; Vocoder DSP</span>
+                      <span className="text-red-400">Pitch Shift &amp; Vocoder DSP</span>
                     </div>
                     <div className="flex justify-between py-1">
                       <span className="text-zinc-400">Status Lisensi:</span>

@@ -127,7 +127,7 @@ export default function ProductsSolutions() {
                     className="w-5 h-4 rounded bg-[#09090c] border border-white/20 flex flex-col justify-end p-0.5 shadow-inner"
                   >
                     <div className="flex justify-between items-center px-0.5">
-                      <div className={`w-1 h-1 rounded-full ${p <= 2 ? 'bg-emerald-400 shadow-[0_0_4px_#34d399]' : 'bg-red-500 shadow-[0_0_4px_#ef4444]'}`} />
+                      <div className={`w-1 h-1 rounded-full ${p <= 2 ? 'bg-rose-400 shadow-[0_0_4px_#f43f5e]' : 'bg-red-500 shadow-[0_0_4px_#ef4444]'}`} />
                       <div className="w-1 h-1 rounded-full bg-amber-400/80" />
                     </div>
                   </div>

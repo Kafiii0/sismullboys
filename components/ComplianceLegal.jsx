@@ -94,7 +94,7 @@ export default function ComplianceLegal() {
               </div>
 
               <div className="pt-3 border-t border-white/[0.04] flex items-center gap-2 text-xs text-zinc-500">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
                 <span>Strictly Enforced Protocol</span>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function ComplianceLegal() {
                 From initial scope definition to official attestation issuance.
               </p>
             </div>
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-fit">
+            <span className="text-xs font-mono px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 w-fit">
               Zero Operational Downtime
             </span>
           </div>

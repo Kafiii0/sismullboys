@@ -15,8 +15,8 @@ export default function ProgramsPage() {
       version: 'v2.5 Standalone',
       tagline: 'Virtual Camera & Voice Disguiser',
       logo: '/bifrost_cam_logo.png',
-      badgeColor: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
-      glowColor: 'from-emerald-600/20 to-teal-600/10',
+      badgeColor: 'border-red-500/40 text-red-400 bg-red-500/10',
+      glowColor: 'from-red-600/20 to-rose-600/10',
       description: 'Aplikasi desktop untuk menyamarkan wajah dan memodulasi suara secara real-time pada Google Meet, Zoom, dan OBS.',
       features: [
         { label: 'DirectShow Virtual Cam', desc: 'Terdaftar resmi sebagai driver kamera virtual di Windows.' },
@@ -32,7 +32,7 @@ export default function ProgramsPage() {
       },
       downloadUrl: '/downloads/BIFROST_Witness_Cam_Windows.zip',
       docUrl: '/witness-shield',
-      accentBtn: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/30'
+      accentBtn: 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-red-600/30'
     },
     {
       id: 'hdmi-shield',
@@ -40,8 +40,8 @@ export default function ProgramsPage() {
       version: 'v2.5 Standalone',
       tagline: 'Presentation Privacy & Anti-Infinity Loop',
       logo: null,
-      badgeColor: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
-      glowColor: 'from-cyan-600/20 to-blue-600/10',
+      badgeColor: 'border-rose-500/40 text-rose-400 bg-rose-500/10',
+      glowColor: 'from-rose-600/20 to-red-900/10',
       description: 'Aplikasi desktop untuk mengamankan presentasi proyektor dan meniadakan bug layar berulang (Infinite Loop) di Google Meet.',
       features: [
         { label: 'Anti-Infinity Loop', desc: 'Menghilangkan efek cermin berulang saat share screen.' },
@@ -57,7 +57,7 @@ export default function ProgramsPage() {
       },
       downloadUrl: '/downloads/BIFROST_HDMI_Shield_Windows.zip',
       docUrl: '/screen-shield',
-      accentBtn: 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-cyan-600/30'
+      accentBtn: 'bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 shadow-rose-600/30'
     }
   ];
 
@@ -71,13 +71,13 @@ export default function ProgramsPage() {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-zinc-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
             <span>PORTABLE WINDOWS APPLICATIONS</span>
           </div>
 
           <h1 className="font-grotesk text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Programs &amp;{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-red-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-rose-500 to-red-600">
               Downloads
             </span>
           </h1>
@@ -118,10 +118,10 @@ export default function ProgramsPage() {
                       <img 
                         src={prog.logo} 
                         alt={prog.name} 
-                        className="w-14 h-14 object-contain rounded-2xl border border-emerald-500/40 shadow-xl shadow-emerald-500/20 bg-black/50 p-1 shrink-0" 
+                        className="w-14 h-14 object-contain rounded-2xl border border-red-500/40 shadow-xl shadow-red-500/20 bg-black/50 p-1 shrink-0" 
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-400 flex items-center justify-center shrink-0 shadow-xl shadow-cyan-500/20">
+                      <div className="w-14 h-14 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-rose-400 flex items-center justify-center shrink-0 shadow-xl shadow-rose-500/20">
                         <Monitor className="w-7 h-7" />
                       </div>
                     )}
@@ -143,7 +143,7 @@ export default function ProgramsPage() {
                     {prog.features.map((feat, fidx) => (
                       <div key={fidx} className="p-3 rounded-xl bg-black/40 border border-white/[0.06] space-y-1">
                         <div className="flex items-center gap-2 text-white font-mono text-xs font-bold">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
                           <span>{feat.label}</span>
                         </div>
                         <p className="text-[11px] text-zinc-400 font-sans leading-relaxed">
@@ -170,7 +170,7 @@ export default function ProgramsPage() {
                     <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
                       Paket Unduhan
                     </span>
-                    <span className="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                    <span className="text-[10px] font-mono text-red-400 px-2 py-0.5 rounded bg-red-500/10 border border-red-500/30">
                       WINDOWS 64-BIT
                     </span>
                   </div>
@@ -182,7 +182,7 @@ export default function ProgramsPage() {
                     </div>
                     <div className="flex justify-between py-1 border-b border-white/[0.04]">
                       <span className="text-zinc-400">Ukuran:</span>
-                      <span className="text-emerald-400 font-bold">{prog.specs.size}</span>
+                      <span className="text-red-400 font-bold">{prog.specs.size}</span>
                     </div>
                     <div className="flex justify-between py-1">
                       <span className="text-zinc-400">Tipe:</span>

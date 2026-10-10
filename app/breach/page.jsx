@@ -182,7 +182,7 @@ export default function BreachWatchPage() {
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
                   result.status === 'COMPROMISED' || result.grade === 'F'
                     ? 'bg-red-600/10 border-red-500/30 text-red-400'
-                    : 'bg-emerald-600/10 border-emerald-500/30 text-emerald-400'
+                    : 'bg-zinc-800 border-zinc-700/50 text-zinc-300'
                 }`}>
                   {result.status === 'COMPROMISED' || result.grade === 'F' ? (
                     <ShieldAlert className="w-5 h-5" />
@@ -199,7 +199,7 @@ export default function BreachWatchPage() {
                     <span className={`text-[10px] uppercase font-sans font-bold px-2 py-0.5 rounded-full border ${
                       result.status === 'COMPROMISED' || result.pwned || result.grade === 'F'
                         ? 'bg-red-600/20 text-red-400 border-red-500/30'
-                        : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                        : 'bg-zinc-800 text-zinc-300 border-zinc-700/50'
                     }`}>
                       {result.status}
                     </span>
@@ -224,7 +224,7 @@ export default function BreachWatchPage() {
                     <div className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Exposure Score</div>
                     <div className="flex items-baseline gap-2">
                       <span className={`text-3xl font-grotesk font-bold ${
-                        result.exposureScore > 60 ? 'text-red-400' : result.exposureScore > 30 ? 'text-amber-400' : 'text-emerald-400'
+                        result.exposureScore > 60 ? 'text-red-400' : result.exposureScore > 30 ? 'text-amber-400' : 'text-zinc-300'
                       }`}>
                         {result.exposureScore}
                       </span>
@@ -316,7 +316,7 @@ export default function BreachWatchPage() {
                   <div className="space-y-4">
                     {result.breaches.length === 0 ? (
                       <div className="p-8 text-center rounded-2xl bg-[#0D0D12] border border-white/[0.08] text-zinc-400">
-                        <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+                        <CheckCircle2 className="w-10 h-10 text-red-400 mx-auto mb-3" />
                         <h4 className="text-white font-semibold mb-1">No Breach Matches</h4>
                         <p className="text-xs text-zinc-500">This identity has no recorded compromise incidents in indexed public breach databases.</p>
                       </div>
@@ -419,7 +419,7 @@ export default function BreachWatchPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-6 rounded-2xl bg-[#0D0D12] border border-white/[0.08]">
                     <div className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Breach Occurrences</div>
-                    <div className={`text-4xl font-grotesk font-bold ${result.pwned ? 'text-red-400' : 'text-emerald-400'}`}>
+                    <div className={`text-4xl font-grotesk font-bold ${result.pwned ? 'text-red-400' : 'text-zinc-300'}`}>
                       {result.leakCount.toLocaleString()}
                     </div>
                     <div className="text-xs text-zinc-400 mt-2 font-mono">
@@ -459,19 +459,19 @@ export default function BreachWatchPage() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-white/[0.06] text-xs font-mono">
                     <div className="flex items-center gap-2">
-                      <span className={result.hasUpper ? 'text-emerald-400' : 'text-zinc-600'}>●</span>
+                      <span className={result.hasUpper ? 'text-red-400' : 'text-zinc-600'}>●</span>
                       <span className="text-zinc-300">Uppercase Letters</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={result.hasLower ? 'text-emerald-400' : 'text-zinc-600'}>●</span>
+                      <span className={result.hasLower ? 'text-red-400' : 'text-zinc-600'}>●</span>
                       <span className="text-zinc-300">Lowercase Letters</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={result.hasNumber ? 'text-emerald-400' : 'text-zinc-600'}>●</span>
+                      <span className={result.hasNumber ? 'text-red-400' : 'text-zinc-600'}>●</span>
                       <span className="text-zinc-300">Numeric Digits</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={result.hasSpecial ? 'text-emerald-400' : 'text-zinc-600'}>●</span>
+                      <span className={result.hasSpecial ? 'text-red-400' : 'text-zinc-600'}>●</span>
                       <span className="text-zinc-300">Special Symbols</span>
                     </div>
                   </div>
@@ -487,7 +487,7 @@ export default function BreachWatchPage() {
                     <div className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Exposure Index</div>
                     <div className="flex items-baseline gap-2">
                       <span className={`text-4xl font-grotesk font-bold ${
-                        result.exposureIndex > 60 ? 'text-red-400' : result.exposureIndex > 30 ? 'text-amber-400' : 'text-emerald-400'
+                        result.exposureIndex > 60 ? 'text-red-400' : result.exposureIndex > 30 ? 'text-amber-400' : 'text-zinc-300'
                       }`}>
                         {result.exposureIndex}
                       </span>
@@ -501,7 +501,7 @@ export default function BreachWatchPage() {
                   <div className="p-6 rounded-2xl bg-[#0D0D12] border border-white/[0.08]">
                     <div className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-1">Email Spoofing Risk</div>
                     <div className={`text-4xl font-grotesk font-bold ${
-                      result.emailSecurity.spoofingRisk === 'HIGH' ? 'text-red-400' : 'text-emerald-400'
+                      result.emailSecurity.spoofingRisk === 'HIGH' ? 'text-red-400' : 'text-zinc-300'
                     }`}>
                       {result.emailSecurity.spoofingRisk}
                     </div>
@@ -532,7 +532,7 @@ export default function BreachWatchPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-zinc-300">SPF Record (Sender Policy Framework)</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                          result.emailSecurity.hasSPF ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'
+                          result.emailSecurity.hasSPF ? 'bg-zinc-800 text-zinc-300 border-zinc-700/50' : 'bg-red-500/20 text-red-400 border-red-500/30'
                         }`}>
                           {result.emailSecurity.hasSPF ? 'Configured' : 'Missing'}
                         </span>
@@ -546,7 +546,7 @@ export default function BreachWatchPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-zinc-300">DMARC Policy Enforcement</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                          result.emailSecurity.dmarcEnforced ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'
+                          result.emailSecurity.dmarcEnforced ? 'bg-zinc-800 text-zinc-300 border-zinc-700/50' : 'bg-red-500/20 text-red-400 border-red-500/30'
                         }`}>
                           {result.emailSecurity.dmarcEnforced ? 'Enforced (p=reject/quarantine)' : 'Vulnerable to Spoofing'}
                         </span>
@@ -587,7 +587,7 @@ export default function BreachWatchPage() {
 
                 <div className="space-y-3">
                   <h3 className="font-semibold text-white text-sm flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-red-400" />
                     <span>Hardening & Remediation Roadmap</span>
                   </h3>
                   {result.recommendations.map((rec, rIdx) => (
