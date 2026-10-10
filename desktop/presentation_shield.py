@@ -23,6 +23,7 @@ ACCENT_EMERALD = '#10B981'
 ACCENT_AMBER = '#F59E0B'
 ACCENT_ROSE = '#F43F5E'
 TEXT_TITLE = '#FFFFFF'
+TEXT_WHITE = '#FFFFFF'
 TEXT_BODY = '#E2E8F0'
 TEXT_MUTED = '#94A3B8'
 TEXT_FAINT = '#64748B'
@@ -653,7 +654,7 @@ class BIFROSTPresentationShieldApp:
         self.btn_stream.pack(side='left')
         self.btn_freeze = tk.Button(pv_ctrl, text='⏸️ Jeda Layar', font=('Segoe UI', 9), fg=TEXT_TITLE, bg='#1E293B', activebackground='#334155', activeforeground=TEXT_TITLE, relief='flat', padx=12, pady=6, cursor='hand2', command=self.toggle_freeze)
         self.btn_freeze.pack(side='left', padx=6)
-        self.chk_crop_tb = tk.Checkbutton(pv_ctrl, text='✂️ Potong Taskbar Laptop (No Double Taskbar)', variable=self.crop_laptop_taskbar, font=('Segoe UI', 8, 'bold'), fg=ACCENT_CYAN, bg=GLASS_CARD, selectcolor='#09182B', activebackground=GLASS_CARD, activeforeground=TEXT_WHITE, cursor='hand2')
+        self.chk_crop_tb = tk.Checkbutton(pv_ctrl, text='✂️ Potong Taskbar Laptop (No Double Taskbar)', variable=self.crop_laptop_taskbar, font=('Segoe UI', 8, 'bold'), fg=ACCENT_CYAN, bg=GLASS_CARD, selectcolor='#09182B', activebackground=GLASS_CARD, activeforeground=TEXT_TITLE, cursor='hand2')
         self.chk_crop_tb.pack(side='left', padx=8)
         self.btn_refresh_mon = tk.Button(pv_ctrl, text='🔄', font=('Segoe UI', 8), fg=TEXT_TITLE, bg='#1E293B', activebackground='#334155', relief='flat', padx=6, pady=4, cursor='hand2', command=self.refresh_monitors)
         self.btn_refresh_mon.pack(side='right', padx=(2, 6))
