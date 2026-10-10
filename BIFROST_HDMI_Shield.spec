@@ -1,10 +1,15 @@
+from PyInstaller.utils.hooks import collect_all
+
+ocr_datas, ocr_binaries, ocr_hiddenimports = collect_all('rapidocr_onnxruntime')
+all_datas = [('scripts', 'scripts')] + ocr_datas
+all_hiddenimports = ocr_hiddenimports
 
 a = Analysis(
     ['desktop/presentation_shield.py'],
     pathex=[],
-    binaries=[],
-    datas=[('scripts', 'scripts')],
-    hiddenimports=[],
+    binaries=ocr_binaries,
+    datas=all_datas,
+    hiddenimports=all_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

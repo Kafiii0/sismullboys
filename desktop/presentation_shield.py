@@ -12,6 +12,10 @@ from PIL import Image, ImageTk, ImageDraw, ImageFont
 import ctypes
 from ctypes import wintypes
 user32 = ctypes.windll.user32
+try:
+    import rapidocr_onnxruntime
+except Exception:
+    rapidocr_onnxruntime = None
 BG_VOID = '#070B14'
 GLASS_BG = '#0D1527'
 GLASS_CARD = '#121D36'
@@ -203,6 +207,8 @@ def check_is_email(text):
     t_lower = t_clean.lower()
     if EMAIL_REGEX.search(t_clean):
         return True
+    if '@' in t_lower and any((ext in t_lower for ext in ['.com', '.id', '.net', '.org', '.edu', '.gov', '.io', '.ai', '.me', '.co'])):
+        return True
     if re.search('[A-Za-z0-9._%+-]+(?:@|e|©|at|\\b)(?:gmail|gmal|gmall|yahoo|hotmail|outlook|ymail|icloud)\\.[A-Za-z]{2,7}', t_lower):
         return True
     if re.search('[A-Za-z0-9._%+-]+(?:\\.sch\\.?id|\\.ac\\.?id|\\.co\\.?id|\\.go\\.?id|\\.id|\\.com)', t_lower):
@@ -214,65 +220,171 @@ def check_is_email(text):
 
 def find_input_box_above_label(frame_bgr, lx, ly, lw, lh):
     H, W = frame_bgr.shape[:2]
-    roi_y1 = max(0, ly - 80)
-    roi_y2 = max(0, ly - 4)
-    roi_x1 = max(0, lx - 40)
-    roi_x2 = min(W, lx + max(lw + 240, 360))
-    if roi_y2 - roi_y1 >= 20 and roi_x2 - roi_x1 >= 100:
+    roi_y1 = max(0, ly - 85)
+    roi_y2 = max(0, ly - 3)
+    roi_x1 = max(0, lx - max(30, int(lw * 0.3)))
+    roi_x2 = min(W, lx + max(lw * 3, 420))
+    if roi_y2 - roi_y1 >= 20 and roi_x2 - roi_x1 >= 90:
         roi = frame_bgr[roi_y1:roi_y2, roi_x1:roi_x2]
         try:
             gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 30, 130)
-            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            edges = cv2.Canny(gray, 20, 110)
+            k = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 3))
+            closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, k)
+            contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             best_box = None
-            max_area = 0
+            max_score = 0
             for cnt in contours:
                 cx, cy, cw, ch = cv2.boundingRect(cnt)
-                if 24 <= ch <= 75 and cw >= 100 and (cw / ch >= 2.0):
-                    area = cw * ch
-                    if area > max_area:
-                        max_area = area
-                        best_box = (roi_x1 + cx, roi_y1 + cy, cw, ch)
+                if 22 <= ch <= 85 and cw >= 95:
+                    score = cw * ch
+                    if score > max_score:
+                        max_score = score
+                        best_box = (max(0, roi_x1 + cx - 4), max(0, roi_y1 + cy - 2), min(W - (roi_x1 + cx - 4), cw + 8), min(H - (roi_y1 + cy - 2), ch + 4))
             if best_box:
                 return best_box
         except Exception:
             pass
-    geom_x = max(0, lx - 15)
+    geom_x = max(0, lx - 10)
     geom_y = max(0, ly - 56)
-    geom_w = min(W - geom_x, max(int(lw * 2.8), 320))
+    geom_w = min(W - geom_x, max(int(lw * 3.0), 340))
     geom_h = 50
     return (geom_x, geom_y, geom_w, geom_h)
 
 def find_input_box_below_label(frame_bgr, lx, ly, lw, lh):
     H, W = frame_bgr.shape[:2]
-    roi_y1 = min(H - 10, ly + lh + 2)
-    roi_y2 = min(H, ly + lh + 90)
-    roi_x1 = max(0, lx - 25)
-    roi_x2 = min(W, lx + max(lw + 220, 360))
-    if roi_y2 - roi_y1 >= 20 and roi_x2 - roi_x1 >= 100:
-        roi = frame_bgr[roi_y1:roi_y2, roi_x1:roi_x2]
+    y_start = min(H - 10, ly + lh + 2)
+    y_end = min(H, ly + lh + max(80, int(lh * 3.6)))
+    search_x1 = max(0, lx - max(35, int(lw * 0.35)))
+    search_x2 = min(W, lx + max(lw * 4, 460))
+    if y_end - y_start >= 18 and search_x2 - search_x1 >= 90:
+        roi = frame_bgr[y_start:y_end, search_x1:search_x2]
         try:
             gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 30, 130)
-            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            edges = cv2.Canny(gray, 20, 110)
+            k = cv2.getStructuringElement(cv2.MORPH_RECT, (25, 3))
+            closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, k)
+            contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             best_box = None
-            max_area = 0
+            max_score = 0
             for cnt in contours:
                 cx, cy, cw, ch = cv2.boundingRect(cnt)
-                if 24 <= ch <= 75 and cw >= 100 and (cw / ch >= 2.0):
-                    area = cw * ch
-                    if area > max_area:
-                        max_area = area
-                        best_box = (roi_x1 + cx, roi_y1 + cy, cw, ch)
+                if 22 <= ch <= 85 and cw >= 95:
+                    score = cw * ch
+                    if score > max_score:
+                        max_score = score
+                        best_box = (max(0, search_x1 + cx - 4), max(0, y_start + cy - 2), min(W - (search_x1 + cx - 4), cw + 8), min(H - (y_start + cy - 2), ch + 4))
             if best_box:
                 return best_box
         except Exception:
             pass
-    geom_x = max(0, lx - 8)
-    geom_y = min(H - 42, ly + lh + 4)
-    geom_w = min(W - geom_x, max(int(lw * 2.4), 280))
-    geom_h = max(38, int(lh * 1.8))
-    return (geom_x, geom_y, geom_w, geom_h)
+    try:
+        gray_f = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+        y_test = min(H - 5, ly + lh + max(16, int(lh * 1.0)))
+        left_x = max(0, lx - 10)
+        for x in range(min(W - 1, lx), max(0, lx - 250), -2):
+            if x > 1:
+                diff = abs(int(gray_f[y_test, x]) - int(gray_f[y_test, x - 2]))
+                if diff > 10:
+                    left_x = max(0, x - 4)
+                    break
+        right_x = min(W, lx + max(lw * 3, 340))
+        for x in range(min(W - 2, lx + lw), min(W - 1, lx + lw + 480), 2):
+            diff = abs(int(gray_f[y_test, x]) - int(gray_f[y_test, x + 2]))
+            if diff > 10:
+                right_x = min(W, x + 4)
+                break
+        if right_x - left_x >= 140:
+            box_h = max(44, min(65, int(lh * 2.5)))
+            return (left_x, y_start, right_x - left_x, box_h)
+    except Exception:
+        pass
+    fb_x = max(0, lx - 10)
+    fb_y = min(H - 46, ly + lh + 4)
+    fb_w = min(W - fb_x, max(int(lw * 3.2), min(420, int(W * 0.35))))
+    fb_h = max(42, min(64, int(lh * 2.5)))
+    return (fb_x, fb_y, fb_w, fb_h)
+
+def find_input_box_beside_label(frame_bgr, lx, ly, lw, lh):
+    H, W = frame_bgr.shape[:2]
+    roi_y1 = max(0, ly - 6)
+    roi_y2 = min(H, ly + lh + 14)
+    roi_x1 = min(W - 20, lx + lw + 2)
+    roi_x2 = min(W, lx + lw + max(260, int(lw * 3)))
+    if roi_y2 - roi_y1 >= 18 and roi_x2 - roi_x1 >= 80:
+        roi = frame_bgr[roi_y1:roi_y2, roi_x1:roi_x2]
+        try:
+            gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+            edges = cv2.Canny(gray, 20, 110)
+            k = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 3))
+            closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, k)
+            contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            for cnt in contours:
+                cx, cy, cw, ch = cv2.boundingRect(cnt)
+                if 20 <= ch <= 80 and cw >= 80:
+                    return (max(0, roi_x1 + cx - 3), max(0, roi_y1 + cy - 2), min(W - (roi_x1 + cx - 3), cw + 6), min(H - (roi_y1 + cy - 2), ch + 4))
+        except Exception:
+            pass
+    return None
+
+def find_enclosing_input_box(frame_bgr, bx, by, bw, bh):
+    H, W = frame_bgr.shape[:2]
+    pad_left = max(24, int(bw * 0.18))
+    pad_right = max(28, int(bw * 0.35))
+    ex = max(0, bx - pad_left)
+    ey = max(0, by - 12)
+    ew = min(W - ex, bw + pad_left + pad_right)
+    eh = min(H - ey, max(44, bh + 24))
+    return (ex, ey, ew, eh)
+
+def detect_password_bullet_boxes(img_bgr, offset_x=0, offset_y=0):
+    H, W = img_bgr.shape[:2]
+    if H < 30 or W < 80:
+        return []
+    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
+    _, thresh_dark = cv2.threshold(gray, 95, 255, cv2.THRESH_BINARY_INV)
+    _, thresh_light = cv2.threshold(gray, 175, 255, cv2.THRESH_BINARY)
+    results = []
+    for thresh in (thresh_dark, thresh_light):
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
+        dots = []
+        for i in range(1, num_labels):
+            w = stats[i, cv2.CC_STAT_WIDTH]
+            h = stats[i, cv2.CC_STAT_HEIGHT]
+            if 4 <= w <= 16 and 4 <= h <= 16 and abs(w - h) <= 2:
+                area = stats[i, cv2.CC_STAT_AREA]
+                if area >= w * h * 0.55:
+                    dots.append({'cx': centroids[i][0], 'cy': centroids[i][1], 'x': stats[i, cv2.CC_STAT_LEFT], 'y': stats[i, cv2.CC_STAT_TOP], 'w': w, 'h': h})
+        if len(dots) < 4:
+            continue
+        dots.sort(key=lambda d: d['cx'])
+        y_clusters = {}
+        for d in dots:
+            matched = False
+            for y_k in list(y_clusters.keys()):
+                if abs(d['cy'] - y_k) <= 3:
+                    y_clusters[y_k].append(d)
+                    matched = True
+                    break
+            if not matched:
+                y_clusters[d['cy']] = [d]
+        for y_k, cluster in y_clusters.items():
+            if len(cluster) >= 4:
+                cluster.sort(key=lambda d: d['cx'])
+                spacings = [cluster[i + 1]['cx'] - cluster[i]['cx'] for i in range(len(cluster) - 1)]
+                mean_sp = float(np.mean(spacings))
+                std_sp = float(np.std(spacings))
+                if len(spacings) >= 3 and 5.0 <= mean_sp <= 26.0 and std_sp < 2.8:
+                    min_x = min((d['x'] for d in cluster))
+                    max_x = max((d['x'] + d['w'] for d in cluster))
+                    min_y = min((d['y'] for d in cluster))
+                    max_y = max((d['y'] + d['h'] for d in cluster))
+                    box_x = max(0, int(offset_x + min_x - 36))
+                    box_y = max(0, int(offset_y + min_y - 18))
+                    box_w = min(W - box_x, int(max_x - min_x + 280))
+                    box_h = min(H - box_y, max(46, int(max_y - min_y + 38)))
+                    results.append((box_x, box_y, box_w, box_h))
+    return results
 
 class SmartToastDetector:
 
@@ -1096,6 +1208,10 @@ class BIFROSTPresentationShieldApp:
                 detected = []
                 bm_ys = []
                 toast_texts = []
+                if self.smart_ocr_pii_active.get():
+                    bullet_boxes = detect_password_bullet_boxes(scan_roi, scan_x1, scan_y1)
+                    for bb in bullet_boxes:
+                        detected.append({'box': bb, 'label': 'KATA SANDI', 'expires': now + 12.0})
                 if results:
                     pname, title = get_foreground_process_info()
                     is_real_browser = pname in REAL_BROWSER_EXES or any((pname.startswith(p) for p in ['chrome', 'msedge', 'brave', 'firefox', 'opera', 'vivaldi', 'arc'])) or any((title.endswith(sfx) for sfx in ['- google chrome', '- microsoft edge', '- brave', '- mozilla firefox', '- opera', '- vivaldi', '- arc']))
@@ -1120,20 +1236,30 @@ class BIFROSTPresentationShieldApp:
                                     toast_texts.append(t_lower)
                         if self.smart_ocr_pii_active.get():
                             if check_is_email(text_clean):
+                                enc_box = find_enclosing_input_box(frame, bx, by, bw, bh)
+                                detected.append({'box': enc_box, 'label': 'EMAIL PRIBADI', 'expires': now + 12.0})
                                 detected.append({'box': (max(0, bx - 14), max(0, by - 6), bw + 28, bh + 12), 'label': 'EMAIL PRIBADI', 'expires': now + 12.0})
                             elif any((k in t_lower for k in ['tampilkan sandi', 'tampllkan sandi', 'show password', 'lihat sandi'])):
                                 inp_box = find_input_box_above_label(frame, bx, by, bw, bh)
                                 detected.append({'box': inp_box, 'label': 'KOLOM SANDI', 'expires': now + 12.0})
-                            elif any((k in t_lower for k in ['email', 'surel', 'e-mail', 'alamat email'])):
+                            elif any((k in t_lower for k in ['email', 'surel', 'e-mail', 'alamat email', 'email address'])):
                                 inp_box = find_input_box_below_label(frame, bx, by, bw, bh)
                                 detected.append({'box': inp_box, 'label': 'KOLOM EMAIL', 'expires': now + 12.0})
+                                side_box = find_input_box_beside_label(frame, bx, by, bw, bh)
+                                if side_box:
+                                    detected.append({'box': side_box, 'label': 'KOLOM EMAIL', 'expires': now + 12.0})
                             elif any((k in t_lower for k in ['password', 'sandi', 'passcode', 'pin', 'masukkan sandi'])):
                                 inp_box = find_input_box_below_label(frame, bx, by, bw, bh)
                                 detected.append({'box': inp_box, 'label': 'KOLOM SANDI', 'expires': now + 12.0})
-                                detected.append({'box': (max(0, bx - 6), max(0, by - 4), bw + 12, bh + 8), 'label': 'KREDENSIAL', 'expires': now + 12.0})
+                                side_box = find_input_box_beside_label(frame, bx, by, bw, bh)
+                                if side_box:
+                                    detected.append({'box': side_box, 'label': 'KOLOM SANDI', 'expires': now + 12.0})
                             elif any((k in t_lower for k in ['username', 'pengguna', 'user id', 'userid'])):
                                 inp_box = find_input_box_below_label(frame, bx, by, bw, bh)
                                 detected.append({'box': inp_box, 'label': 'KOLOM USERNAME', 'expires': now + 12.0})
+                                side_box = find_input_box_beside_label(frame, bx, by, bw, bh)
+                                if side_box:
+                                    detected.append({'box': side_box, 'label': 'KOLOM USERNAME', 'expires': now + 12.0})
                             elif PASSWORD_BULLETS_REGEX.search(text_clean):
                                 detected.append({'box': (max(0, bx - 18), max(0, by - 8), bw + 36, bh + 16), 'label': 'KATA SANDI', 'expires': now + 12.0})
                             elif PHONE_REGEX.search(text_clean):
