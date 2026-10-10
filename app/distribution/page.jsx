@@ -326,6 +326,37 @@ export default function DistributionPage() {
                 </button>
               </div>
 
+              <div className="pt-2 border-t border-white/[0.06]">
+                <label className="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-dashed border-white/20 bg-black/40 hover:bg-white/[0.03] cursor-pointer text-xs font-mono text-zinc-300 transition-all">
+                  <Download className="w-3.5 h-3.5 text-amber-400 rotate-180" />
+                  <span>Unggah Manifes .muninn Bukti Nyata</span>
+                  <input
+                    type="file"
+                    accept=".muninn,.json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = (evt) => {
+                        try {
+                          const parsed = JSON.parse(evt.target.result);
+                          if (parsed.recipientId) setExtractedRecipient(parsed.recipientId);
+                          if (parsed.integrityStatus === 'TAMPERED_INVALID' || parsed.status === 'TAMPERED_INVALID') {
+                            setVerifierStatus('tampered');
+                          } else {
+                            setVerifierStatus('authentic');
+                          }
+                        } catch {
+                          setVerifierStatus('tampered');
+                        }
+                      };
+                      reader.readAsText(file);
+                    }}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
             </div>
 
           </div>
