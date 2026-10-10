@@ -1,9 +1,6 @@
-# MUNINN — Secure Multimedia Evidence Pipeline
+#  Secure Multimedia Evidence Pipeline
 
-> **Dokumentasi & Spesifikasi Proyek Tugas Besar Sistem Multimedia (CBK2CAB3)**  
-> **Telkom University · Semester Genap 2025/2026**  
-> *Pengembangan Terintegrasi dari PROMETHEUS Cybersecurity*  
-> Slogan: *"Ingat semuanya. Buktikan keasliannya. Bagikan dengan aman."*
+
 
 ---
 
@@ -26,18 +23,7 @@
 
 ---
 
-## 1. Asal Nama & Filosofi
-
-Dalam mitologi Nordik, **Muninn** (*"ingatan"*) adalah salah satu dari dua burung gagak setia milik dewa Odin; saudaranya bernama **Huginn** (*"pikiran"*). Setiap fajar, Muninn terbang mengelilingi sembilan dunia, mengamati segala peristiwa yang terjadi, lalu kembali hinggap di bahu Odin untuk melaporkan semua yang dilihatnya secara persis tanpa distorsi.
-
-Itulah representasi alur kerja sistem **MUNINN**:  
-1. **Menangkap bukti** (*capture* rekaman layar, kamera, suara insiden siber),  
-2. **Mengingatnya tanpa berubah** (*integrity preservation*, *hash chain*, *DCT watermark*),  
-3. **Menyampaikannya kepada pihak yang berhak** (*secure client distribution*, HLS adaptif, tautan kedaluwarsa).
-
----
-
-## 2. Ringkasan Eksekutif
+## 1. Ringkasan Eksekutif
 
 Audit keamanan siber (*penetration testing*) dan penanganan insiden (*incident response*) menghasilkan bukti multimedia yang masif, sensitif, dan harus dapat dipertanggungjawabkan di hadapan hukum maupun manajemen eksekutif. **MUNINN** adalah *pipeline multimedia end-to-end* yang memperlakukan bukti digital layaknya layanan streaming komersial modern memperlakukan video resolusi tinggi, namun dengan standar kerahasiaan (*confidentiality*) dan integritas (*chain of custody*) yang jauh lebih tinggi.
 
