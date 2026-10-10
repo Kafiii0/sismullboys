@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="fav_crimson" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#FF2E5B" />
+      <stop offset="45%" stop-color="#E11D48" />
+      <stop offset="100%" stop-color="#9F1239" />
+    </linearGradient>
+    <linearGradient id="fav_metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#27272A" />
+      <stop offset="60%" stop-color="#18181B" />
+      <stop offset="100%" stop-color="#09090B" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Shield Silhouette -->
+  <path 
+    d="M60 10 L102 24 V64 C102 88 60 110 60 110 C60 110 18 88 18 64 V24 L60 10Z" 
+    fill="url(#fav_metal)" 
+    stroke="#3F3F46" 
+    stroke-width="2"
+  />
+
+  <!-- Monogram T Wings -->
+  <path d="M32 32 L56 32 L52 46 L38 46 L32 32Z" fill="url(#fav_crimson)" />
+  <path d="M64 32 L88 32 L82 46 L68 46 L64 32Z" fill="#FF2E5B" />
+
+  <!-- Crown Tip -->
+  <polygon points="60,22 72,32 48,32" fill="#FFFFFF" />
+
+  <!-- Central Pillar Stem -->
+  <path d="M54 34 L66 34 L64 80 L60 92 L56 80 L54 34Z" fill="url(#fav_crimson)" />
+
+  <!-- Core Precision Diamond -->
+  <polygon points="60,42 66,54 60,66 54,54" fill="#FFFFFF" />
+  <polygon points="36,54 44,68 40,71 33,57" fill="#E11D48" opacity="0.75" />
+  <polygon points="84,54 76,68 80,71 87,57" fill="#FF2E5B" opacity="0.9" />
+</svg>
