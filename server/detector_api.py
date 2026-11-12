@@ -1,18 +1,48 @@
 import re
 import io
 import os
+import json
 import time
 import base64
 import hashlib
 import threading
 from collections import OrderedDict
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import cv2
 from PIL import Image, ExifTags
 from ultralytics import YOLO
+
+try:
+    import pillow_heif
+    pillow_heif.register_heif_opener()
+    print("pillow_heif initialized: Apple HEIC/HEIF images supported.")
+except Exception as e:
+    print("pillow_heif warning:", e)
+
+def decode_image_robust(contents: bytes) -> Tuple[np.ndarray, Image.Image]:
+    """Decodes JPG, PNG, WEBP, and Apple iPhone HEIC/HEIF formats."""
+    nparr = np.frombuffer(contents, np.uint8)
+    img_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if img_bgr is not None:
+        try:
+            pil_img = Image.open(io.BytesIO(contents))
+        except Exception:
+            pil_img = Image.fromarray(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB))
+        return img_bgr, pil_img
+
+    try:
+        pil_img = Image.open(io.BytesIO(contents))
+        if pil_img.mode != 'RGB':
+            pil_img = pil_img.convert('RGB')
+        img_rgb = np.array(pil_img)
+        img_bgr = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
+        return img_bgr, pil_img
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f'Format gambar tidak valid atau tidak didukung: {str(e)}')
+
 app = FastAPI(title='BIFROST-ADLS Forensic Vision API', description='Adaptive Document Localization & Selective Credential Segmentation Engine', version='2.5.0-hki')
 app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
 
@@ -528,3 +558,145 @@ async def witness_detect_face(file: UploadFile=File(...)):
         return {'faces': [], 'width': 0, 'height': 0}
     faces = detect_faces_fast(img_bgr, force_deep=False)
     return {'faces': faces, 'width': int(img_bgr.shape[1]), 'height': int(img_bgr.shape[0])}
+
+try:
+    from server.pqc_watermark import (
+        apply_pqc_watermark, verify_pqc_watermark, extract_original_camera_metadata,
+        generate_officer_identity_key, validate_officer_identity_key
+    )
+except ImportError:
+    from pqc_watermark import (
+        apply_pqc_watermark, verify_pqc_watermark, extract_original_camera_metadata,
+        generate_officer_identity_key, validate_officer_identity_key
+    )
+
+@app.post('/api/pqc/generate-key')
+async def pqc_generate_key_endpoint(
+    officer_name: str = Form(...),
+    institution_name: str = Form(...),
+    badge_number: Optional[str] = Form(None)
+):
+    try:
+        key_bundle = generate_officer_identity_key(
+            officer_name=officer_name,
+            institution_name=institution_name,
+            badge_number=badge_number
+        )
+        return to_py(key_bundle)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal membuat kunci identitas PQC: {str(e)}")
+
+@app.post('/api/pqc/parse-key')
+async def pqc_parse_key_endpoint(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        key_str = contents.decode('utf-8', errors='ignore')
+        key_bundle = json.loads(key_str)
+        is_valid, err_msg, identity = validate_officer_identity_key(key_bundle)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=err_msg or "File kunci tidak valid.")
+        return {
+            "success": True,
+            "key_bundle": to_py(key_bundle),
+            "identity": to_py(identity)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal membaca berkas kunci: {str(e)}")
+
+@app.post('/api/pqc/watermark')
+async def pqc_watermark_endpoint(
+    file: UploadFile = File(...),
+    author_name: str = Form("BIFROST Forensic Officer"),
+    institution_name: Optional[str] = Form(None),
+    badge_number: Optional[str] = Form(None),
+    private_key_json: Optional[str] = Form(None),
+    public_key_json: Optional[str] = Form(None),
+    location_name: str = Form("Gedung Selaru, Telkom University, Bandung"),
+    latitude: float = Form(-6.9744),
+    longitude: float = Form(107.6303),
+    custom_timestamp: Optional[str] = Form(None),
+    case_id: Optional[str] = Form(None),
+    visual_badge: str = Form("true"),
+    badge_position: str = Form("bottom-right"),
+    invisible_only: str = Form("false"),
+    output_format: str = Form("PNG")
+):
+    try:
+        contents = await file.read()
+        priv_k = json.loads(private_key_json) if private_key_json and private_key_json.strip() else None
+        pub_k = json.loads(public_key_json) if public_key_json and public_key_json.strip() else None
+
+        res = apply_pqc_watermark(
+            image_bytes=contents,
+            author_name=author_name,
+            institution_name=institution_name,
+            badge_number=badge_number,
+            private_key=priv_k,
+            public_key=pub_k,
+            location_name=location_name,
+            latitude=float(latitude),
+            longitude=float(longitude),
+            custom_timestamp=custom_timestamp if custom_timestamp and custom_timestamp.strip() else None,
+            case_id=case_id if case_id and case_id.strip() else None,
+            visual_badge=parse_bool(visual_badge),
+            badge_position=badge_position,
+            invisible_only=parse_bool(invisible_only),
+            output_format=output_format
+        )
+        return to_py(res)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal memproses watermark PQC: {str(e)}")
+
+@app.post('/api/pqc/verify')
+async def pqc_verify_endpoint(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        res = verify_pqc_watermark(contents)
+        return to_py(res)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal memverifikasi keaslian gambar: {str(e)}")
+
+@app.post('/api/pqc/inspect-file')
+async def pqc_inspect_file_endpoint(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        img_bgr, pil_img = decode_image_robust(contents)
+        camera_metadata = extract_original_camera_metadata(contents)
+        is_heic = file.filename and (file.filename.lower().endswith('.heic') or file.filename.lower().endswith('.heif'))
+        preview_url = None
+        if is_heic:
+            _, encoded = cv2.imencode('.jpg', img_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
+            preview_url = f"data:image/jpeg;base64,{base64.b64encode(encoded.tobytes()).decode('utf-8')}"
+
+        return {
+            "success": True,
+            "preview_url": preview_url,
+            "width": int(img_bgr.shape[1]),
+            "height": int(img_bgr.shape[0]),
+            "filename": file.filename,
+            "camera_metadata": camera_metadata
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal memeriksa metadata file: {str(e)}")
+
+@app.post('/api/pqc/convert-heic')
+async def pqc_convert_heic_endpoint(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        img_bgr, pil_img = decode_image_robust(contents)
+        camera_metadata = extract_original_camera_metadata(contents)
+        _, encoded = cv2.imencode('.jpg', img_bgr, [int(cv2.IMWRITE_JPEG_QUALITY), 92])
+        b64 = base64.b64encode(encoded.tobytes()).decode('utf-8')
+        return {
+            "success": True,
+            "preview_url": f"data:image/jpeg;base64,{b64}",
+            "width": int(img_bgr.shape[1]),
+            "height": int(img_bgr.shape[0]),
+            "filename": file.filename,
+            "camera_metadata": camera_metadata
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gagal mengonversi gambar HEIC: {str(e)}")
+

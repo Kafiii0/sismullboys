@@ -4,29 +4,42 @@ import time
 import threading
 import ctypes
 from ctypes import wintypes
-import tkinter as tk
-from tkinter import ttk, messagebox
 import cv2
 import numpy as np
 from PIL import Image, ImageTk
+import customtkinter as ctk
+from tkinter import messagebox
+
 try:
     import sounddevice as sd
     HAS_SOUNDDEVICE = True
 except ImportError:
     HAS_SOUNDDEVICE = False
-BG_DARK = '#0B0F19'
-BG_SIDEBAR = '#080D18'
-BG_CARD = '#0F172A'
-BG_CARD_BORDER = '#1E293B'
-BG_CARD_ACTIVE = '#0D203C'
-BORDER_ACTIVE = '#2563EB'
-ACCENT_BLUE = '#2563EB'
-ACCENT_CYAN = '#38BDF8'
-ACCENT_GREEN = '#10B981'
-ACCENT_RED = '#EF4444'
-TEXT_WHITE = '#F8FAFC'
-TEXT_MUTED = '#94A3B8'
-TEXT_DIM = '#64748B'
+
+# ==============================================================================
+# DESIGN SYSTEM: ULTRA-CLEAN LIGHT MODE GLASSMORPHISM
+# ==============================================================================
+ctk.set_appearance_mode("light")
+ctk.set_default_color_theme("blue")
+
+BG_CANVAS = "#F1F5F9"        # Soft crisp ice slate
+SURFACE_WHITE = "#FFFFFF"    # Pure translucent glass card
+SURFACE_MUTED = "#F8FAFC"    # Soft nested container
+BORDER_GLASS = "#E2E8F0"     # Crisp subtle card border
+BORDER_ACTIVE = "#3B82F6"    # Vibrant focus ring
+
+ACCENT_BLUE = "#2563EB"      # Modern Royal Blue
+ACCENT_BLUE_HOVER = "#1D4ED8"
+ACCENT_CYAN = "#0EA5E9"      # Sky Blue
+ACCENT_GREEN = "#10B981"     # Emerald Online indicator
+ACCENT_RED = "#EF4444"       # Stop button crimson
+ACCENT_RED_HOVER = "#DC2626"
+
+TEXT_HEADING = "#0F172A"     # Deep crisp slate
+TEXT_BODY = "#334155"        # Neutral dark slate
+TEXT_MUTED = "#64748B"       # Subtle slate
+TEXT_DIM = "#94A3B8"         # Placeholder slate
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 YUNET_MODEL_PATH = os.path.join(SCRIPT_DIR, '..', 'scripts', 'face_detection_yunet.onnx')
 if not os.path.exists(YUNET_MODEL_PATH):
@@ -34,7 +47,9 @@ if not os.path.exists(YUNET_MODEL_PATH):
 if not os.path.exists(YUNET_MODEL_PATH):
     YUNET_MODEL_PATH = os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'face_detection_yunet.onnx')
 
+
 def ensure_single_instance():
+    """Mencegah multiple instance berjalan bersamaan."""
     try:
         import psutil
         my_pid = os.getpid()
@@ -49,10 +64,12 @@ def ensure_single_instance():
     except Exception:
         pass
 
+
 def ensure_bifrost_vcam_registered():
+    """Mendaftarkan DirectShow CLSID BIFROST Encrypted Camera di Windows Registry."""
     try:
         import winreg
-        key_path = 'SOFTWARE\\Classes\\CLSID\\{860BB310-5D01-11d0-BD3B-00A0C911CE86}\\Instance\\{A3FCE0F5-3493-419F-958A-ABA1250EC20B}'
+        key_path = r'SOFTWARE\Classes\CLSID\{860BB310-5D01-11d0-BD3B-00A0C911CE86}\Instance\{A3FCE0F5-3493-419F-958A-ABA1250EC20B}'
         clsid_val = '{A3FCE0F5-3493-419F-958A-ABA1250EC20B}'
         filter_data = None
         try:
@@ -68,6 +85,11 @@ def ensure_bifrost_vcam_registered():
         print('[VirtualCam] Registered device: BIFROST Encrypted Camera')
     except Exception as e:
         print(f'[VirtualCam] Registration note: {e}')
+
+
+# ==============================================================================
+# DIRECTSHOW VIRTUAL CAMERA LOW-LEVEL MEMORY MAPPING (1080p FULL HD READY)
+# ==============================================================================
 VIDEO_NAME = 'OBSVirtualCamVideo'
 SHARED_QUEUE_STATE_INVALID = 0
 SHARED_QUEUE_STATE_STARTING = 1
@@ -76,14 +98,23 @@ SHARED_QUEUE_STATE_STOPPING = 3
 FRAME_HEADER_SIZE = 32
 
 class QueueHeader(ctypes.Structure):
-    _fields_ = [('write_idx', wintypes.DWORD), ('read_idx', wintypes.DWORD), ('state', wintypes.DWORD), ('offsets', wintypes.DWORD * 3), ('type', wintypes.DWORD), ('cx', wintypes.DWORD), ('cy', wintypes.DWORD), ('interval', ctypes.c_uint64), ('reserved', wintypes.DWORD * 8)]
+    _fields_ = [
+        ('write_idx', wintypes.DWORD),
+        ('read_idx', wintypes.DWORD),
+        ('state', wintypes.DWORD),
+        ('offsets', wintypes.DWORD * 3),
+        ('type', wintypes.DWORD),
+        ('cx', wintypes.DWORD),
+        ('cy', wintypes.DWORD),
+        ('interval', ctypes.c_uint64),
+        ('reserved', wintypes.DWORD * 8)
+    ]
 
 def align_size(size, align=32):
-    return size + (align - 1) & ~(align - 1)
+    return (size + (align - 1)) & ~(align - 1)
 
 class DirectVirtualCam:
-
-    def __init__(self, width=640, height=480, fps=30):
+    def __init__(self, width=1920, height=1080, fps=30):
         self.width = width
         self.height = height
         self.fps = fps
@@ -94,6 +125,7 @@ class DirectVirtualCam:
         self.header = None
         self.ts_offsets = [0, 0, 0]
         self.frame_offsets = [0, 0, 0]
+
         kernel32 = ctypes.windll.kernel32
         kernel32.OpenFileMappingW.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.LPCWSTR]
         kernel32.OpenFileMappingW.restype = wintypes.HANDLE
@@ -105,7 +137,8 @@ class DirectVirtualCam:
         kernel32.UnmapViewOfFile.restype = wintypes.BOOL
         kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
         kernel32.CloseHandle.restype = wintypes.BOOL
-        FILE_MAP_ALL_ACCESS = 983071
+
+        FILE_MAP_ALL_ACCESS = 0xF001F
         size = ctypes.sizeof(QueueHeader)
         size = align_size(size, 32)
         offset_frame = [0, 0, 0]
@@ -114,18 +147,21 @@ class DirectVirtualCam:
             size += self.frame_size + FRAME_HEADER_SIZE
             size = align_size(size, 32)
         self.total_size = size
+
         h = kernel32.OpenFileMappingW(FILE_MAP_ALL_ACCESS, False, VIDEO_NAME)
         created = False
         if not h:
-            h = kernel32.CreateFileMappingW(wintypes.HANDLE(-1), None, 4, 0, self.total_size, VIDEO_NAME)
+            h = kernel32.CreateFileMappingW(wintypes.HANDLE(-1), None, 0x04, 0, self.total_size, VIDEO_NAME)
             created = True
         if not h:
             raise RuntimeError(f'Gagal membuat file mapping: {ctypes.GetLastError()}')
+
         self.handle = h
         base_addr = kernel32.MapViewOfFile(h, FILE_MAP_ALL_ACCESS, 0, 0, 0)
         if not base_addr:
             kernel32.CloseHandle(h)
             raise RuntimeError(f'Gagal MapViewOfFile: {ctypes.GetLastError()}')
+
         self.base_addr = base_addr
         self.header = QueueHeader.from_address(base_addr)
         if created or self.header.state == SHARED_QUEUE_STATE_INVALID or self.header.cx != width or (self.header.cy != height):
@@ -145,9 +181,9 @@ class DirectVirtualCam:
         print(f'[DirectVirtualCam] Output aktif ke DirectShow: {width}x{height} @ {fps}fps')
 
     def send_bgr(self, bgr_frame):
-        W, H = (self.width, self.height)
+        W, H = self.width, self.height
         if bgr_frame.shape[1] != W or bgr_frame.shape[0] != H:
-            bgr_frame = cv2.resize(bgr_frame, (W, H))
+            bgr_frame = cv2.resize(bgr_frame, (W, H), interpolation=cv2.INTER_LINEAR)
         yuv = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2YUV_I420)
         y_size = W * H
         uv_size = y_size // 4
@@ -158,12 +194,14 @@ class DirectVirtualCam:
         uv = np.empty(y_size // 2, dtype=np.uint8)
         uv[0::2] = u
         uv[1::2] = v
-        inc = self.header.write_idx + 1 & 4294967295
+
+        inc = (self.header.write_idx + 1) & 0xFFFFFFFF
         idx = inc % 3
         frame_addr = self.base_addr + self.frame_offsets[idx]
         self.header.write_idx = inc
         ctypes.memmove(frame_addr, y.ctypes.data, y_size)
         ctypes.memmove(frame_addr + y_size, uv.ctypes.data, y_size // 2)
+
         ts_addr = self.base_addr + self.ts_offsets[idx]
         now_ns = int(time.perf_counter() * 1000000000.0)
         ctypes.cast(ts_addr, ctypes.POINTER(ctypes.c_uint64))[0] = now_ns
@@ -183,8 +221,11 @@ class DirectVirtualCam:
             ctypes.windll.kernel32.CloseHandle(self.handle)
             self.handle = None
 
-class RealtimeVoiceDisguiser:
 
+# ==============================================================================
+# AUDIO DSP VOICE DISGUISER
+# ==============================================================================
+class RealtimeVoiceDisguiser:
     def __init__(self, sr=22050):
         self.sr = sr
         self.mode = 'deep_shadow'
@@ -267,7 +308,6 @@ class RealtimeVoiceDisguiser:
                 for idx, d in enumerate(sd.query_devices()):
                     if d['max_output_channels'] > 0 and ('cable input' in d['name'].lower() or 'vb-audio' in d['name'].lower()):
                         output_device = idx
-                        print(f"[VoiceDisguiser] Otomatis mengalirkan suara ke Virtual Cable: {d['name']}")
                         break
             dev = None
             if input_device is not None or output_device is not None:
@@ -277,10 +317,8 @@ class RealtimeVoiceDisguiser:
             self.stream = sd.Stream(device=dev, samplerate=self.sr, blocksize=512, channels=1, dtype='float32', callback=self._audio_callback)
             self.stream.start()
             self.is_running = True
-            print('[VoiceDisguiser] Stream audio aktif')
             return True
-        except Exception as e:
-            print(f'[VoiceDisguiser] Gagal memulai audio: {e}')
+        except Exception:
             self.stream = None
             self.is_running = False
             return False
@@ -295,7 +333,12 @@ class RealtimeVoiceDisguiser:
             self.stream = None
         self.is_running = False
 
+
+# ==============================================================================
+# SAFE HARDWARE WEBCAM ENUMERATION (FILTERS OUT VIRTUAL CAMS)
+# ==============================================================================
 def scan_available_cameras(max_tested=8):
+    """Memindai HANYA webcam fisik nyata (mengecualikan virtual loopback)."""
     ensure_bifrost_vcam_registered()
     cameras = []
     try:
@@ -303,20 +346,13 @@ def scan_available_cameras(max_tested=8):
         graph = FilterGraph()
         devices = graph.get_input_devices()
         for idx, name in enumerate(devices):
-            is_vcam = 'BIFROST' in name or 'OBS Virtual Camera' in name
-            is_working = False
+            # FILTER KETAT: Buang perangkat virtual agar tidak terjadi feedback deadlock
+            is_vcam = any(k in name.lower() for k in ['bifrost', 'obs virtual camera', 'virtual', 'vcam', 'cyberlink'])
             if not is_vcam:
-                try:
-                    test_cap = cv2.VideoCapture(idx, cv2.CAP_DSHOW)
-                    if test_cap.isOpened():
-                        is_working = True
-                    test_cap.release()
-                except Exception:
-                    pass
-            display_name = f'{name} (Virtual)' if is_vcam else name
-            cameras.append({'idx': idx, 'name': display_name, 'raw_name': name, 'is_working': is_working, 'is_vcam': is_vcam})
+                cameras.append({'idx': idx, 'name': name, 'raw_name': name, 'is_vcam': False})
     except Exception:
         pass
+
     if not cameras:
         for idx in range(max_tested):
             try:
@@ -324,151 +360,105 @@ def scan_available_cameras(max_tested=8):
                 if not cap.isOpened():
                     cap = cv2.VideoCapture(idx)
                 if cap.isOpened():
-                    cameras.append({'idx': idx, 'name': f'Integrated Camera {idx}', 'raw_name': f'Integrated Camera {idx}', 'is_working': True, 'is_vcam': False})
+                    cameras.append({'idx': idx, 'name': f'Kamera Fisik #{idx}', 'raw_name': f'Camera {idx}', 'is_vcam': False})
                     cap.release()
             except Exception:
                 pass
+
     if not cameras:
-        cameras.append({'idx': 0, 'name': 'Integrated Camera (Default)', 'raw_name': 'Integrated Camera (Default)', 'is_working': True, 'is_vcam': False})
+        cameras.append({'idx': 0, 'name': 'Kamera Fisik Bawaan', 'raw_name': 'Default Camera', 'is_vcam': False})
     return cameras
 
-class BIFROSTWitnessShieldApp:
 
-    def __init__(self, root):
+# ==============================================================================
+# MAIN MODERN GLASSMORPHIC APPLICATION
+# ==============================================================================
+class BIFROSTWitnessShieldApp:
+    def __init__(self, root: ctk.CTk):
         self.root = root
-        self.root.title('BIFROST | Witness Cam')
-        self.root.geometry('1160x740')
-        self.root.configure(bg=BG_DARK)
-        self.root.minsize(1050, 680)
-        ico_candidates = [os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'desktop', 'bifrost_cam.ico'), os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'bifrost_cam.ico'), os.path.join(SCRIPT_DIR, 'bifrost_cam.ico'), os.path.join(SCRIPT_DIR, 'desktop', 'bifrost_cam.ico')]
+        self.root.title('BIFROST Witness Cam — 1080p Full HD')
+        self.root.geometry('1140x740')
+        self.root.minsize(1020, 650)
+        self.root.configure(fg_color=BG_CANVAS)
+
+        # Set App Icon
+        ico_candidates = [
+            os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'desktop', 'bifrost_cam.ico'),
+            os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'bifrost_cam.ico'),
+            os.path.join(SCRIPT_DIR, 'bifrost_cam.ico'),
+            os.path.join(SCRIPT_DIR, 'desktop', 'bifrost_cam.ico')
+        ]
         for p in ico_candidates:
             if os.path.exists(p):
                 try:
                     self.root.iconbitmap(p)
                     break
                 except Exception:
-                    try:
-                        ico_img = ImageTk.PhotoImage(file=p)
-                        self.root.iconphoto(True, ico_img)
-                        break
-                    except Exception:
-                        pass
+                    pass
+
+        # States & Logic
         self.is_streaming = False
-        self.is_frozen = False
-        self.frozen_frame = None
-        self.is_filter_enabled = tk.BooleanVar(value=True)
-        self.mask_mode = tk.StringVar(value='mosaic')
-        self.pixel_pct = tk.IntVar(value=70)
+        self._is_switching = False
+        self.is_filter_enabled = ctk.BooleanVar(value=True)
+        self.mask_mode = ctk.StringVar(value='mosaic')
+        self.pixel_pct = ctk.IntVar(value=70)
         self.pixel_size = 28
+
+        # Target Resolution: 1080p Full HD default
+        self.res_mode = ctk.StringVar(value="1080p")
+        self.target_width = 1920
+        self.target_height = 1080
+
         self.voice_disguiser = RealtimeVoiceDisguiser()
-        self.audio_mode = tk.StringVar(value='deep_shadow')
-        self.audio_fx_pct = tk.IntVar(value=60)
+        self.audio_mode = ctk.StringVar(value='deep_shadow')
+        self.audio_fx_pct = ctk.IntVar(value=60)
+
         self.cap = None
         self.available_cameras = scan_available_cameras()
-        working_cams = [c for c in self.available_cameras if c['is_working'] and (not c['is_vcam'])]
-        if working_cams:
-            usb_cams = [c for c in working_cams if any((k in c['raw_name'].lower() for k in ['usb', 'integrated', 'hd', 'webcam']))]
-            preferred = usb_cams[0] if usb_cams else working_cams[0]
-        else:
-            non_vcam = [c for c in self.available_cameras if not c['is_vcam']]
-            preferred = non_vcam[0] if non_vcam else self.available_cameras[0]
-        self.preferred_cam_idx = self.available_cameras.index(preferred)
-        self.selected_camera_idx = tk.IntVar(value=preferred['idx'])
+        self.preferred_cam_idx = 0
+        self.selected_camera_idx = ctk.IntVar(value=self.available_cameras[0]['idx'])
+
         self.vcam = None
-        self.vcam_device_name = 'BIFROST Encrypted Camera'
         self.latest_stream_frame = None
         self.frame_lock = threading.Lock()
         self.pump_thread = None
-        self._init_virtual_cam(640, 480)
+        self._init_virtual_cam(1920, 1080)
+
         self.face_detector = None
         self._init_detector()
-        self.icons = {}
-        self.thumbnail_images = []
-        self._create_graphics_assets()
-        self.vc_window = None
-        self.vc_label = None
-        self._build_ui()
+
+        # Build Clean UI
+        self._build_clean_ui()
+
+        # Global Hotkey (Spasi to toggle sensor)
         self.root.bind('<space>', lambda e: self.toggle_filter())
-        self.root.bind('<f>', lambda e: self.toggle_freeze())
         self.root.protocol('WM_DELETE_WINDOW', self.on_close)
-        self.root.after(300, self.start_all)
 
-    def _create_graphics_assets(self):
-        self.header_logo_img = None
-        logo_candidates = [os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'desktop', 'bifrost_cam.png'), os.path.join(getattr(sys, '_MEIPASS', SCRIPT_DIR), 'bifrost_cam.png'), os.path.join(SCRIPT_DIR, 'bifrost_cam.png'), os.path.join(SCRIPT_DIR, 'desktop', 'bifrost_cam.png')]
-        for lp in logo_candidates:
-            if os.path.exists(lp):
-                try:
-                    pil_logo = Image.open(lp).convert('RGBA')
-                    pil_logo = pil_logo.resize((26, 26), Image.Resampling.LANCZOS)
-                    self.header_logo_img = ImageTk.PhotoImage(pil_logo)
-                    break
-                except Exception:
-                    pass
-        w, h = (50, 50)
-        base = np.zeros((h, w, 3), dtype=np.uint8) + 20
-        cv2.ellipse(base, (25, 50), (23, 18), 0, 180, 360, (38, 48, 65), -1)
-        cv2.rectangle(base, (21, 28), (29, 38), (175, 135, 115), -1)
-        cv2.circle(base, (25, 21), 13, (190, 148, 125), -1)
-        cv2.ellipse(base, (25, 15), (14, 9), 0, 180, 360, (22, 22, 28), -1)
-        cv2.circle(base, (20, 21), 2, (30, 30, 30), -1)
-        cv2.circle(base, (30, 21), 2, (30, 30, 30), -1)
-        pcts = [0, 25, 50, 75, 100]
-        self.thumbnail_images = []
-        for p in pcts:
-            img = base.copy()
-            if p > 0:
-                grid = max(2, int(p * 14 / 100))
-                sw = max(2, w // grid)
-                sh = max(2, h // grid)
-                small = cv2.resize(img, (sw, sh), interpolation=cv2.INTER_LINEAR)
-                img = cv2.resize(small, (w, h), interpolation=cv2.INTER_NEAREST)
-            img[0, :] = (40, 52, 75)
-            img[-1, :] = (40, 52, 75)
-            img[:, 0] = (40, 52, 75)
-            img[:, -1] = (40, 52, 75)
-            pil_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            self.thumbnail_images.append(ImageTk.PhotoImage(pil_img))
-        ico_px = np.zeros((26, 26, 3), dtype=np.uint8) + 15
-        for r in [4, 11, 18]:
-            for c in [4, 11, 18]:
-                cv2.rectangle(ico_px, (c, r), (c + 4, r + 4), (248, 189, 56), -1)
-        self.icons['pixel'] = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(ico_px, cv2.COLOR_BGR2RGB)))
-        ico_sil = np.zeros((26, 26, 3), dtype=np.uint8) + 15
-        cv2.circle(ico_sil, (13, 8), 5, (190, 205, 225), -1)
-        cv2.ellipse(ico_sil, (13, 23), (9, 7), 0, 180, 360, (190, 205, 225), -1)
-        self.icons['sil'] = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(ico_sil, cv2.COLOR_BGR2RGB)))
-        ico_eye = np.zeros((26, 26, 3), dtype=np.uint8) + 15
-        cv2.ellipse(ico_eye, (13, 13), (10, 6), 0, 0, 360, (190, 205, 225), 1)
-        cv2.circle(ico_eye, (13, 13), 3, (190, 205, 225), -1)
-        cv2.line(ico_eye, (3, 22), (23, 4), (56, 189, 248), 2)
-        self.icons['eyebar'] = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(ico_eye, cv2.COLOR_BGR2RGB)))
-        ico_wave = np.zeros((24, 24, 3), dtype=np.uint8) + 15
-        bars = [(4, 6), (8, 12), (12, 18), (16, 12), (20, 6)]
-        for bx, bh in bars:
-            y1 = 12 - bh // 2
-            cv2.line(ico_wave, (bx, y1), (bx, y1 + bh), (56, 189, 248), 2)
-        self.icons['wave'] = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(ico_wave, cv2.COLOR_BGR2RGB)))
-        ico_rob = np.zeros((24, 24, 3), dtype=np.uint8) + 15
-        cv2.circle(ico_rob, (12, 12), 8, (190, 205, 225), 2)
-        cv2.circle(ico_rob, (9, 11), 2, (56, 189, 248), -1)
-        cv2.circle(ico_rob, (15, 11), 2, (56, 189, 248), -1)
-        cv2.line(ico_rob, (9, 16), (15, 16), (190, 205, 225), 1)
-        self.icons['robot'] = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(ico_rob, cv2.COLOR_BGR2RGB)))
+        # Autostart safely
+        self.root.after(350, self.start_stream)
 
-    def _init_virtual_cam(self, target_w=640, target_h=480):
+    def _init_virtual_cam(self, target_w=1920, target_h=1080):
         if self.vcam is not None:
-            return True
+            if getattr(self.vcam, 'width', 0) == target_w and getattr(self.vcam, 'height', 0) == target_h:
+                return True
+            try:
+                self.vcam.close()
+            except Exception:
+                pass
+            self.vcam = None
+
         ensure_bifrost_vcam_registered()
         try:
             self.vcam = DirectVirtualCam(width=target_w, height=target_h, fps=30)
-            self.vcam_device_name = 'BIFROST Encrypted Camera'
+            self.target_width = target_w
+            self.target_height = target_h
             return True
-        except Exception as e:
+        except Exception:
             try:
                 import pyvirtualcam
                 self.vcam = pyvirtualcam.Camera(width=target_w, height=target_h, fps=30, fmt=pyvirtualcam.PixelFormat.BGR)
-                self.vcam_device_name = 'BIFROST Encrypted Camera'
+                self.target_width = target_w
+                self.target_height = target_h
                 return True
             except Exception:
                 self.vcam = None
@@ -477,293 +467,403 @@ class BIFROSTWitnessShieldApp:
     def _init_detector(self):
         if os.path.exists(YUNET_MODEL_PATH):
             try:
-                self.face_detector = cv2.FaceDetectorYN.create(YUNET_MODEL_PATH, '', (320, 320), score_threshold=0.42, nms_threshold=0.3, top_k=5000)
+                self.face_detector = cv2.FaceDetectorYN.create(
+                    YUNET_MODEL_PATH, '', (320, 320),
+                    score_threshold=0.42, nms_threshold=0.3, top_k=5000
+                )
             except Exception:
                 self.face_detector = None
 
-    def _build_ui(self):
-        header = tk.Frame(self.root, bg=BG_DARK, height=50)
-        header.pack(fill='x', padx=18, pady=(12, 6))
-        title_box = tk.Frame(header, bg=BG_DARK)
-        title_box.pack(side='left')
-        if getattr(self, 'header_logo_img', None) is not None:
-            lbl_shield = tk.Label(title_box, image=self.header_logo_img, bg=BG_DARK)
-        else:
-            lbl_shield = tk.Label(title_box, text='🛡️', font=('Segoe UI', 13), fg=ACCENT_CYAN, bg=BG_DARK)
-        lbl_shield.pack(side='left', padx=(0, 8))
-        lbl_brand = tk.Label(title_box, text='BIFROST', font=('Segoe UI', 13, 'bold'), fg=TEXT_WHITE, bg=BG_DARK)
-        lbl_brand.pack(side='left')
-        lbl_sep = tk.Label(title_box, text=' | ', font=('Segoe UI', 13), fg='#475569', bg=BG_DARK)
-        lbl_sep.pack(side='left')
-        lbl_subbrand = tk.Label(title_box, text='Witness Cam', font=('Segoe UI', 12), fg=TEXT_MUTED, bg=BG_DARK)
-        lbl_subbrand.pack(side='left')
-        win_ctrls = tk.Frame(header, bg=BG_DARK)
-        win_ctrls.pack(side='right')
+    # ==========================================================================
+    # USER INTERFACE BUILDER (CLEAN LIGHT GLASSMORPHISM)
+    # ==========================================================================
+    def _build_clean_ui(self):
+        self.root.grid_rowconfigure(1, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
 
-        def make_wbtn(text, cmd):
-            b = tk.Button(win_ctrls, text=text, font=('Segoe UI', 9), fg=TEXT_MUTED, bg=BG_DARK, activebackground='#1E293B', activeforeground=TEXT_WHITE, bd=0, relief='flat', padx=10, pady=4, cursor='hand2', command=cmd)
-            b.pack(side='left')
-            return b
-        make_wbtn('─', lambda: self.root.iconify())
-        make_wbtn('▢', lambda: self._toggle_maximize())
-        make_wbtn('✕', lambda: self.on_close())
-        main_body = tk.Frame(self.root, bg=BG_DARK)
-        main_body.pack(fill='both', expand=True, padx=18, pady=(4, 14))
-        sidebar = tk.Frame(main_body, bg=BG_SIDEBAR, width=140, highlightthickness=1, highlightbackground=BG_CARD_BORDER)
-        sidebar.pack(side='left', fill='y', padx=(0, 12))
-        sidebar.pack_propagate(False)
-        nav_box = tk.Frame(sidebar, bg=BG_SIDEBAR)
-        nav_box.pack(fill='x', padx=10, pady=16)
-        self.btn_nav_live = tk.Frame(nav_box, bg='#132036', highlightthickness=1, highlightbackground='#1D4ED8', padx=8, pady=8)
-        self.btn_nav_live.pack(fill='x', pady=4)
-        tk.Label(self.btn_nav_live, text='📹  Live', font=('Segoe UI', 9, 'bold'), fg=ACCENT_CYAN, bg='#132036').pack(anchor='w')
-        self.btn_nav_settings = tk.Frame(nav_box, bg=BG_SIDEBAR, padx=8, pady=8, cursor='hand2')
-        self.btn_nav_settings.pack(fill='x', pady=4)
-        lbl_set = tk.Label(self.btn_nav_settings, text='⚙️  Pengaturan', font=('Segoe UI', 9), fg=TEXT_MUTED, bg=BG_SIDEBAR)
-        lbl_set.pack(anchor='w')
-        self.btn_nav_settings.bind('<Button-1>', lambda e: self.show_settings_dialog())
-        lbl_set.bind('<Button-1>', lambda e: self.show_settings_dialog())
-        self.btn_nav_log = tk.Frame(nav_box, bg=BG_SIDEBAR, padx=8, pady=8, cursor='hand2')
-        self.btn_nav_log.pack(fill='x', pady=4)
-        lbl_log = tk.Label(self.btn_nav_log, text='📄  Log', font=('Segoe UI', 9), fg=TEXT_MUTED, bg=BG_SIDEBAR)
-        lbl_log.pack(anchor='w')
-        self.btn_nav_log.bind('<Button-1>', lambda e: self.show_log_dialog())
-        lbl_log.bind('<Button-1>', lambda e: self.show_log_dialog())
-        footer_sb = tk.Frame(sidebar, bg=BG_SIDEBAR)
-        footer_sb.pack(side='bottom', fill='x', padx=10, pady=16)
-        status_row = tk.Frame(footer_sb, bg=BG_SIDEBAR)
-        status_row.pack(anchor='w', pady=(0, 4))
-        tk.Label(status_row, text='●', font=('Segoe UI', 8), fg=ACCENT_GREEN, bg=BG_SIDEBAR).pack(side='left', padx=(0, 4))
-        tk.Label(status_row, text='Kamera & Mikrofon\nTerhubung', font=('Segoe UI', 8), fg=TEXT_MUTED, bg=BG_SIDEBAR, justify='left').pack(side='left')
-        tk.Label(footer_sb, text='v1.0.0', font=('Segoe UI', 8), fg=TEXT_DIM, bg=BG_SIDEBAR).pack(anchor='w', pady=(6, 0))
-        center_col = tk.Frame(main_body, bg=BG_CARD, highlightthickness=1, highlightbackground=BG_CARD_BORDER)
-        center_col.pack(side='left', fill='both', expand=True, padx=(0, 12))
-        self.video_viewport = tk.Frame(center_col, bg='#050811')
-        self.video_viewport.pack(side='top', fill='both', expand=True, padx=12, pady=(12, 8))
-        self.video_viewport.pack_propagate(False)
-        self.preview_label = tk.Label(self.video_viewport, bg='#050811', text='Menghubungkan ke BIFROST...', fg=TEXT_MUTED, font=('Segoe UI', 10))
-        self.preview_label.place(relx=0.5, rely=0.5, anchor='center')
-        self.overlay_vcam = tk.Frame(self.video_viewport, bg='#0A111E', highlightthickness=1, highlightbackground='#1E293B', padx=8, pady=4)
-        self.overlay_vcam.place(x=14, y=14)
-        tk.Label(self.overlay_vcam, text='📹  BIFROST Encrypted Camera  ⌄', font=('Segoe UI', 8, 'bold'), fg=TEXT_WHITE, bg='#0A111E').pack()
-        self.overlay_live = tk.Frame(self.video_viewport, bg='#0A111E', highlightthickness=1, highlightbackground='#1E293B', padx=8, pady=4)
-        self.overlay_live.place(relx=1.0, x=-14, y=14, anchor='ne')
-        self.lbl_live_indicator = tk.Label(self.overlay_live, text='●  LIVE  30 FPS', font=('Segoe UI', 8, 'bold'), fg='#F87171', bg='#0A111E')
-        self.lbl_live_indicator.pack()
+        # ----------------------------------------------------------------------
+        # 1. TOP NAVBAR
+        # ----------------------------------------------------------------------
+        header = ctk.CTkFrame(self.root, fg_color=SURFACE_WHITE, corner_radius=0, height=62, border_width=1, border_color=BORDER_GLASS)
+        header.grid(row=0, column=0, sticky="ew")
+        header.grid_propagate(False)
+
+        brand_box = ctk.CTkFrame(header, fg_color="transparent")
+        brand_box.pack(side="left", padx=24, pady=12)
+
+        lbl_icon = ctk.CTkLabel(brand_box, text="🛡️", font=("Segoe UI Emoji", 20))
+        lbl_icon.pack(side="left", padx=(0, 10))
+
+        lbl_title = ctk.CTkLabel(brand_box, text="BIFROST", font=("Segoe UI", 16, "bold"), text_color=TEXT_HEADING)
+        lbl_title.pack(side="left")
+
+        lbl_sep = ctk.CTkLabel(brand_box, text="•", font=("Segoe UI", 12), text_color=TEXT_DIM)
+        lbl_sep.pack(side="left", padx=8)
+
+        lbl_sub = ctk.CTkLabel(brand_box, text="Witness Cam", font=("Segoe UI", 13, "bold"), text_color=ACCENT_BLUE)
+        lbl_sub.pack(side="left")
+
+        lbl_chip = ctk.CTkLabel(
+            brand_box, text="Identity Shield", font=("Segoe UI", 10, "bold"),
+            text_color="#1E40AF", fg_color="#EFF6FF", corner_radius=12, padx=10, pady=2
+        )
+        lbl_chip.pack(side="left", padx=(12, 0))
+
+        nav_right = ctk.CTkFrame(header, fg_color="transparent")
+        nav_right.pack(side="right", padx=24)
+
+        self.lbl_vcam_chip = ctk.CTkLabel(
+            nav_right, text="● 1080p FHD Virtual Cam: Siap di Google Meet / Zoom",
+            font=("Segoe UI", 11, "bold"), text_color="#065F46",
+            fg_color="#D1FAE5", corner_radius=12, padx=12, pady=4
+        )
+        self.lbl_vcam_chip.pack(side="left", padx=(0, 12))
+
+        btn_info = ctk.CTkButton(
+            nav_right, text="Panduan Setup ↗", font=("Segoe UI", 11, "bold"),
+            fg_color=SURFACE_MUTED, hover_color="#E2E8F0", text_color=TEXT_BODY,
+            corner_radius=8, width=130, height=32, command=self.show_guide_dialog
+        )
+        btn_info.pack(side="left")
+
+        # ----------------------------------------------------------------------
+        # 2. MAIN BODY
+        # ----------------------------------------------------------------------
+        body = ctk.CTkFrame(self.root, fg_color="transparent")
+        body.grid(row=1, column=0, sticky="nsew", padx=24, pady=20)
+        body.grid_rowconfigure(0, weight=1)
+        body.grid_columnconfigure(0, weight=3)
+        body.grid_columnconfigure(1, weight=2)
+
+        # ------------------- LEFT: CAMERA VIEWPORT -------------------
+        viewport_wrapper = ctk.CTkFrame(body, fg_color="transparent")
+        viewport_wrapper.grid(row=0, column=0, sticky="nsew", padx=(0, 16))
+        viewport_wrapper.grid_rowconfigure(0, weight=1)
+        viewport_wrapper.grid_columnconfigure(0, weight=1)
+
+        self.video_card = ctk.CTkFrame(
+            viewport_wrapper, fg_color="#090D16", corner_radius=16,
+            border_width=1, border_color="#CBD5E1"
+        )
+        self.video_card.grid(row=0, column=0, sticky="nsew")
+
+        self.preview_label = ctk.CTkLabel(
+            self.video_card, text="Menghubungkan Kamera 1080p BIFROST...",
+            font=("Segoe UI", 13), text_color="#94A3B8"
+        )
+        self.preview_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.overlay_badge = ctk.CTkLabel(
+            self.video_card, text="📹 BIFROST Encrypted Camera (1080p FHD)",
+            font=("Segoe UI", 10, "bold"), text_color="#FFFFFF",
+            fg_color="#1E293B", corner_radius=8, padx=12, pady=5
+        )
+        self.overlay_badge.place(x=16, y=16)
+
+        self.lbl_fps_badge = ctk.CTkLabel(
+            self.video_card, text="● LIVE 30 FPS",
+            font=("Segoe UI", 10, "bold"), text_color="#34D399",
+            fg_color="#1E293B", corner_radius=8, padx=12, pady=5
+        )
+        self.lbl_fps_badge.place(relx=1.0, x=-16, y=16, anchor="ne")
+
         self.container_w = 640
         self.container_h = 440
-
-        def _on_resize_viewport(e):
+        def _on_resize(e):
             if e.width > 50 and e.height > 50:
                 self.container_w = e.width
                 self.container_h = e.height
-        self.video_viewport.bind('<Configure>', _on_resize_viewport)
-        bottom_bar = tk.Frame(center_col, bg=BG_CARD, height=58)
-        bottom_bar.pack(side='bottom', fill='x', padx=16, pady=(4, 14))
-        cam_selector_frame = tk.Frame(bottom_bar, bg=BG_CARD)
-        cam_selector_frame.pack(side='left')
-        lbl_cam_title = tk.Label(cam_selector_frame, text='📹  Kamera Fisik', font=('Segoe UI', 8), fg=TEXT_MUTED, bg=BG_CARD)
-        lbl_cam_title.pack(anchor='w', pady=(0, 2))
+        self.video_card.bind("<Configure>", _on_resize)
+
+        # Bottom Camera & Resolution Selector Toolbar
+        cam_bar = ctk.CTkFrame(viewport_wrapper, fg_color=SURFACE_WHITE, corner_radius=12, height=54, border_width=1, border_color=BORDER_GLASS)
+        cam_bar.grid(row=1, column=0, sticky="ew", pady=(12, 0))
+        cam_bar.pack_propagate(False)
+
+        lbl_source = ctk.CTkLabel(cam_bar, text="Kamera Fisik:", font=("Segoe UI", 11, "bold"), text_color=TEXT_MUTED)
+        lbl_source.pack(side="left", padx=(16, 8))
+
         cam_labels = [c['name'] for c in self.available_cameras]
-        self.combo_cams = ttk.Combobox(cam_selector_frame, values=cam_labels, state='readonly', width=26, font=('Segoe UI', 9))
-        self.combo_cams.current(self.preferred_cam_idx)
-        self.combo_cams.pack(anchor='w')
-        self.combo_cams.bind('<<ComboboxSelected>>', self.on_camera_select)
-        ctrl_btns = tk.Frame(bottom_bar, bg=BG_CARD)
-        ctrl_btns.pack(side='right', pady=4)
-        self.btn_mulai = tk.Button(ctrl_btns, text='📹  Mulai', font=('Segoe UI', 10, 'bold'), fg=TEXT_WHITE, bg=ACCENT_BLUE, activebackground='#1D4ED8', activeforeground=TEXT_WHITE, relief='flat', padx=22, pady=7, bd=0, cursor='hand2', command=self.start_all)
-        self.btn_mulai.pack(side='left', padx=(0, 10))
-        self.btn_hentikan = tk.Button(ctrl_btns, text='■  Hentikan', font=('Segoe UI', 10), fg=TEXT_WHITE, bg='#1E293B', activebackground='#334155', activeforeground=TEXT_WHITE, relief='flat', padx=18, pady=7, bd=0, cursor='hand2', command=self.stop_all)
-        self.btn_hentikan.pack(side='left')
-        right_col = tk.Frame(main_body, bg=BG_CARD, width=340, highlightthickness=1, highlightbackground=BG_CARD_BORDER)
-        right_col.pack(side='right', fill='both', padx=(0, 0))
-        right_col.pack_propagate(False)
-        top_pills_frame = tk.Frame(right_col, bg='#0A111E', highlightthickness=1, highlightbackground=BG_CARD_BORDER)
-        top_pills_frame.pack(fill='x', padx=14, pady=(14, 12))
-        self.pill_video = tk.Label(top_pills_frame, text='📹 Video', font=('Segoe UI', 8, 'bold'), fg=TEXT_WHITE, bg=ACCENT_BLUE, padx=14, pady=6, cursor='hand2')
-        self.pill_video.pack(side='left', padx=3, pady=3)
-        self.pill_suara = tk.Label(top_pills_frame, text='ılı Suara', font=('Segoe UI', 8), fg=TEXT_MUTED, bg='#0A111E', padx=14, pady=6, cursor='hand2')
-        self.pill_suara.pack(side='left', padx=3, pady=3)
-        self.pill_umum = tk.Label(top_pills_frame, text='⚙ Umum', font=('Segoe UI', 8), fg=TEXT_MUTED, bg='#0A111E', padx=14, pady=6, cursor='hand2')
-        self.pill_umum.pack(side='left', padx=3, pady=3)
-        tk.Label(right_col, text='Mode Sensor Wajah', font=('Segoe UI', 10, 'bold'), fg=TEXT_WHITE, bg=BG_CARD).pack(anchor='w', padx=14, pady=(6, 8))
-        modes_row = tk.Frame(right_col, bg=BG_CARD)
-        modes_row.pack(fill='x', padx=14)
-        self.card_pixel = tk.Frame(modes_row, bg=BG_CARD_ACTIVE, highlightthickness=1, highlightbackground=BORDER_ACTIVE, cursor='hand2', padx=6, pady=8)
-        self.card_pixel.pack(side='left', fill='both', expand=True, padx=(0, 4))
-        self.lbl_ico_pixel = tk.Label(self.card_pixel, image=self.icons['pixel'], bg=BG_CARD_ACTIVE)
-        self.lbl_ico_pixel.pack(pady=(0, 4))
-        self.lbl_t_pixel = tk.Label(self.card_pixel, text='Pixelation', font=('Segoe UI', 8, 'bold'), fg=TEXT_WHITE, bg=BG_CARD_ACTIVE)
-        self.lbl_t_pixel.pack()
-        self.lbl_s_pixel = tk.Label(self.card_pixel, text='Mozaik adaptif', font=('Segoe UI', 8), fg='#60A5FA', bg=BG_CARD_ACTIVE)
-        self.lbl_s_pixel.pack()
-        self.card_sil = tk.Frame(modes_row, bg=BG_CARD, highlightthickness=1, highlightbackground=BG_CARD_BORDER, cursor='hand2', padx=6, pady=8)
-        self.card_sil.pack(side='left', fill='both', expand=True, padx=4)
-        self.lbl_ico_sil = tk.Label(self.card_sil, image=self.icons['sil'], bg=BG_CARD)
-        self.lbl_ico_sil.pack(pady=(0, 4))
-        self.lbl_t_sil = tk.Label(self.card_sil, text='Silhouette', font=('Segoe UI', 8, 'bold'), fg=TEXT_WHITE, bg=BG_CARD)
-        self.lbl_t_sil.pack()
-        self.lbl_s_sil = tk.Label(self.card_sil, text='Bayangan gelap', font=('Segoe UI', 8), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_s_sil.pack()
-        self.card_eye = tk.Frame(modes_row, bg=BG_CARD, highlightthickness=1, highlightbackground=BG_CARD_BORDER, cursor='hand2', padx=6, pady=8)
-        self.card_eye.pack(side='left', fill='both', expand=True, padx=(4, 0))
-        self.lbl_ico_eye = tk.Label(self.card_eye, image=self.icons['eyebar'], bg=BG_CARD)
-        self.lbl_ico_eye.pack(pady=(0, 4))
-        self.lbl_t_eye = tk.Label(self.card_eye, text='Eyebar', font=('Segoe UI', 8, 'bold'), fg=TEXT_WHITE, bg=BG_CARD)
-        self.lbl_t_eye.pack()
-        self.lbl_s_eye = tk.Label(self.card_eye, text='Pita mata', font=('Segoe UI', 8), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_s_eye.pack()
-        for w in (self.card_pixel, self.lbl_ico_pixel, self.lbl_t_pixel, self.lbl_s_pixel):
-            w.bind('<Button-1>', lambda e: self.select_mask_mode('mosaic'))
-        for w in (self.card_sil, self.lbl_ico_sil, self.lbl_t_sil, self.lbl_s_sil):
-            w.bind('<Button-1>', lambda e: self.select_mask_mode('silhouette'))
-        for w in (self.card_eye, self.lbl_ico_eye, self.lbl_t_eye, self.lbl_s_eye):
-            w.bind('<Button-1>', lambda e: self.select_mask_mode('eyebar'))
-        px_header = tk.Frame(right_col, bg=BG_CARD)
-        px_header.pack(fill='x', padx=14, pady=(14, 4))
-        tk.Label(px_header, text='Tingkat Pixelation', font=('Segoe UI', 9), fg=TEXT_WHITE, bg=BG_CARD).pack(side='left')
-        self.lbl_px_pct = tk.Label(px_header, text='70%', font=('Segoe UI', 9, 'bold'), fg=TEXT_MUTED, bg=BG_CARD)
-        self.lbl_px_pct.pack(side='right')
-        self.slider_pixel = tk.Scale(right_col, from_=0, to=100, orient='horizontal', variable=self.pixel_pct, bg=BG_CARD, fg=TEXT_WHITE, highlightthickness=0, troughcolor='#1E293B', activebackground=ACCENT_CYAN, bd=0, showvalue=False, command=self._on_pixel_slider_change)
-        self.slider_pixel.pack(fill='x', padx=14, pady=(0, 8))
-        thumbs_row = tk.Frame(right_col, bg=BG_CARD)
-        thumbs_row.pack(fill='x', padx=14, pady=(0, 10))
-        steps = [0, 25, 50, 75, 100]
-        for idx, pct in enumerate(steps):
-            f = tk.Frame(thumbs_row, bg=BG_CARD, cursor='hand2')
-            f.pack(side='left', fill='both', expand=True)
-            lbl_th = tk.Label(f, image=self.thumbnail_images[idx], bg=BG_CARD)
-            lbl_th.pack()
-            lbl_lb = tk.Label(f, text=f'{pct}%', font=('Segoe UI', 7), fg=TEXT_DIM, bg=BG_CARD)
-            lbl_lb.pack(pady=(2, 0))
+        self.option_cam = ctk.CTkOptionMenu(
+            cam_bar, values=cam_labels, width=220, height=32,
+            fg_color=SURFACE_MUTED, button_color=ACCENT_BLUE,
+            button_hover_color=ACCENT_BLUE_HOVER, dropdown_fg_color=SURFACE_WHITE,
+            text_color=TEXT_HEADING, dropdown_text_color=TEXT_HEADING,
+            corner_radius=8, font=("Segoe UI", 10),
+            command=self.on_camera_option_selected
+        )
+        if 0 <= self.preferred_cam_idx < len(cam_labels):
+            self.option_cam.set(cam_labels[self.preferred_cam_idx])
+        self.option_cam.pack(side="left")
 
-            def _make_setter(val):
-                return lambda e: self.set_pixel_percentage(val)
-            lbl_th.bind('<Button-1>', _make_setter(pct))
-            lbl_lb.bind('<Button-1>', _make_setter(pct))
-        tk.Frame(right_col, bg=BG_CARD_BORDER, height=1).pack(fill='x', padx=14, pady=(4, 10))
-        tk.Label(right_col, text='🔊  Audio', font=('Segoe UI', 10, 'bold'), fg=TEXT_WHITE, bg=BG_CARD).pack(anchor='w', padx=14, pady=(0, 6))
-        self.card_aud_deep = tk.Frame(right_col, bg=BG_CARD_ACTIVE, highlightthickness=1, highlightbackground=BORDER_ACTIVE, cursor='hand2', padx=10, pady=8)
-        self.card_aud_deep.pack(fill='x', padx=14, pady=3)
-        self.lbl_rad_deep = tk.Label(self.card_aud_deep, text='⊙', font=('Segoe UI', 12, 'bold'), fg=ACCENT_CYAN, bg=BG_CARD_ACTIVE)
-        self.lbl_rad_deep.pack(side='left', padx=(0, 8))
-        self.lbl_ico_aud_deep = tk.Label(self.card_aud_deep, image=self.icons['wave'], bg=BG_CARD_ACTIVE)
-        self.lbl_ico_aud_deep.pack(side='left', padx=(0, 8))
-        aud_t1 = tk.Frame(self.card_aud_deep, bg=BG_CARD_ACTIVE)
-        aud_t1.pack(side='left', fill='both', expand=True)
-        self.lbl_t_aud_deep = tk.Label(aud_t1, text='Deep Shadow', font=('Segoe UI', 9, 'bold'), fg=TEXT_WHITE, bg=BG_CARD_ACTIVE)
-        self.lbl_t_aud_deep.pack(anchor='w')
-        self.lbl_s_aud_deep = tk.Label(aud_t1, text='Suara lebih berat, menutupi identitas.', font=('Segoe UI', 8), fg=TEXT_MUTED, bg=BG_CARD_ACTIVE)
-        self.lbl_s_aud_deep.pack(anchor='w')
-        self.card_aud_rob = tk.Frame(right_col, bg=BG_CARD, highlightthickness=1, highlightbackground=BG_CARD_BORDER, cursor='hand2', padx=10, pady=8)
-        self.card_aud_rob.pack(fill='x', padx=14, pady=3)
-        self.lbl_rad_rob = tk.Label(self.card_aud_rob, text='○', font=('Segoe UI', 12), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_rad_rob.pack(side='left', padx=(0, 8))
-        self.lbl_ico_aud_rob = tk.Label(self.card_aud_rob, image=self.icons['robot'], bg=BG_CARD)
-        self.lbl_ico_aud_rob.pack(side='left', padx=(0, 8))
-        aud_t2 = tk.Frame(self.card_aud_rob, bg=BG_CARD)
-        aud_t2.pack(side='left', fill='both', expand=True)
-        self.lbl_t_aud_rob = tk.Label(aud_t2, text='Robotik (Vocoder)', font=('Segoe UI', 9, 'bold'), fg=TEXT_WHITE, bg=BG_CARD)
-        self.lbl_t_aud_rob.pack(anchor='w')
-        self.lbl_s_aud_rob = tk.Label(aud_t2, text='Efek suara robotik, distorsi ringan.', font=('Segoe UI', 8), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_s_aud_rob.pack(anchor='w')
-        self.card_aud_norm = tk.Frame(right_col, bg=BG_CARD, highlightthickness=1, highlightbackground=BG_CARD_BORDER, cursor='hand2', padx=10, pady=8)
-        self.card_aud_norm.pack(fill='x', padx=14, pady=3)
-        self.lbl_rad_norm = tk.Label(self.card_aud_norm, text='○', font=('Segoe UI', 12), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_rad_norm.pack(side='left', padx=(0, 8))
-        self.lbl_ico_aud_norm = tk.Label(self.card_aud_norm, image=self.icons['wave'], bg=BG_CARD)
-        self.lbl_ico_aud_norm.pack(side='left', padx=(0, 8))
-        aud_t3 = tk.Frame(self.card_aud_norm, bg=BG_CARD)
-        aud_t3.pack(side='left', fill='both', expand=True)
-        self.lbl_t_aud_norm = tk.Label(aud_t3, text='Normal', font=('Segoe UI', 9, 'bold'), fg=TEXT_WHITE, bg=BG_CARD)
-        self.lbl_t_aud_norm.pack(anchor='w')
-        self.lbl_s_aud_norm = tk.Label(aud_t3, text='Tanpa perubahan.', font=('Segoe UI', 8), fg=TEXT_DIM, bg=BG_CARD)
-        self.lbl_s_aud_norm.pack(anchor='w')
-        for w in (self.card_aud_deep, self.lbl_rad_deep, self.lbl_ico_aud_deep, self.lbl_t_aud_deep, self.lbl_s_aud_deep, aud_t1):
-            w.bind('<Button-1>', lambda e: self.select_audio_mode('deep_shadow'))
-        for w in (self.card_aud_rob, self.lbl_rad_rob, self.lbl_ico_aud_rob, self.lbl_t_aud_rob, self.lbl_s_aud_rob, aud_t2):
-            w.bind('<Button-1>', lambda e: self.select_audio_mode('robotic'))
-        for w in (self.card_aud_norm, self.lbl_rad_norm, self.lbl_ico_aud_norm, self.lbl_t_aud_norm, self.lbl_s_aud_norm, aud_t3):
-            w.bind('<Button-1>', lambda e: self.select_audio_mode('normal'))
-        fx_header = tk.Frame(right_col, bg=BG_CARD)
-        fx_header.pack(fill='x', padx=14, pady=(12, 4))
-        tk.Label(fx_header, text='Tingkat Efek', font=('Segoe UI', 9), fg=TEXT_WHITE, bg=BG_CARD).pack(side='left')
-        self.lbl_fx_pct = tk.Label(fx_header, text='60%', font=('Segoe UI', 9, 'bold'), fg=TEXT_MUTED, bg=BG_CARD)
-        self.lbl_fx_pct.pack(side='right')
-        self.slider_fx = tk.Scale(right_col, from_=0, to=100, orient='horizontal', variable=self.audio_fx_pct, bg=BG_CARD, fg=TEXT_WHITE, highlightthickness=0, troughcolor='#1E293B', activebackground=ACCENT_CYAN, bd=0, showvalue=False, command=self._on_fx_slider_change)
-        self.slider_fx.pack(fill='x', padx=14, pady=(0, 10))
+        lbl_res = ctk.CTkLabel(cam_bar, text="Resolusi:", font=("Segoe UI", 11, "bold"), text_color=TEXT_MUTED)
+        lbl_res.pack(side="left", padx=(16, 8))
 
-    def select_mask_mode(self, mode: str):
-        self.mask_mode.set(mode)
-        for card, ico, tit, sub in [(self.card_pixel, self.lbl_ico_pixel, self.lbl_t_pixel, self.lbl_s_pixel), (self.card_sil, self.lbl_ico_sil, self.lbl_t_sil, self.lbl_s_sil), (self.card_eye, self.lbl_ico_eye, self.lbl_t_eye, self.lbl_s_eye)]:
-            card.config(bg=BG_CARD, highlightbackground=BG_CARD_BORDER)
-            ico.config(bg=BG_CARD)
-            tit.config(bg=BG_CARD)
-            sub.config(bg=BG_CARD, fg=TEXT_DIM)
-        if mode == 'mosaic':
-            self.card_pixel.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_ico_pixel.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_pixel.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_pixel.config(bg=BG_CARD_ACTIVE, fg='#60A5FA')
-        elif mode == 'silhouette':
-            self.card_sil.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_ico_sil.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_sil.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_sil.config(bg=BG_CARD_ACTIVE, fg='#60A5FA')
-        elif mode == 'eyebar':
-            self.card_eye.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_ico_eye.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_eye.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_eye.config(bg=BG_CARD_ACTIVE, fg='#60A5FA')
+        self.seg_res = ctk.CTkSegmentedButton(
+            cam_bar, values=["1080p FHD", "720p HD"],
+            font=("Segoe UI", 10, "bold"), selected_color=ACCENT_BLUE,
+            selected_hover_color=ACCENT_BLUE_HOVER, corner_radius=8, height=32,
+            command=self._on_res_change
+        )
+        self.seg_res.set("1080p FHD")
+        self.seg_res.pack(side="left", padx=(0, 14))
+
+        # ------------------- RIGHT: MODERN GLASS CONTROLS -------------------
+        controls_card = ctk.CTkFrame(
+            body, fg_color=SURFACE_WHITE, corner_radius=16,
+            border_width=1, border_color=BORDER_GLASS
+        )
+        controls_card.grid(row=0, column=1, sticky="nsew")
+
+        scroll_content = ctk.CTkScrollableFrame(controls_card, fg_color="transparent")
+        scroll_content.pack(fill="both", expand=True, padx=16, pady=16)
+
+        # 1. Face Sensor Section
+        sec_face = ctk.CTkFrame(scroll_content, fg_color=SURFACE_MUTED, corner_radius=12, border_width=1, border_color=BORDER_GLASS)
+        sec_face.pack(fill="x", pady=(0, 14))
+
+        face_head = ctk.CTkFrame(sec_face, fg_color="transparent")
+        face_head.pack(fill="x", padx=14, pady=(12, 8))
+
+        ctk.CTkLabel(face_head, text="Sensor Wajah Saksi", font=("Segoe UI", 12, "bold"), text_color=TEXT_HEADING).pack(side="left")
+        
+        self.sw_sensor = ctk.CTkSwitch(
+            face_head, text="", width=44, height=22,
+            variable=self.is_filter_enabled, progress_color=ACCENT_BLUE,
+            command=self.toggle_filter
+        )
+        self.sw_sensor.pack(side="right")
+
+        self.seg_mask = ctk.CTkSegmentedButton(
+            sec_face, values=["Mosaik", "Siluet", "Pita Mata"],
+            font=("Segoe UI", 11, "bold"), selected_color=ACCENT_BLUE,
+            selected_hover_color=ACCENT_BLUE_HOVER, corner_radius=8, height=34,
+            command=self._on_mask_mode_change
+        )
+        self.seg_mask.set("Mosaik")
+        self.seg_mask.pack(fill="x", padx=14, pady=(0, 10))
+
+        slider_head = ctk.CTkFrame(sec_face, fg_color="transparent")
+        slider_head.pack(fill="x", padx=14, pady=(0, 4))
+        ctk.CTkLabel(slider_head, text="Intensitas Sensor", font=("Segoe UI", 10), text_color=TEXT_MUTED).pack(side="left")
+        self.lbl_px_pct = ctk.CTkLabel(slider_head, text="70%", font=("Segoe UI", 11, "bold"), text_color=ACCENT_BLUE)
+        self.lbl_px_pct.pack(side="right")
+
+        self.slider_pixel = ctk.CTkSlider(
+            sec_face, from_=0, to=100, number_of_steps=100,
+            variable=self.pixel_pct, progress_color=ACCENT_BLUE,
+            button_color=ACCENT_BLUE, button_hover_color=ACCENT_BLUE_HOVER,
+            command=self._on_pixel_slider_change
+        )
+        self.slider_pixel.pack(fill="x", padx=14, pady=(0, 8))
+
+        presets = ctk.CTkFrame(sec_face, fg_color="transparent")
+        presets.pack(fill="x", padx=10, pady=(0, 12))
+        for v in [0, 25, 50, 75, 100]:
+            ctk.CTkButton(
+                presets, text=f"{v}%", font=("Segoe UI", 9, "bold"),
+                fg_color=SURFACE_WHITE, hover_color="#E2E8F0", text_color=TEXT_BODY,
+                corner_radius=6, height=24, width=44,
+                command=lambda val=v: self.set_pixel_percentage(val)
+            ).pack(side="left", expand=True, padx=2)
+
+        # 2. Voice Disguiser Section
+        sec_voice = ctk.CTkFrame(scroll_content, fg_color=SURFACE_MUTED, corner_radius=12, border_width=1, border_color=BORDER_GLASS)
+        sec_voice.pack(fill="x", pady=(0, 14))
+
+        voice_head = ctk.CTkFrame(sec_voice, fg_color="transparent")
+        voice_head.pack(fill="x", padx=14, pady=(12, 8))
+        ctk.CTkLabel(voice_head, text="Pengubah Suara (Voice DSP)", font=("Segoe UI", 12, "bold"), text_color=TEXT_HEADING).pack(side="left")
+
+        self.seg_voice = ctk.CTkSegmentedButton(
+            sec_voice, values=["Deep Shadow", "Robotik", "Normal"],
+            font=("Segoe UI", 11, "bold"), selected_color=ACCENT_BLUE,
+            selected_hover_color=ACCENT_BLUE_HOVER, corner_radius=8, height=34,
+            command=self._on_voice_mode_change
+        )
+        self.seg_voice.set("Deep Shadow")
+        self.seg_voice.pack(fill="x", padx=14, pady=(0, 10))
+
+        v_slider_head = ctk.CTkFrame(sec_voice, fg_color="transparent")
+        v_slider_head.pack(fill="x", padx=14, pady=(0, 4))
+        ctk.CTkLabel(v_slider_head, text="Modulasi Suara", font=("Segoe UI", 10), text_color=TEXT_MUTED).pack(side="left")
+        self.lbl_voice_pct = ctk.CTkLabel(v_slider_head, text="60%", font=("Segoe UI", 11, "bold"), text_color=ACCENT_BLUE)
+        self.lbl_voice_pct.pack(side="right")
+
+        self.slider_voice = ctk.CTkSlider(
+            sec_voice, from_=0, to=100, number_of_steps=100,
+            variable=self.audio_fx_pct, progress_color=ACCENT_BLUE,
+            button_color=ACCENT_BLUE, button_hover_color=ACCENT_BLUE_HOVER,
+            command=self._on_voice_slider_change
+        )
+        self.slider_voice.pack(fill="x", padx=14, pady=(0, 12))
+
+        # 3. Single Unified Primary Action Button (Start / Stop)
+        self.btn_action = ctk.CTkButton(
+            scroll_content, text="■  Hentikan Siaran",
+            font=("Segoe UI", 13, "bold"), fg_color=ACCENT_RED,
+            hover_color=ACCENT_RED_HOVER, text_color="#FFFFFF",
+            corner_radius=10, height=44, command=self.toggle_stream_state
+        )
+        self.btn_action.pack(fill="x", pady=(4, 8))
+
+        hint_box = ctk.CTkFrame(scroll_content, fg_color="transparent")
+        hint_box.pack(fill="x")
+        ctk.CTkLabel(
+            hint_box, text="Tekan [Spasi] untuk mengaktifkan/mematikan sensor wajah secara instan.",
+            font=("Segoe UI", 9), text_color=TEXT_MUTED, wraplength=270, justify="center"
+        ).pack()
+
+    # ==========================================================================
+    # EVENT HANDLERS & SAFE ASYNCHRONOUS CAMERA SWITCHING
+    # ==========================================================================
+    def _on_res_change(self, val):
+        if "1080p" in val:
+            self.res_mode.set("1080p")
+            self.target_width = 1920
+            self.target_height = 1080
+            self.overlay_badge.configure(text="📹 BIFROST Encrypted Camera (1080p FHD)")
+            self.lbl_vcam_chip.configure(text="● 1080p FHD Virtual Cam: Siap di Google Meet / Zoom")
+        else:
+            self.res_mode.set("720p")
+            self.target_width = 1280
+            self.target_height = 720
+            self.overlay_badge.configure(text="📹 BIFROST Encrypted Camera (720p HD)")
+            self.lbl_vcam_chip.configure(text="● 720p HD Virtual Cam: Siap di Google Meet / Zoom")
+        
+        if self.is_streaming:
+            threading.Thread(target=self._switch_camera_worker, args=(self.selected_camera_idx.get(),), daemon=True).start()
+
+    def on_camera_option_selected(self, choice_text):
+        for c in self.available_cameras:
+            if c['name'] == choice_text:
+                new_idx = c['idx']
+                if new_idx == self.selected_camera_idx.get() and self.is_streaming:
+                    return
+                self.selected_camera_idx.set(new_idx)
+                threading.Thread(target=self._switch_camera_worker, args=(new_idx,), daemon=True).start()
+                break
+
+    def _switch_camera_worker(self, new_idx):
+        """Asynchronous safe camera switching thread (prevents GUI freeze & DirectShow crashes)."""
+        if self._is_switching:
+            return
+        self._is_switching = True
+
+        self.root.after(0, lambda: self.preview_label.configure(image='', text="Beralih ke kamera..."))
+        self.root.after(0, lambda: self.option_cam.configure(state="disabled"))
+
+        # 1. Hentikan loop pengambilan gambar secara bersih
+        self.is_streaming = False
+        if hasattr(self, 'capture_thread') and self.capture_thread and self.capture_thread.is_alive():
+            try:
+                self.capture_thread.join(timeout=1.2)
+            except Exception:
+                pass
+
+        # 2. Release hardware handle secara aman setelah thread capture berhenti
+        if self.cap:
+            try:
+                self.cap.release()
+            except Exception:
+                pass
+            self.cap = None
+
+        time.sleep(0.15)  # Beri jeda kernel Windows DirectShow untuk melepas driver
+
+        # 3. Buka kamera baru di background thread tanpa membekukan GUI
+        target_w, target_h = self.target_width, self.target_height
+        new_cap = None
+        try:
+            new_cap = cv2.VideoCapture(new_idx, cv2.CAP_DSHOW)
+            if not new_cap.isOpened():
+                new_cap.release()
+                new_cap = cv2.VideoCapture(new_idx)
+        except Exception:
+            new_cap = None
+
+        if new_cap and new_cap.isOpened():
+            try:
+                new_cap.set(cv2.CAP_PROP_FRAME_WIDTH, target_w)
+                new_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, target_h)
+            except Exception:
+                pass
+            self.cap = new_cap
+            self._init_virtual_cam(target_w, target_h)
+            self.is_streaming = True
+            self.capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
+            self.capture_thread.start()
+        else:
+            self.root.after(0, lambda: self.preview_label.configure(image='', text="Kamera tidak dapat diakses atau sedang digunakan aplikasi lain."))
+
+        self._is_switching = False
+        self.root.after(0, lambda: self.option_cam.configure(state="normal"))
+
+    def toggle_stream_state(self):
+        """Satu tombol tunggal yang jelas untuk Mulai / Hentikan siaran."""
+        if self.is_streaming:
+            self.stop_stream()
+            self.btn_action.configure(
+                text="▶  Mulai Siaran",
+                fg_color=ACCENT_BLUE,
+                hover_color=ACCENT_BLUE_HOVER
+            )
+            self.preview_label.configure(image='', text="Kamera Dihentikan • Tekan 'Mulai Siaran'")
+            self.lbl_fps_badge.configure(text="● OFFLINE", text_color="#94A3B8")
+        else:
+            self.start_stream()
+            self.btn_action.configure(
+                text="■  Hentikan Siaran",
+                fg_color=ACCENT_RED,
+                hover_color=ACCENT_RED_HOVER
+            )
+
+    def _on_mask_mode_change(self, value):
+        mapping = {"Mosaik": "mosaic", "Siluet": "silhouette", "Pita Mata": "eyebar"}
+        self.mask_mode.set(mapping.get(value, "mosaic"))
+
+    def _on_voice_mode_change(self, value):
+        mapping = {"Deep Shadow": "deep_shadow", "Robotik": "robotic", "Normal": "normal"}
+        mode = mapping.get(value, "deep_shadow")
+        self.audio_mode.set(mode)
+        self.voice_disguiser.set_mode(mode)
 
     def _on_pixel_slider_change(self, val):
         p = int(float(val))
-        self.lbl_px_pct.config(text=f'{p}%')
-        self.pixel_size = max(4, int(4 + p / 100.0 * 36))
+        self.lbl_px_pct.configure(text=f"{p}%")
+        self.pixel_size = max(4, int(4 + (p / 100.0) * 36))
 
     def set_pixel_percentage(self, pct: int):
         self.pixel_pct.set(pct)
         self._on_pixel_slider_change(pct)
 
-    def select_audio_mode(self, mode: str):
-        self.audio_mode.set(mode)
-        self.voice_disguiser.set_mode(mode)
-        for card, rad, ico, t, s in [(self.card_aud_deep, self.lbl_rad_deep, self.lbl_ico_aud_deep, self.lbl_t_aud_deep, self.lbl_s_aud_deep), (self.card_aud_rob, self.lbl_rad_rob, self.lbl_ico_aud_rob, self.lbl_t_aud_rob, self.lbl_s_aud_rob), (self.card_aud_norm, self.lbl_rad_norm, self.lbl_ico_aud_norm, self.lbl_t_aud_norm, self.lbl_s_aud_norm)]:
-            card.config(bg=BG_CARD, highlightbackground=BG_CARD_BORDER)
-            rad.config(text='○', fg=TEXT_DIM, bg=BG_CARD)
-            ico.config(bg=BG_CARD)
-            t.config(bg=BG_CARD)
-            s.config(bg=BG_CARD, fg=TEXT_DIM)
-        if mode == 'deep_shadow':
-            self.card_aud_deep.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_rad_deep.config(text='⊙', fg=ACCENT_CYAN, bg=BG_CARD_ACTIVE)
-            self.lbl_ico_aud_deep.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_aud_deep.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_aud_deep.config(bg=BG_CARD_ACTIVE, fg=TEXT_MUTED)
-        elif mode == 'robotic':
-            self.card_aud_rob.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_rad_rob.config(text='⊙', fg=ACCENT_CYAN, bg=BG_CARD_ACTIVE)
-            self.lbl_ico_aud_rob.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_aud_rob.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_aud_rob.config(bg=BG_CARD_ACTIVE, fg=TEXT_MUTED)
-        elif mode == 'normal':
-            self.card_aud_norm.config(bg=BG_CARD_ACTIVE, highlightbackground=BORDER_ACTIVE)
-            self.lbl_rad_norm.config(text='⊙', fg=ACCENT_CYAN, bg=BG_CARD_ACTIVE)
-            self.lbl_ico_aud_norm.config(bg=BG_CARD_ACTIVE)
-            self.lbl_t_aud_norm.config(bg=BG_CARD_ACTIVE)
-            self.lbl_s_aud_norm.config(bg=BG_CARD_ACTIVE, fg=TEXT_MUTED)
-
-    def _on_fx_slider_change(self, val):
+    def _on_voice_slider_change(self, val):
         p = int(float(val))
-        self.lbl_fx_pct.config(text=f'{p}%')
+        self.lbl_voice_pct.configure(text=f"{p}%")
         self.voice_disguiser.set_intensity(p / 100.0)
 
-    def _toggle_maximize(self):
-        if self.root.state() == 'zoomed':
-            self.root.state('normal')
-        else:
-            self.root.state('zoomed')
+    def toggle_filter(self):
+        curr = self.is_filter_enabled.get()
+        self.is_filter_enabled.set(not curr)
 
+    def show_guide_dialog(self):
+        msg = (
+            "PANDUAN BIFROST WITNESS CAM (1080p FULL HD)\n\n"
+            "1. Hubungkan ke Google Meet / Zoom:\n"
+            "   • Buka Setelan Kamera > Pilih 'BIFROST Encrypted Camera'\n"
+            "   • Output video terenkripsi mengalir dalam resolusi 1920x1080 Full HD!\n\n"
+            "2. Pengubah Suara Saksi:\n"
+            "   • Pasang Virtual Audio Cable (VB-Audio Cable)\n"
+            "   • Di Google Meet > Setelan Mikrofon > Pilih 'CABLE Output'\n"
+            "   • Peserta rapat akan mendengar suara Deep Shadow yang telah disamarkan.\n\n"
+            "Shortcut Keyboard:\n"
+            "   • [Spasi] : Sensor Wajah ON / OFF"
+        )
+        messagebox.showinfo("Panduan BIFROST", msg)
+
+    # ==========================================================================
+    # VIDEO STREAMING ENGINE
+    # ==========================================================================
     def _apply_face_mask(self, frame, x, y, w, h, landmarks):
         H, W = frame.shape[:2]
         mode = self.mask_mode.get()
@@ -774,9 +874,10 @@ class BIFROSTWitnessShieldApp:
         y1 = max(0, y - pad_y)
         x2 = min(W, x + w + pad_x)
         y2 = min(H, y + h + int(pad_y * 0.5))
-        rw, rh = (x2 - x1, y2 - y1)
+        rw, rh = x2 - x1, y2 - y1
         if rw <= 0 or rh <= 0:
             return
+
         roi = frame[y1:y2, x1:x2]
         if mode == 'mosaic':
             if pct <= 2:
@@ -794,8 +895,8 @@ class BIFROSTWitnessShieldApp:
             frame[y1:y2, x1:x2] = np.where(mask[:, :, None] > 0, roi_sil, roi)
         elif mode == 'eyebar':
             if landmarks is not None and len(landmarks) >= 4:
-                rex, rey = (int(landmarks[0]), int(landmarks[1]))
-                lex, ley = (int(landmarks[2]), int(landmarks[3]))
+                rex, rey = int(landmarks[0]), int(landmarks[1])
+                lex, ley = int(landmarks[2]), int(landmarks[3])
                 bar_cx = (rex + lex) // 2
                 bar_cy = (rey + ley) // 2
                 bar_w = int(abs(lex - rex) * 2.2) + 26
@@ -810,62 +911,26 @@ class BIFROSTWitnessShieldApp:
                 ey2 = min(H, y + int(h * 0.4))
                 frame[ey1:ey2, x:x + w] = (12, 12, 12)
 
-    def start_all(self):
-        if not self.is_streaming:
-            self.start_stream()
-        self.voice_disguiser.start()
-        self.btn_mulai.config(bg='#1D4ED8')
-        self.btn_hentikan.config(bg='#1E293B')
-
-    def stop_all(self):
-        self.stop_stream()
-        self.voice_disguiser.stop()
-        self.btn_mulai.config(bg=ACCENT_BLUE)
-        self.btn_hentikan.config(bg='#334155')
-        self.preview_label.config(image='', text="Kamera Dihentikan • Tekan 'Mulai' untuk siaran")
-
     def start_stream(self):
-        if self.is_streaming:
+        if self.is_streaming or self._is_switching:
             return
-        target_idx = self.selected_camera_idx.get()
-        try:
-            self.cap = cv2.VideoCapture(target_idx, cv2.CAP_DSHOW)
-        except Exception:
-            self.cap = None
-        if self.cap is None or not self.cap.isOpened():
-            try:
-                self.cap = cv2.VideoCapture(target_idx)
-            except Exception:
-                self.cap = None
-        if self.cap and self.cap.isOpened():
-            try:
-                self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-                self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-            except Exception:
-                pass
-            cam_w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            cam_h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            if cam_w <= 0 or cam_h <= 0:
-                cam_w, cam_h = (640, 480)
-            self._init_virtual_cam(cam_w, cam_h)
-        if not self.vcam:
-            self._init_virtual_cam(640, 480)
-        self.is_streaming = True
-        self.capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
-        self.capture_thread.start()
-        self.pump_thread = threading.Thread(target=self._vcam_pump_loop, daemon=True)
-        self.pump_thread.start()
+        threading.Thread(target=self._switch_camera_worker, args=(self.selected_camera_idx.get(),), daemon=True).start()
+        self.voice_disguiser.start()
+        if not self.pump_thread or not self.pump_thread.is_alive():
+            self.pump_thread = threading.Thread(target=self._vcam_pump_loop, daemon=True)
+            self.pump_thread.start()
 
     def stop_stream(self):
         self.is_streaming = False
+        self.voice_disguiser.stop()
         if hasattr(self, 'capture_thread') and self.capture_thread and self.capture_thread.is_alive():
             try:
-                self.capture_thread.join(timeout=0.4)
+                self.capture_thread.join(timeout=1.0)
             except Exception:
                 pass
         if hasattr(self, 'pump_thread') and self.pump_thread and self.pump_thread.is_alive():
             try:
-                self.pump_thread.join(timeout=0.4)
+                self.pump_thread.join(timeout=0.5)
             except Exception:
                 pass
         if self.cap:
@@ -878,59 +943,97 @@ class BIFROSTWitnessShieldApp:
     def _capture_loop(self):
         fps_counter = 0
         last_fps_time = time.time()
+        target_w, target_h = self.target_width, self.target_height
+
         while self.is_streaming:
+            if not self.is_streaming:
+                break
+
             frame = None
-            if self.cap and self.cap.isOpened():
-                ret, raw = self.cap.read()
-                if ret and raw is not None:
-                    frame = raw
+            cap_ref = self.cap
+            if cap_ref and cap_ref.isOpened():
+                try:
+                    ret, raw = cap_ref.read()
+                    if ret and raw is not None:
+                        frame = raw
+                except Exception:
+                    frame = None
+
+            if not self.is_streaming:
+                break
+
             if frame is None:
                 if self.latest_stream_frame is not None:
                     time.sleep(0.01)
                     continue
                 else:
-                    frame = np.zeros((720, 1280, 3), dtype=np.uint8) + 16
-                    cv2.putText(frame, 'Menghubungkan kamera...', (480, 360), cv2.FONT_HERSHEY_SIMPLEX, 1, (120, 120, 120), 2)
+                    frame = np.zeros((target_h, target_w, 3), dtype=np.uint8) + 20
+                    cv2.putText(frame, 'Menghubungkan kamera 1080p...', (target_w // 4, target_h // 2), cv2.FONT_HERSHEY_SIMPLEX, 1, (160, 160, 160), 2)
                     time.sleep(0.03)
+
             H, W = frame.shape[:2]
-            if self.is_frozen:
-                if self.frozen_frame is None:
-                    self.frozen_frame = frame.copy()
-                frame = self.frozen_frame.copy()
-            elif self.is_filter_enabled.get() and self.face_detector is not None:
+            if W != target_w or H != target_h:
+                frame = cv2.resize(frame, (target_w, target_h), interpolation=cv2.INTER_LINEAR)
+                H, W = target_h, target_w
+
+            # AI Face Detection
+            if self.is_filter_enabled.get() and self.face_detector is not None:
                 try:
-                    self.face_detector.setInputSize((W, H))
-                    _, detections = self.face_detector.detect(frame)
+                    det_w = max(320, int(W * 0.5))
+                    det_h = max(180, int(H * 0.5))
+                    det_frame = cv2.resize(frame, (det_w, det_h))
+                    self.face_detector.setInputSize((det_w, det_h))
+                    _, detections = self.face_detector.detect(det_frame)
                     if detections is not None:
+                        scale_x = W / det_w
+                        scale_y = H / det_h
                         for det in detections:
-                            fx, fy, fw, fh = det[0:4].astype(int)
                             conf = float(det[-1])
                             if conf > 0.4:
-                                landmarks = det[4:8]
+                                fx = int(det[0] * scale_x)
+                                fy = int(det[1] * scale_y)
+                                fw = int(det[2] * scale_x)
+                                fh = int(det[3] * scale_y)
+                                landmarks = [
+                                    det[4] * scale_x, det[5] * scale_y,
+                                    det[6] * scale_x, det[7] * scale_y
+                                ]
                                 self._apply_face_mask(frame, fx, fy, fw, fh, landmarks)
                 except Exception:
                     pass
+
             with self.frame_lock:
                 self.latest_stream_frame = frame.copy()
-            cw, ch = (self.container_w, self.container_h)
+
+            # Render to Viewport
+            cw, ch = self.container_w, self.container_h
             if cw > 60 and ch > 60:
                 scale = min(cw / W, ch / H)
                 nw = max(1, int(W * scale))
                 nh = max(1, int(H * scale))
                 prev_res = cv2.resize(frame, (nw, nh))
                 prev_rgb = cv2.cvtColor(prev_res, cv2.COLOR_BGR2RGB)
-                prev_tk = ImageTk.PhotoImage(Image.fromarray(prev_rgb))
-                self.preview_label.config(image=prev_tk, text='')
-                self.preview_label.image = prev_tk
+                
+                ctk_img = ctk.CTkImage(
+                    light_image=Image.fromarray(prev_rgb),
+                    dark_image=Image.fromarray(prev_rgb),
+                    size=(nw, nh)
+                )
+                self.preview_label.configure(image=ctk_img, text='')
+                self.preview_label.image = ctk_img
+
             fps_counter += 1
             if time.time() - last_fps_time >= 1.0:
                 cur_fps = fps_counter / (time.time() - last_fps_time)
                 fps_counter = 0
                 last_fps_time = time.time()
-                self.lbl_live_indicator.config(text=f'●  LIVE  {cur_fps:.0f} FPS')
+                self.lbl_fps_badge.configure(text=f'● LIVE {cur_fps:.0f} FPS')
 
     def _vcam_pump_loop(self):
-        while self.is_streaming:
+        while True:
+            if not self.is_streaming:
+                time.sleep(0.05)
+                continue
             t0 = time.time()
             if self.vcam is not None:
                 send_frame = None
@@ -944,31 +1047,6 @@ class BIFROSTWitnessShieldApp:
                         pass
             elapsed = time.time() - t0
             time.sleep(max(0.002, 1.0 / 30.0 - elapsed))
-
-    def on_camera_select(self, event=None):
-        sel_idx = self.combo_cams.current()
-        if 0 <= sel_idx < len(self.available_cameras):
-            cam_dev_idx = self.available_cameras[sel_idx]['idx']
-            self.selected_camera_idx.set(cam_dev_idx)
-            self.stop_stream()
-            self.root.after(150, self.start_stream)
-
-    def toggle_filter(self):
-        curr = self.is_filter_enabled.get()
-        self.is_filter_enabled.set(not curr)
-
-    def toggle_freeze(self):
-        self.is_frozen = not self.is_frozen
-        if not self.is_frozen:
-            self.frozen_frame = None
-
-    def show_settings_dialog(self):
-        msg = "PENGATURAN BIFROST WITNESS CAM\n\n📹 KAMERA VIRTUAL:\n• Di Google Meet / Zoom, pilih Kamera: 'BIFROST Encrypted Camera'\n\n🎙️ SUARA / MIKROFON DI GOOGLE MEET:\n• Di Windows, aplikasi pengubah suara memerlukan Virtual Audio Cable agar bisa dibaca sebagai Mikrofon oleh Google Meet.\n• Langkah menghubungkan ke Google Meet:\n  1. Unduh driver gratis: VB-CABLE (vb-audio.com/Cable)\n  2. Install driver VB-CABLE (hanya 1 menit)\n  3. BIFROST otomatis mendeteksi dan mengalirkan suara ke 'CABLE Input'\n  4. Di Google Meet > Setelan > Mikrofon: pilih 'CABLE Output (VB-Audio Virtual Cable)'!\n  5. Seluruh peserta Google Meet akan mendengar suara Deep Shadow / Robotik!\n\nShortcut Cepat:\n  [Spasi] : Nyalakan/Matikan Sensor Wajah\n  [F]     : Jeda/Lanjutkan Layar (Freeze)"
-        messagebox.showinfo('Pengaturan & Panduan BIFROST', msg)
-
-    def show_log_dialog(self):
-        log_txt = f"[OK] DirectShow Virtual Camera Driver Terdaftar\n[OK] Model AI YuNet Terhubung\n[OK] Voice Disguiser DSP Engine: {self.audio_mode.get()}\n[OK] Kamera Sumber: {self.available_cameras[self.combo_cams.current()]['name']}\n[INFO] Mengalirkan feed terenkripsi ke Google Meet / Zoom / OBS"
-        messagebox.showinfo('Log Sistem BIFROST', log_txt)
 
     def on_close(self):
         self.is_streaming = False
@@ -984,13 +1062,17 @@ class BIFROSTWitnessShieldApp:
                 self.cap.release()
             except Exception:
                 pass
+            self.cap = None
         self.root.destroy()
+
 
 def main():
     ensure_single_instance()
     time.sleep(0.1)
-    root = tk.Tk()
+    root = ctk.CTk()
     app = BIFROSTWitnessShieldApp(root)
     root.mainloop()
+
+
 if __name__ == '__main__':
     main()

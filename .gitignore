@@ -20,6 +20,11 @@ next-env.d.ts
 scratch/
 scratch_crop.png
 public/downloads/*.zip
+src-tauri/target/
+src-tauri/resources/
+vs_BuildTools.exe
+mitm_mcp_traffic.db
+
 CLAUDE.md
 *.py[cod]
 __pycache__/

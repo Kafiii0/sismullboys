@@ -73,6 +73,23 @@ export default function Home() {
 
       <section className="relative pt-36 pb-24 md:pt-44 md:pb-32 overflow-hidden border-b border-white/[0.08]">
         
+        {/* Animated Cyber Dark-Red Video Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/video/hero_poster.webp"
+            className="w-full h-full object-cover object-right lg:object-center brightness-[1.1] contrast-[1.15] opacity-65"
+          >
+            <source src="/video/hero_bg.mp4" type="video/mp4" />
+          </video>
+          {/* Subtle gradient overlays to blend seamlessly into #08080A and maintain text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#08080A]/95 via-[#08080A]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#08080A] via-transparent to-[#08080A]/70" />
+        </div>
+
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
         <div className="absolute top-1/4 left-[-100px] w-[500px] h-[500px] bg-red-600/10 blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-[-100px] w-[450px] h-[450px] bg-red-950/20 blur-[130px] rounded-full pointer-events-none" />
@@ -125,29 +142,30 @@ export default function Home() {
 
             </div>
 
-            <div className="lg:col-span-5">
-              <div className="rounded-2xl bg-[#0E0F14] border border-white/[0.1] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.85)] space-y-4">
+            <div className="lg:col-span-5 relative z-10">
+              <div className="rounded-2xl bg-[#0E0F14]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] space-y-4">
                 
+                {/* Header Controls */}
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-red-500" />
-                    <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-                      Interactive Evidence Preview
+                    <span className="text-xs font-mono font-semibold text-white uppercase tracking-wider">
+                      Evidence Preview
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-lg border border-white/[0.06]">
+                  <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-white/[0.06]">
                     <button
                       onClick={() => setHeroRedacted(false)}
-                      className={`px-2.5 py-1 rounded text-[11px] font-mono transition-all ${
-                        !heroRedacted ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'
+                      className={`px-3 py-1 rounded text-xs font-mono transition-all ${
+                        !heroRedacted ? 'bg-zinc-800 text-white font-medium' : 'text-zinc-400 hover:text-white'
                       }`}
                     >
                       Raw
                     </button>
                     <button
                       onClick={() => setHeroRedacted(true)}
-                      className={`px-2.5 py-1 rounded text-[11px] font-mono transition-all ${
-                        heroRedacted ? 'bg-red-600 text-white font-bold' : 'text-zinc-400 hover:text-white'
+                      className={`px-3 py-1 rounded text-xs font-mono transition-all ${
+                        heroRedacted ? 'bg-red-600 text-white font-medium shadow-md shadow-red-600/30' : 'text-zinc-400 hover:text-white'
                       }`}
                     >
                       Sanitized
@@ -155,56 +173,23 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#161821] border border-white/[0.06] space-y-3 font-mono text-xs">
-                  
-                  <div className="p-2 rounded bg-red-950/40 border border-red-500/30 text-red-300 text-[11px] flex items-center justify-between">
-                    <span>🇮🇩 REPUBLIK INDONESIA - KTP</span>
-                    <span className="text-[10px] uppercase font-bold text-red-400">Preserved Legal Marker</span>
-                  </div>
-
-                  <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-                    <span className="text-zinc-400">NIK (16-Digit ID):</span>
-                    <span className={heroRedacted ? 'bg-black text-red-400 px-2 py-0.5 rounded font-bold' : 'text-white'}>
-                      {heroRedacted ? '????????????????' : '3204122308990001'}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-                    <span className="text-zinc-400">Nama Lengkap:</span>
-                    <span className="text-zinc-200">SYAHRUL RAMADHAN</span>
-                  </div>
-
-                  <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-                    <span className="text-zinc-400">EXIF Geolocation:</span>
-                    <span className={heroRedacted ? 'text-red-400 font-bold' : 'text-amber-400'}>
-                      {heroRedacted ? '[PURGED - ZEROED]' : '-6.9732, 107.6304'}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-                    <span className="text-zinc-400">Hardware Serial:</span>
-                    <span className={heroRedacted ? 'text-red-400 font-bold' : 'text-zinc-300'}>
-                      {heroRedacted ? '[STRIPPED]' : 'iPhone15,3 SN#88419'}
-                    </span>
-                  </div>
-
-                  <div className="pt-2">
-                    <div className="text-[10px] text-zinc-400 mb-1">SHA-256 Integrity Verification:</div>
-                    <div className="text-[10px] p-2 rounded bg-black border border-white/[0.06] text-zinc-300 truncate">
-                      {heroRedacted 
-                        ? 'e8b4c91a02f3781d45bc901a4e76d9102c984b67f1a309e45c71bfa82910d43a' 
-                        : '8f4a7c29e13d98b0451a2f643e8d710b9c3e215840d2a891e45763bf018a3d52'
-                      }
-                    </div>
-                  </div>
-
+                {/* Clean Photo Frame */}
+                <div className="relative rounded-xl overflow-hidden border border-white/[0.08] aspect-square bg-[#08080A]">
+                  <img
+                    src={heroRedacted ? '/evidence_cinematic_sanitized_clean.jpg' : '/evidence_cinematic_raw.jpg'}
+                    alt="Evidence Preview"
+                    className="w-full h-full object-cover transition-opacity duration-200"
+                  />
                 </div>
 
-                <div className="flex items-center justify-between pt-1 text-xs">
-                  <span className="text-zinc-400">Test with full interactive canvas:</span>
-                  <Link href="/redact" className="text-red-400 hover:text-red-300 font-semibold flex items-center gap-1">
+                {/* Minimal Footer */}
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <span className="font-mono text-[11px] text-zinc-400">
+                    {heroRedacted ? 'Ocular privacy protected' : 'Original raw evidence'}
+                  </span>
+                  <Link href="/redact" className="text-red-400 hover:text-red-300 font-medium flex items-center gap-1 group">
                     <span>Open Workbench</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </Link>
                 </div>
 

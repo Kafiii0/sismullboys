@@ -20,7 +20,7 @@ import {
 
   Image as ImageIcon, FolderOpen, Smartphone, CreditCard,
 
-  FileCheck, Clipboard
+  FileCheck, Clipboard, Stamp
 } from 'lucide-react';
 
 export default function RedactStudioPage() {
@@ -701,6 +701,28 @@ export default function RedactStudioPage() {
                   Ganti File
 
                 </button>
+
+                {aiResult?.redacted_image_url && (
+                  <>
+                    <button
+                      onClick={handleDownloadSanitized}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition-all text-xs shadow-md shadow-red-600/30"
+                      title="Unduh gambar hasil sensor"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
+                    </button>
+
+                    <Link
+                      href="/watermark"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-semibold transition-all text-xs"
+                      title="Beri tanda tangan & watermark Post-Quantum (PQC)"
+                    >
+                      <Stamp className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Watermark PQC</span>
+                    </Link>
+                  </>
+                )}
 
                 <button
 
@@ -1445,57 +1467,7 @@ export default function RedactStudioPage() {
 
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#0E0F14] border border-white/[0.08] space-y-4 font-mono text-xs">
 
-                  <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-
-                    <div className="flex items-center gap-2">
-
-                      <Hash className="w-4 h-4 text-red-500" />
-
-                      <h3 className="text-sm font-bold font-grotesk uppercase tracking-wider text-white">
-
-                        Chain of Custody (SHA-256)
-
-                      </h3>
-
-                    </div>
-
-                    <button
-
-                      onClick={copyHashToClipboard}
-
-                      className="text-zinc-400 hover:text-white transition-colors"
-
-                      title="Salin Hash Sanitized"
-
-                    >
-
-                      {copiedHash ? <Check className="w-4 h-4 text-red-400" /> : <Copy className="w-4 h-4" />}
-
-                    </button>
-
-                  </div>
-
-                  <div className="space-y-2">
-
-                    <div>
-                      <div className="text-[10px] text-zinc-500 mb-1">SHA-256 Original:</div>
-                      <div className="p-2 rounded bg-black/60 border border-white/[0.04] text-[11px] text-zinc-300 break-all select-all">
-                        {aiResult?.raw_sha256 || 'Menunggu upload file...'}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-[10px] text-zinc-500 mb-1">SHA-256 Sanitized:</div>
-                      <div className="p-2 rounded bg-black/60 border border-white/[0.04] text-[11px] text-rose-400 break-all select-all">
-                        {aiResult?.sanitized_sha256 || 'Menunggu proses...'}
-                      </div>
-                    </div>
-
-                  </div>
-
-                </div>
 
               </div>
 

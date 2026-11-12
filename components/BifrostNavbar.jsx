@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   Menu, X, ArrowUpRight, Download, ChevronDown, 
   Video, Monitor, Shield, Layers, FileCheck, Sparkles, 
-  Lock, ShieldCheck, ChevronRight
+  Lock, ShieldCheck, ChevronRight, Stamp
 } from 'lucide-react';
 
 export default function BifrostNavbar() {
@@ -14,6 +14,7 @@ export default function BifrostNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProgramsOpen, setMobileProgramsOpen] = useState(false);
   const [mobilePlatformOpen, setMobilePlatformOpen] = useState(false);
+  const [mobileStudioOpen, setMobileStudioOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null); 
   const timeoutRef = useRef(null);
   const pathname = usePathname();
@@ -172,18 +173,56 @@ export default function BifrostNavbar() {
               )}
             </div>
 
-            <Link
-              href="/redact"
-              onClick={closeDropdown}
-              className={`transition-colors flex items-center gap-1.5 ${
-                pathname === '/redact' ? 'text-red-400 font-bold' : 'text-zinc-300 hover:text-white'
-              }`}
+            <div 
+              className="relative"
+              onMouseEnter={() => handleMouseEnter('studio')}
+              onMouseLeave={handleMouseLeave}
             >
-              <span>Redact Studio</span>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30">
-                Web
-              </span>
-            </Link>
+              <button
+                onClick={() => setActiveDropdown(activeDropdown === 'studio' ? null : 'studio')}
+                className={`inline-flex items-center gap-1.5 transition-colors py-1 cursor-pointer ${
+                  pathname === '/redact' || pathname === '/watermark' || pathname === '/verify'
+                    ? 'text-red-400 font-bold'
+                    : 'text-zinc-300 hover:text-white'
+                }`}
+              >
+                <span>Studio</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'studio' ? 'rotate-180 text-red-400' : 'text-zinc-500'}`} />
+              </button>
+
+              {activeDropdown === 'studio' && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-52 z-50">
+                  <div className="rounded-xl bg-[#0D0F14]/95 backdrop-blur-xl border border-white/10 p-1.5 shadow-2xl space-y-0.5">
+                    <Link
+                      href="/redact"
+                      onClick={closeDropdown}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <Shield className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                      <span>Redact Studio</span>
+                    </Link>
+
+                    <Link
+                      href="/watermark?tab=add"
+                      onClick={closeDropdown}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <Stamp className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                      <span>Add Watermark (PQC)</span>
+                    </Link>
+
+                    <Link
+                      href="/watermark?tab=verify"
+                      onClick={closeDropdown}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-zinc-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Cek Keaslian</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
 
           </nav>
 
@@ -303,13 +342,44 @@ export default function BifrostNavbar() {
               )}
             </div>
 
-            <Link
-              href="/redact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-red-400 hover:text-red-300 py-1"
-            >
-              Redact Studio (Web)
-            </Link>
+            <div className="border-b border-white/[0.06] pb-2 space-y-2">
+              <button
+                onClick={() => setMobileStudioOpen(!mobileStudioOpen)}
+                className="w-full flex items-center justify-between text-zinc-300 py-1"
+              >
+                <span>Studio &amp; Forensik</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${mobileStudioOpen ? 'rotate-180 text-red-400' : ''}`} />
+              </button>
+
+              {mobileStudioOpen && (
+                <div className="pl-3 space-y-2.5 text-xs text-zinc-400 font-sans normal-case">
+                  <Link
+                    href="/redact"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block hover:text-white"
+                  >
+                    <strong className="text-white block">Redact Studio (Web)</strong>
+                    Sensor KTP, SIM, Chat WA &amp; Wajah
+                  </Link>
+                  <Link
+                    href="/watermark?tab=add"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block hover:text-white"
+                  >
+                    <strong className="text-white block">Add Watermark (PQC)</strong>
+                    Tanda tangan Post-Quantum ML-DSA-65
+                  </Link>
+                  <Link
+                    href="/watermark?tab=verify"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block hover:text-white"
+                  >
+                    <strong className="text-white block">Cek Keaslian</strong>
+                    Verifikasi integritas &amp; deteksi manipulasi
+                  </Link>
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="pt-6 border-t border-white/[0.08] flex flex-col gap-3">

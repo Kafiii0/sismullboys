@@ -25,12 +25,12 @@ export default function ProgramsPage() {
         { label: 'Offline & Low Latency', desc: 'Komputasi lokal tanpa internet dengan latensi < 15ms.' }
       ],
       specs: {
-        executable: 'BIFROST_Witness_Cam.exe',
+        executable: 'BIFROST_Witness_Cam_Setup.exe',
         os: 'Windows 10 / 11 (64-bit)',
-        size: '79.1 MB ZIP',
-        type: 'Portable Standalone (.exe)'
+        size: '83.9 MB Installer',
+        type: 'Windows Setup Installer (.exe)'
       },
-      downloadUrl: '/downloads/BIFROST_Witness_Cam_Windows.zip',
+      downloadUrl: '/downloads/BIFROST_Witness_Cam_Setup.exe',
       docUrl: '/witness-shield',
       accentBtn: 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-red-600/30'
     },
@@ -50,12 +50,12 @@ export default function ProgramsPage() {
         { label: 'Panic Blackout Hotkey', desc: 'Tombol darurat instan [Spasi] untuk memadamkan layar.' }
       ],
       specs: {
-        executable: 'BIFROST_HDMI_Shield.exe',
+        executable: 'BIFROST_HDMI_Shield_Setup.exe',
         os: 'Windows 10 / 11 (64-bit)',
-        size: '119.5 MB ZIP',
-        type: 'Portable Standalone (.exe)'
+        size: '93.5 MB Installer',
+        type: 'Windows Setup Installer (.exe)'
       },
-      downloadUrl: '/downloads/BIFROST_HDMI_Shield_Windows.zip',
+      downloadUrl: '/downloads/BIFROST_HDMI_Shield_Setup.exe',
       docUrl: '/screen-shield',
       accentBtn: 'bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 shadow-rose-600/30'
     }

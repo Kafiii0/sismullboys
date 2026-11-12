@@ -58,12 +58,12 @@ export default function ScreenShieldPage() {
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
             <a
-              href="/downloads/BIFROST_HDMI_Shield_Windows.zip"
+              href="/downloads/BIFROST_HDMI_Shield_Setup.exe"
               download
               className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98] border border-red-400/40"
             >
               <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-              <span>Unduh HDMI Shield (.zip)</span>
+              <span>Unduh HDMI Shield Installer (.exe)</span>
             </a>
 
             <Link
@@ -76,9 +76,9 @@ export default function ScreenShieldPage() {
           </div>
 
           <div className="text-xs font-mono text-zinc-400 pt-1 flex items-center justify-center gap-3">
-            <span>Berkas: <strong>BIFROST_HDMI_Shield.exe</strong></span>
+            <span>Berkas: <strong>BIFROST_HDMI_Shield_Setup.exe</strong></span>
             <span>•</span>
-            <span>Ukuran: <strong>119.5 MB ZIP</strong></span>
+            <span>Ukuran: <strong>93.5 MB Installer</strong></span>
             <span>•</span>
             <span>Windows 10 / 11 64-bit</span>
           </div>
@@ -210,21 +210,21 @@ export default function ScreenShieldPage() {
                 </p>
               </div>
               <a
-                href="/downloads/BIFROST_HDMI_Shield_Windows.zip"
+                href="/downloads/BIFROST_HDMI_Shield_Setup.exe"
                 download
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold uppercase transition-all shadow-lg shrink-0"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red-600 hover:from-red-500 hover:to-rose-500 text-white font-mono text-xs font-bold uppercase transition-all shadow-lg shrink-0"
               >
                 <Download className="w-4 h-4" />
-                <span>Unduh ZIP (119.5 MB)</span>
+                <span>Unduh Setup (.exe - 93.5 MB)</span>
               </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-mono text-xs">
               <div className="p-4 rounded-xl bg-black/50 border border-white/[0.06] space-y-2">
                 <span className="w-6 h-6 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">1</span>
-                <h4 className="text-white font-bold">Buka Program</h4>
+                <h4 className="text-white font-bold">Install & Buka</h4>
                 <p className="text-zinc-400 font-sans text-xs leading-relaxed">
-                  Ekstrak berkas ZIP lalu buka <code>BIFROST_HDMI_Shield.exe</code>.
+                  Jalankan <code>BIFROST_HDMI_Shield_Setup.exe</code>, ikuti wizard, lalu buka BIFROST HDMI Shield dari Desktop / Start Menu.
                 </p>
               </div>
 

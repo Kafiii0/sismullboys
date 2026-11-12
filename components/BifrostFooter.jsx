@@ -15,12 +15,6 @@ export default function BifrostFooter() {
             <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
               Digital multimedia evidence manipulation and sanitization suite. Selective credential redaction, container telemetry purging, and cryptographic custody verification for judicial admissibility.
             </p>
-            <div className="pt-2">
-              <span className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 bg-white/[0.03] border border-white/[0.06] px-3 py-1.5 rounded-md">
-                <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse"></span>
-                Telkom University &bull; Sistem Multimedia (CBK2CAB3)
-              </span>
-            </div>
           </div>
 
           <div className="md:col-span-3 space-y-3">

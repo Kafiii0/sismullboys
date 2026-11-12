@@ -18,6 +18,7 @@ echo.
 echo [2/3] Compiling BIFROST_Witness_Cam.exe with PyInstaller...
 pyinstaller --noconfirm --onedir --windowed ^
     --name "BIFROST_Witness_Cam" ^
+    --collect-all customtkinter ^
     --exclude-module torch ^
     --exclude-module torchvision ^
     --exclude-module tensorflow ^
