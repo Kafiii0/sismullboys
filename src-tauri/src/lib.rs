@@ -72,6 +72,9 @@ pub fn run() {
                         const CREATE_NO_WINDOW: u32 = 0x08000000;
                         let _ = Command::new(&engine_path)
                             .args(&["--parent-pid", &current_pid])
+                            .stdin(std::process::Stdio::null())
+                            .stdout(std::process::Stdio::null())
+                            .stderr(std::process::Stdio::null())
                             .creation_flags(CREATE_NO_WINDOW)
                             .spawn();
                     }

@@ -1,5 +1,43 @@
 import sys
 import os
+
+# Crucial fix for PyInstaller Windows GUI / CREATE_NO_WINDOW mode where stdout/stderr are None
+log_dir = os.path.join(os.environ.get('LOCALAPPDATA', os.path.expanduser('~')), 'BIFROST')
+try:
+    os.makedirs(log_dir, exist_ok=True)
+    _hdmi_log_file = open(os.path.join(log_dir, 'hdmi_engine.log'), 'a', encoding='utf-8', errors='replace')
+except Exception:
+    _hdmi_log_file = None
+
+class SafeStreamWriter:
+    def __init__(self, target_file=None):
+        self.target = target_file
+    def write(self, s):
+        if self.target:
+            try:
+                self.target.write(s)
+                self.target.flush()
+            except Exception:
+                pass
+    def flush(self):
+        if self.target:
+            try:
+                self.target.flush()
+            except Exception:
+                pass
+    def isatty(self):
+        return False
+
+if sys.stdout is None or not hasattr(sys.stdout, 'isatty'):
+    sys.stdout = SafeStreamWriter(_hdmi_log_file)
+if sys.stderr is None or not hasattr(sys.stderr, 'isatty'):
+    sys.stderr = SafeStreamWriter(_hdmi_log_file)
+if sys.stdin is None:
+    class SafeStreamReader:
+        def read(self, *a, **k): return ""
+        def readline(self, *a, **k): return ""
+    sys.stdin = SafeStreamReader()
+
 import re
 import time
 import threading
@@ -641,5 +679,5 @@ if __name__ == '__main__':
         except Exception:
             pass
 
-    uvicorn.run(app, host="127.0.0.1", port=8766, log_level="warning")
+    uvicorn.run(app, host="127.0.0.1", port=8766, log_level="warning", log_config=None)
 
