@@ -661,3 +661,4 @@ if __name__ == '__main__':
     os.makedirs(os.path.dirname(out2), exist_ok=True)
     build_manual_book_docx(out1)
     shutil.copyfile(out1, out2)
+

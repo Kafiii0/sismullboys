@@ -12,8 +12,6 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const [heroRedacted, setHeroRedacted] = useState(true);
-
   const capabilities = [
     {
       step: '01',
@@ -94,106 +92,51 @@ export default function Home() {
         <div className="absolute top-1/4 left-[-100px] w-[500px] h-[500px] bg-red-600/10 blur-[140px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-[-100px] w-[450px] h-[450px] bg-red-950/20 blur-[130px] rounded-full pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <div className="flex flex-col items-center space-y-6 max-w-3xl mx-auto">
             
-            <div className="lg:col-span-7 space-y-6">
-              
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-zinc-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                <span>FORENSIC EVIDENCE SANITIZATION SUITE</span>
-              </div>
-
-              <h1 className="font-grotesk text-3xl sm:text-4xl lg:text-[46px] font-bold tracking-tight text-white leading-[1.18]">
-                Forensic Media Redaction with Zero{' '}
-                <span className="text-red-500 underline decoration-red-500/30 underline-offset-8">
-                  Evidentiary
-                </span>{' '}
-                Context Loss.
-              </h1>
-
-              <p className="text-sm sm:text-base text-zinc-300 font-sans leading-relaxed max-w-xl font-light">
-                Selective credential masking and container metadata stripping for digital evidence. Redact sensitive NIK, financial tokens, and biometric identifiers while preserving legal authority headers, purging hardware EXIF telemetry, and certifying SHA-256 chain of custody.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <Link
-                  href="/redact"
-                  className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-lg shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span>Launch Redact Studio</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-black/40 hover:bg-white/[0.08] text-white border border-white/10 hover:border-white/20 font-semibold text-xs tracking-wider uppercase backdrop-blur-sm transition-all"
-                >
-                  <span>How It Works</span>
-                </a>
-              </div>
-
-              <div className="pt-2 flex items-center gap-3 text-xs font-mono text-zinc-400">
-                <span className="text-zinc-500">Standard:</span>
-                <span>ISO/IEC 27037:2012</span>
-                <span className="text-zinc-600">|</span>
-                <span>UU PDP 27/2022</span>
-              </div>
-
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              <span>FORENSIC EVIDENCE SANITIZATION SUITE</span>
             </div>
 
-            <div className="lg:col-span-5 relative z-10">
-              <div className="rounded-2xl bg-[#0E0F14]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] space-y-4">
-                
-                {/* Header Controls */}
-                <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-red-500" />
-                    <span className="text-xs font-mono font-semibold text-white uppercase tracking-wider">
-                      Evidence Preview
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 bg-black/60 p-1 rounded-lg border border-white/[0.06]">
-                    <button
-                      onClick={() => setHeroRedacted(false)}
-                      className={`px-3 py-1 rounded text-xs font-mono transition-all ${
-                        !heroRedacted ? 'bg-zinc-800 text-white font-medium' : 'text-zinc-400 hover:text-white'
-                      }`}
-                    >
-                      Raw
-                    </button>
-                    <button
-                      onClick={() => setHeroRedacted(true)}
-                      className={`px-3 py-1 rounded text-xs font-mono transition-all ${
-                        heroRedacted ? 'bg-red-600 text-white font-medium shadow-md shadow-red-600/30' : 'text-zinc-400 hover:text-white'
-                      }`}
-                    >
-                      Sanitized
-                    </button>
-                  </div>
-                </div>
+            <h1 className="font-grotesk text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.14]">
+              Forensic Media Redaction with Zero{' '}
+              <span className="text-red-500 underline decoration-red-500/30 underline-offset-8">
+                Evidentiary
+              </span>{' '}
+              Context Loss.
+            </h1>
 
-                {/* Clean Photo Frame */}
-                <div className="relative rounded-xl overflow-hidden border border-white/[0.08] aspect-square bg-[#08080A]">
-                  <img
-                    src={heroRedacted ? '/evidence_cinematic_sanitized_clean.jpg' : '/evidence_cinematic_raw.jpg'}
-                    alt="Evidence Preview"
-                    className="w-full h-full object-cover transition-opacity duration-200"
-                  />
-                </div>
+            <p className="text-sm sm:text-base text-zinc-300 font-sans leading-relaxed max-w-2xl font-light">
+              Selective credential masking and container metadata stripping for digital evidence. Redact sensitive NIK, financial tokens, and biometric identifiers while preserving legal authority headers, purging hardware EXIF telemetry, and certifying SHA-256 chain of custody.
+            </p>
 
-                {/* Minimal Footer */}
-                <div className="flex items-center justify-between text-xs pt-1">
-                  <span className="font-mono text-[11px] text-zinc-400">
-                    {heroRedacted ? 'Ocular privacy protected' : 'Original raw evidence'}
-                  </span>
-                  <Link href="/redact" className="text-red-400 hover:text-red-300 font-medium flex items-center gap-1 group">
-                    <span>Open Workbench</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </Link>
-                </div>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <Link
+                href="/redact"
+                className="group relative inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-lg shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Launch Redact Studio</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
 
-              </div>
+              <Link
+                href="/programs"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-black/40 hover:bg-white/[0.08] text-white border border-white/10 hover:border-white/20 font-semibold text-xs tracking-wider uppercase backdrop-blur-sm transition-all"
+              >
+                <Download className="w-3.5 h-3.5 text-red-400" />
+                <span>Download Desktop Apps</span>
+              </Link>
+            </div>
+
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-zinc-400">
+              <span className="text-zinc-500">Standard Compliance:</span>
+              <span className="px-2.5 py-1 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300">ISO/IEC 27037:2012</span>
+              <span className="text-zinc-600">•</span>
+              <span className="px-2.5 py-1 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300">UU PDP No. 27/2022</span>
+              <span className="text-zinc-600">•</span>
+              <span className="px-2.5 py-1 rounded bg-white/[0.04] border border-white/[0.06] text-zinc-300">SHA-256 Digest Integrity</span>
             </div>
 
           </div>
