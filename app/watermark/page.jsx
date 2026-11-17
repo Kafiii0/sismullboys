@@ -504,7 +504,7 @@ function WatermarkStudioContent() {
     <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#07080B] text-zinc-100 flex flex-col font-sans selection:bg-red-950 selection:text-red-200">
       <BifrostNavbar />
 
-      <main className="flex-1 flex flex-col min-h-0 w-full pt-20 sm:pt-22 pb-3 px-3 sm:px-6 max-w-[1600px] mx-auto">
+      <main className="flex-1 flex flex-col min-h-0 w-full pt-28 md:pt-32 pb-4 px-3 sm:px-6 max-w-[1600px] mx-auto">
         
         {/* ========================================================================= */}
         {/* COMPACT TOP BAR HEADER (NO OUTER SCREEN SCROLL) */}
