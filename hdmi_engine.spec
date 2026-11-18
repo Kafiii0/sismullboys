@@ -1,12 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_all
 
+ocr_datas, ocr_binaries, ocr_hiddenimports = collect_all('rapidocr_onnxruntime')
 
 a = Analysis(
     ['desktop/hdmi_engine.py'],
     pathex=[],
-    binaries=[],
-    datas=[],
-    hiddenimports=[],
+    binaries=ocr_binaries,
+    datas=ocr_datas,
+    hiddenimports=ocr_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -14,6 +16,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+a.binaries = [b for b in a.binaries if 'opencv_videoio_ffmpeg' not in b[0].lower() and '_avif' not in b[0].lower()]
 pyz = PYZ(a.pure)
 
 exe = EXE(

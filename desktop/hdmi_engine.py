@@ -52,7 +52,44 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 
-user32 = ctypes.windll.user32
+user32 = ctypes.WinDLL('user32', use_last_error=True)
+
+WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+GW_HWNDNEXT = 2
+WDA_EXCLUDEFROMCAPTURE = 0x00000011
+
+user32.GetForegroundWindow.argtypes = []
+user32.GetForegroundWindow.restype = wintypes.HWND
+
+user32.GetTopWindow.argtypes = [wintypes.HWND]
+user32.GetTopWindow.restype = wintypes.HWND
+
+user32.GetWindow.argtypes = [wintypes.HWND, wintypes.UINT]
+user32.GetWindow.restype = wintypes.HWND
+
+user32.IsWindowVisible.argtypes = [wintypes.HWND]
+user32.IsWindowVisible.restype = wintypes.BOOL
+
+user32.IsIconic.argtypes = [wintypes.HWND]
+user32.IsIconic.restype = wintypes.BOOL
+
+user32.GetWindowRect.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.RECT)]
+user32.GetWindowRect.restype = wintypes.BOOL
+
+user32.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+user32.GetWindowTextLengthW.restype = ctypes.c_int
+
+user32.GetWindowTextW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+user32.GetWindowTextW.restype = ctypes.c_int
+
+user32.GetWindowThreadProcessId.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.DWORD)]
+user32.GetWindowThreadProcessId.restype = wintypes.DWORD
+
+user32.FindWindowW.argtypes = [wintypes.LPCWSTR, wintypes.LPCWSTR]
+user32.FindWindowW.restype = wintypes.HWND
+
+user32.SetWindowDisplayAffinity.argtypes = [wintypes.HWND, wintypes.DWORD]
+user32.SetWindowDisplayAffinity.restype = wintypes.BOOL
 
 try:
     import rapidocr_onnxruntime
@@ -64,11 +101,11 @@ except Exception:
 # ==============================================================================
 EMAIL_REGEX = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b', re.IGNORECASE)
 PHONE_REGEX = re.compile(r'(?:\+?62|08)[\d\s-]{7,16}')
-PASSWORD_BULLETS_REGEX = re.compile(r'(?:[•●\*\.]{3,}|[\u2022\u25cf\u2219\u25aa\u22c5]{2,})')
+PASSWORD_BULLETS_REGEX = re.compile(r'(?:[•●\*\.]{3,}|[\u2022\u25cf\u2219\u25aa\u22c5]{2,}|[\*•●]{4,})')
 TOKEN_REGEX = re.compile(r'\b(ey[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}|\bghp_[0-9a-zA-Z]{30,}|\b[a-fA-F0-9]{32,64}\b)')
 CREDIT_CARD_REGEX = re.compile(r'\b(?:\d{4}[ -]?){3}\d{4}\b')
 NIK_REGEX = re.compile(r'\b\d{16}\b')
-BANK_ACCOUNT_REGEX = re.compile(r'\b\d{10,16}\b')
+BANK_ACCOUNT_REGEX = re.compile(r'\b(?:\d{10,16}|\d[\d -]{10,22}\d)\b')
 
 FORM_LABEL_MAPPINGS = {
     'email': 'KOLOM EMAIL',
@@ -82,6 +119,9 @@ FORM_LABEL_MAPPINGS = {
     'api key': 'KOLOM API KEY',
     'rekening': 'KOLOM REKENING',
     'no rekening': 'KOLOM REKENING',
+    'nomor akun': 'KOLOM AKUN',
+    'server id': 'KOLOM SERVER ID',
+    'ip:': 'KOLOM IP',
     'card number': 'KOLOM KARTU',
     'cvv': 'KOLOM CVV',
     'otp': 'KOLOM OTP'
@@ -92,6 +132,28 @@ NON_BROWSER_EXES = {
     'antigravity.exe', 'code.exe', 'cursor.exe', 'devenv.exe', 'pycharm64.exe',
     'idea64.exe', 'powerpnt.exe', 'winword.exe', 'excel.exe', 'notepad.exe',
     'explorer.exe', 'cmd.exe', 'powershell.exe', 'pwsh.exe', 'obs64.exe', 'app.exe'
+}
+SHELL_PSEUDO_TITLES = {
+    'program manager',
+    'windows input experience',
+    'microsoft text input application',
+    'windows shell experience host',
+    'search',
+    'start',
+}
+SHELL_PSEUDO_EXES = {
+    'textinputhost.exe',
+    'shellexperiencehost.exe',
+    'searchhost.exe',
+    'searchapp.exe',
+    'startmenuexperiencehost.exe',
+    'lockapp.exe',
+}
+BIFROST_SELF_EXES = {
+    'hdmi_engine.exe',
+    'witness_engine.exe',
+    'bifrost hdmi shield.exe',
+    'bifrost witness cam.exe',
 }
 
 _PID_PNAME_CACHE = {}
@@ -112,90 +174,136 @@ def get_process_name_cached(pid_val):
     except Exception:
         return ''
 
-def get_foreground_process_info():
+def _get_window_info(hwnd):
+    if not hwnd:
+        return None
     try:
-        hwnd = user32.GetForegroundWindow()
-        if not hwnd:
-            return ('', '')
+        if not user32.IsWindowVisible(hwnd) or user32.IsIconic(hwnd):
+            return None
+        rect = wintypes.RECT()
+        if not user32.GetWindowRect(hwnd, ctypes.byref(rect)):
+            return None
+        w = rect.right - rect.left
+        h = rect.bottom - rect.top
+        if w <= 20 or h <= 20:
+            return None
         pid = wintypes.DWORD()
         user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         pname = get_process_name_cached(pid.value)
         length = user32.GetWindowTextLengthW(hwnd)
-        buff = ctypes.create_unicode_buffer(length + 1)
-        user32.GetWindowTextW(hwnd, buff, length + 1)
-        title = buff.value.lower()
-        return (pname, title)
+        title = ''
+        if length > 0:
+            buff = ctypes.create_unicode_buffer(length + 1)
+            user32.GetWindowTextW(hwnd, buff, length + 1)
+            title = buff.value.lower().strip()
+        return (hwnd, pname, title, (rect.left, rect.top, rect.right, rect.bottom))
     except Exception:
-        return ('', '')
+        return None
+
+def is_bifrost_self_window(pname, title):
+    p = (pname or '').lower()
+    t = (title or '').lower()
+    return ('bifrost' in t) or (p in BIFROST_SELF_EXES)
+
+def _is_shell_pseudo_window(pname, title, rect):
+    p = (pname or '').lower()
+    t = (title or '').lower()
+    if t in SHELL_PSEUDO_TITLES or p in SHELL_PSEUDO_EXES:
+        return True
+    if p == 'explorer.exe' and t in ('', 'program manager'):
+        return True
+    return False
+
+def iter_visible_windows_z_order(screen_w=1920, screen_h=1080):
+    hwnd = user32.GetTopWindow(None)
+    seen = set()
+    steps = 0
+    while hwnd and hwnd not in seen and steps < 512:
+        seen.add(hwnd)
+        steps += 1
+        info = _get_window_info(hwnd)
+        if info is not None:
+            _, _, _, (left, top, right, bottom) = info
+            if right > 0 and bottom > 0 and left < screen_w and top < screen_h:
+                yield info
+        hwnd = user32.GetWindow(hwnd, GW_HWNDNEXT)
+
+def get_active_target_window(screen_w=1920, screen_h=1080):
+    fg_hwnd = user32.GetForegroundWindow()
+    if fg_hwnd:
+        fg_info = _get_window_info(fg_hwnd)
+        if fg_info is not None:
+            _, fg_pname, fg_title, fg_rect = fg_info
+            if not is_bifrost_self_window(fg_pname, fg_title) and not _is_shell_pseudo_window(fg_pname, fg_title, fg_rect):
+                return fg_info
+
+    for info in iter_visible_windows_z_order(screen_w, screen_h):
+        _, pname, title, rect = info
+        if is_bifrost_self_window(pname, title):
+            continue
+        if _is_shell_pseudo_window(pname, title, rect):
+            continue
+        w = rect[2] - rect[0]
+        h = rect[3] - rect[1]
+        if w > 100 and h > 100 and (title or pname):
+            return info
+    return None
+
+def get_foreground_process_info():
+    target = get_active_target_window()
+    if target is not None:
+        return (target[1], target[2])
+    return ('', '')
 
 def check_win32_toast_window(screen_w=1920, screen_h=1080):
-    found_box = None
-    try:
-        def callback(hwnd, extra):
-            nonlocal found_box
-            if not user32.IsWindowVisible(hwnd):
-                return 1
-            rect = wintypes.RECT()
-            user32.GetWindowRect(hwnd, ctypes.byref(rect))
-            w = rect.right - rect.left
-            h = rect.bottom - rect.top
-            if rect.left >= int(screen_w * 0.55) and rect.top >= int(screen_h * 0.45):
-                if 160 <= w <= 540 and 40 <= h <= 320:
-                    found_box = (max(0, rect.left), max(0, rect.top), w, h)
-                    return 0
-            return 1
-        WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
-        user32.EnumWindows(WNDENUMPROC(callback), 0)
-    except Exception:
-        pass
-    return found_box
+    for _, pname, title, (left, top, right, bottom) in iter_visible_windows_z_order(screen_w, screen_h):
+        if is_bifrost_self_window(pname, title):
+            continue
+        w = right - left
+        h = bottom - top
+        if left >= int(screen_w * 0.55) and top >= int(screen_h * 0.45):
+            if 160 <= w <= 560 and 40 <= h <= 360:
+                if pname == 'explorer.exe' and h <= 60 and bottom >= screen_h - 4:
+                    continue
+                return (max(0, left), max(0, top), w, h)
+    return None
+
+def _is_browser_window(pname, title):
+    p = (pname or '').lower()
+    t = (title or '').lower()
+    if p in NON_BROWSER_EXES or any(ex in p for ex in ['antigravity', 'code', 'cursor', 'terminal', 'powerpnt']):
+        return False
+    return (
+        p in REAL_BROWSER_EXES or
+        any(p.startswith(prefix) for prefix in ['chrome', 'msedge', 'brave', 'firefox', 'opera', 'vivaldi']) or
+        any(t.endswith(sfx) for sfx in ['- brave', '- google chrome', '- microsoft edge', '- mozilla firefox', '- opera', '- vivaldi'])
+    )
 
 def scan_whatsapp_windows(screen_w=1920, screen_h=1080):
     wa_rects = []
-    is_fg_wa = False
     fg_hwnd = user32.GetForegroundWindow()
-    if fg_hwnd:
-        pname, title = get_foreground_process_info()
-        if 'whatsapp' in pname or 'whatsapp' in title:
-            is_fg_wa = True
-            rect = wintypes.RECT()
-            user32.GetWindowRect(fg_hwnd, ctypes.byref(rect))
-            wx = max(0, rect.left)
-            wy = max(0, rect.top)
-            ww = min(screen_w - wx, rect.right - rect.left)
-            wh = min(screen_h - wy, rect.bottom - rect.top)
-            if ww > 150 and wh > 150:
-                wa_rects.append((wx, wy, ww, wh))
-                return wa_rects, is_fg_wa
+    is_fg_wa = False
+    top_offset = int(124 * (screen_h / 1080.0))
 
-    def enum_cb(hwnd, lparam):
-        if not user32.IsWindowVisible(hwnd) or user32.IsIconic(hwnd):
-            return True
-        rect = wintypes.RECT()
-        user32.GetWindowRect(hwnd, ctypes.byref(rect))
-        w = rect.right - rect.left
-        h = rect.bottom - rect.top
-        if w < 180 or h < 180:
-            return True
-        length = user32.GetWindowTextLengthW(hwnd)
-        buff = ctypes.create_unicode_buffer(length + 1)
-        user32.GetWindowTextW(hwnd, buff, length + 1)
-        title = buff.value.lower()
-        if 'whatsapp' in title:
-            wx = max(0, rect.left)
-            wy = max(0, rect.top)
-            ww = min(screen_w - wx, w)
-            wh = min(screen_h - wy, h)
+    for hwnd, pname, title, (left, top, right, bottom) in iter_visible_windows_z_order(screen_w, screen_h):
+        if is_bifrost_self_window(pname, title):
+            continue
+        if _is_shell_pseudo_window(pname, title, (left, top, right, bottom)):
+            continue
+        p = (pname or '').lower()
+        t = (title or '').lower()
+        if 'whatsapp' in p or 'whatsapp' in t or 'web.whatsapp' in t:
+            wx = max(0, left)
+            wy = max(0, top)
+            ww = min(screen_w - wx, right - wx)
+            wh = min(screen_h - wy, bottom - wy)
+            if _is_browser_window(p, t):
+                wy = min(screen_h, wy + top_offset)
+                wh = max(0, wh - top_offset)
             if ww > 150 and wh > 150:
+                if hwnd == fg_hwnd:
+                    is_fg_wa = True
                 wa_rects.append((wx, wy, ww, wh))
-            return True
-        return True
-
-    try:
-        WNDENUMPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
-        user32.EnumWindows(WNDENUMPROC(enum_cb), 0)
-    except Exception:
-        pass
     return wa_rects, is_fg_wa
 
 
@@ -228,23 +336,47 @@ class SmartToastDetector:
 
 class SmartBookmarkDetector:
     def __init__(self):
-        self.custom_y_offset = 80
-        self.custom_height = 46
+        self.custom_y_offset = 76
+        self.custom_height = 48
 
     def check(self, H, W):
-        pname, title = get_foreground_process_info()
-        if pname in NON_BROWSER_EXES or any(ex in pname for ex in ['antigravity', 'code', 'cursor', 'terminal', 'powerpnt']):
-            return False, 0, 0
-        is_real_browser = (
-            pname in REAL_BROWSER_EXES or
-            any(pname.startswith(p) for p in ['chrome', 'msedge', 'brave', 'firefox', 'opera']) or
-            any(title.endswith(sfx) for sfx in ['- google chrome', '- microsoft edge', '- brave', '- mozilla firefox'])
-        )
-        if is_real_browser:
-            y1 = int(self.custom_y_offset * (H / 1080.0))
-            y2 = y1 + int(self.custom_height * (H / 1080.0))
-            return True, y1, y2
-        return False, 0, 0
+        target = get_active_target_window(W, H)
+        if target is not None:
+            _, pname, title, (left, top, right, bottom) = target
+            if _is_browser_window(pname, title):
+                bx = max(0, left)
+                by = max(0, top)
+                bw = max(0, min(W, right) - bx)
+                y1 = by + int(self.custom_y_offset * (H / 1080.0))
+                y2 = by + int((self.custom_y_offset + self.custom_height) * (H / 1080.0))
+                bh = max(0, min(H, y2) - y1)
+                if bw > 100 and bh > 10:
+                    return True, bx, y1, bw, bh
+
+        # Check Z-order for an exposed (non-occluded) visible browser window
+        occluders = []
+        for _, pname, title, rect in iter_visible_windows_z_order(W, H):
+            if is_bifrost_self_window(pname, title) or _is_shell_pseudo_window(pname, title, rect):
+                continue
+            if _is_browser_window(pname, title):
+                left, top, right, bottom = rect
+                bx = max(0, left)
+                by = max(0, top)
+                bw = max(0, min(W, right) - bx)
+                y1 = by + int(self.custom_y_offset * (H / 1080.0))
+                y2 = by + int((self.custom_y_offset + self.custom_height) * (H / 1080.0))
+                bh = max(0, min(H, y2) - y1)
+                if bw > 100 and bh > 10:
+                    # Check if a higher non-BIFROST window completely occludes this bookmark strip
+                    strip_occluded = any(
+                        occ[0] <= bx + 40 and occ[2] >= bx + bw - 40 and occ[1] <= y1 and occ[3] >= y1 + bh
+                        for occ in occluders
+                    )
+                    if not strip_occluded:
+                        return True, bx, y1, bw, bh
+            occluders.append(rect)
+
+        return False, 0, 0, 0, 0
 
 
 class SmartAntiLoopDetector:
@@ -254,7 +386,10 @@ class SmartAntiLoopDetector:
     def check(self):
         if not self.enabled:
             return False, ''
-        _, title = get_foreground_process_info()
+        target = get_active_target_window()
+        if target is None:
+            return False, ''
+        title = target[2]
         if any(k in title for k in ['meet.google.com', 'google meet']) or title.startswith('meet - ') or '- meet -' in title:
             return True, 'Google Meet (Anti-Loop)'
         if any(k in title for k in ['zoom meeting', 'zoom workplace', 'microsoft teams']):
@@ -267,8 +402,8 @@ class SmartAntiLoopDetector:
 # ==============================================================================
 class HDMIShieldEngine:
     def __init__(self):
-        self.sct = mss.mss()
-        self.monitors = self.sct.monitors
+        with mss.mss() as sct:
+            self.monitors = list(sct.monitors)
         self.selected_monitor_idx = 1 if len(self.monitors) > 1 else 0
         
         self.is_streaming = True
@@ -318,10 +453,10 @@ class HDMIShieldEngine:
 
     def apply_mask(self, img, x, y, w, h, style='mosaic', badge_text=''):
         H, W = img.shape[:2]
-        x = max(0, x)
-        y = max(0, y)
-        w = min(w, W - x)
-        h = min(h, H - y)
+        x = max(0, int(x))
+        y = max(0, int(y))
+        w = min(int(w), W - x)
+        h = min(int(h), H - y)
         if w <= 0 or h <= 0:
             return
         if style == 'solid':
@@ -341,10 +476,14 @@ class HDMIShieldEngine:
                 img[y:y+h, x:x+w] = cv2.GaussianBlur(roi, (k, k), 35)
 
         if badge_text and w >= 120 and h >= 24:
-            label = f'🔒 {badge_text}'
-            cv2.rectangle(img, (x + 8, y + 6), (x + min(w - 10, 220), y + 28), (15, 23, 42), -1)
-            cv2.rectangle(img, (x + 8, y + 6), (x + min(w - 10, 220), y + 28), (56, 189, 248), 1)
-            cv2.putText(img, label, (x + 14, y + 22), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (241, 245, 249), 1, cv2.LINE_AA)
+            label = f'[SENSOR] {badge_text}'
+            rx1 = min(W - 2, x + 8)
+            ry1 = min(H - 2, y + 6)
+            rx2 = max(rx1 + 1, min(W - 1, x + min(w - 10, 260)))
+            ry2 = max(ry1 + 1, min(H - 1, y + 28))
+            cv2.rectangle(img, (rx1, ry1), (rx2, ry2), (15, 23, 42), -1)
+            cv2.rectangle(img, (rx1, ry1), (rx2, ry2), (56, 189, 248), 1)
+            cv2.putText(img, label, (rx1 + 6, min(H - 2, ry1 + 16)), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (241, 245, 249), 1, cv2.LINE_AA)
 
     def draw_curtain(self, img, reason='Google Meet'):
         H, W = img.shape[:2]
@@ -354,9 +493,9 @@ class HDMIShieldEngine:
         title = 'BIFROST ANTI-LOOP PRIVACY CURTAIN'
         desc = f'Deteksi aktif: {reason}. Layar presentasi diproteksi dari efek cermin.'
         
-        cv2.putText(img, title, (center_x - 320, center_y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (56, 189, 248), 2, cv2.LINE_AA)
-        cv2.putText(img, desc, (center_x - 300, center_y + 25), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (148, 163, 184), 1, cv2.LINE_AA)
-        cv2.putText(img, 'Buka jendela aplikasi/dokumen yang ingin dipresentasikan.', (center_x - 240, center_y + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (100, 116, 139), 1, cv2.LINE_AA)
+        cv2.putText(img, title, (max(20, center_x - 320), max(40, center_y - 20)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (56, 189, 248), 2, cv2.LINE_AA)
+        cv2.putText(img, desc, (max(20, center_x - 300), max(70, center_y + 25)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (148, 163, 184), 1, cv2.LINE_AA)
+        cv2.putText(img, 'Buka jendela aplikasi/dokumen yang ingin dipresentasikan.', (max(20, center_x - 240), max(100, center_y + 60)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (100, 116, 139), 1, cv2.LINE_AA)
 
     def _ocr_worker(self):
         while True:
@@ -377,6 +516,15 @@ class HDMIShieldEngine:
             try:
                 H, W = frame.shape[:2]
                 ocr_img = cv2.resize(frame, (W // 2, H // 2))
+                for _, pname, title, (wl, wt, wr, wb) in iter_visible_windows_z_order(W, H):
+                    if is_bifrost_self_window(pname, title):
+                        ox1 = max(0, wl // 2)
+                        oy1 = max(0, wt // 2)
+                        ox2 = min(ocr_img.shape[1], wr // 2)
+                        oy2 = min(ocr_img.shape[0], wb // 2)
+                        if ox2 > ox1 and oy2 > oy1:
+                            ocr_img[oy1:oy2, ox1:ox2] = (15, 23, 42)
+
                 res, _ = self.ocr_engine(ocr_img)
                 
                 boxes = []
@@ -420,7 +568,6 @@ class HDMIShieldEngine:
                         if is_sensitive:
                             pts = np.array(poly, dtype=np.int32) * 2
                             bx, by, bw, bh = cv2.boundingRect(pts)
-                            # Perluas box agar mencakup kolom isian
                             bx = max(0, bx - 10)
                             by = max(0, by - 6)
                             bw = min(W - bx, bw + 20)
@@ -428,84 +575,84 @@ class HDMIShieldEngine:
                             boxes.append({'box': (bx, by, bw, bh), 'tag': tag, 'until': now + 3.0})
 
                 with self.pii_lock:
-                    # Gabungkan box yang masih berlaku
                     valid_existing = [b for b in self.active_pii_boxes if b['until'] > now]
                     self.active_pii_boxes = valid_existing + boxes
             except Exception as e:
-                pass
+                print(f'[HDMI Engine] OCR worker error: {e}')
             time.sleep(0.35)
 
     def _capture_worker(self):
-        last_t = time.time()
         fps_count = 0
         fps_timer = time.time()
 
-        while True:
-            if not self.is_streaming:
-                time.sleep(0.1)
-                continue
+        with mss.mss() as sct:
+            while True:
+                if not self.is_streaming:
+                    time.sleep(0.1)
+                    continue
 
-            try:
-                mon_idx = min(self.selected_monitor_idx, len(self.monitors) - 1)
-                target_mon = self.monitors[mon_idx]
-                raw = self.sct.grab(target_mon)
-                frame = np.array(raw)[:, :, :3]  # BGRA to BGR
-                H, W = frame.shape[:2]
+                try:
+                    monitors = sct.monitors
+                    self.monitors = list(monitors)
+                    mon_idx = min(self.selected_monitor_idx, len(monitors) - 1)
+                    target_mon = monitors[mon_idx]
+                    raw = sct.grab(target_mon)
+                    frame = np.ascontiguousarray(np.array(raw)[:, :, :3])  # BGRA to contiguous BGR
+                    H, W = frame.shape[:2]
 
-                if self.is_panic:
-                    frame[:] = (0, 0, 0)
-                    cv2.putText(frame, "PANIC BLACKOUT AKTIF", (W // 2 - 200, H // 2), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2, cv2.LINE_AA)
-                else:
-                    # 1. Anti-Loop
-                    if self.enable_anti_loop:
-                        is_loop, reason = self.smart_anti_loop.check()
+                    if self.is_panic:
+                        frame[:] = (0, 0, 0)
+                        cv2.putText(frame, "PANIC BLACKOUT AKTIF", (max(20, W // 2 - 200), max(40, H // 2)), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2, cv2.LINE_AA)
+                    else:
+                        is_loop = False
+                        reason = ''
+                        if self.enable_anti_loop:
+                            is_loop, reason = self.smart_anti_loop.check()
+
                         if is_loop:
                             self.draw_curtain(frame, reason)
-                            with self.frame_lock:
-                                self.latest_frame = frame
-                            time.sleep(0.03)
-                            continue
+                        else:
+                            # 2. Browser Bookmark Bar
+                            if self.enable_bookmark_sensor:
+                                is_bm, bx, by, bw, bh = self.smart_bookmark.check(H, W)
+                                if is_bm and bw > 0 and bh > 0:
+                                    self.apply_mask(frame, bx, by, bw, bh, self.mask_style, 'BOOKMARK BROWSER')
 
-                    # 2. Browser Bookmark Bar
-                    if self.enable_bookmark_sensor:
-                        is_bm, y1, y2 = self.smart_bookmark.check(H, W)
-                        if is_bm and y2 > y1:
-                            self.apply_mask(frame, 0, y1, W, y2 - y1, self.mask_style, 'BOOKMARK BROWSER')
+                            # 3. Toast Notifications
+                            if self.enable_toast_sensor:
+                                is_toast, t_box = self.smart_toast.update(W, H)
+                                if is_toast and t_box:
+                                    tx, ty, tw, th = t_box
+                                    self.apply_mask(frame, tx, ty, tw, th, self.mask_style, 'POP-UP NOTIFIKASI')
 
-                    # 3. Toast Notifications
-                    if self.enable_toast_sensor:
-                        is_toast, t_box = self.smart_toast.update(W, H)
-                        if is_toast and t_box:
-                            tx, ty, tw, th = t_box
-                            self.apply_mask(frame, tx, ty, tw, th, self.mask_style, 'POP-UP NOTIFIKASI')
+                            # 4. WhatsApp Window
+                            if self.enable_wa_sensor:
+                                wa_rects, _ = scan_whatsapp_windows(W, H)
+                                for wx, wy, ww, wh in wa_rects:
+                                    self.apply_mask(frame, wx, wy, ww, wh, self.mask_style, 'WHATSAPP OBROLAN')
 
-                    # 4. WhatsApp Window
-                    if self.enable_wa_sensor:
-                        wa_rects, is_fg = scan_whatsapp_windows(W, H)
-                        for wx, wy, ww, wh in wa_rects:
-                            self.apply_mask(frame, wx, wy, ww, wh, self.mask_style, 'WHATSAPP OBROLAN')
+                            # 5. AI OCR PII
+                            if self.enable_ocr_pii_sensor:
+                                now = time.time()
+                                with self.pii_lock:
+                                    for item in self.active_pii_boxes:
+                                        if item['until'] > now:
+                                            bx, by, bw, bh = item['box']
+                                            self.apply_mask(frame, bx, by, bw, bh, self.mask_style, item['tag'])
 
-                    # 5. AI OCR PII
-                    if self.enable_ocr_pii_sensor:
-                        now = time.time()
-                        with self.pii_lock:
-                            for item in self.active_pii_boxes:
-                                if item['until'] > now:
-                                    bx, by, bw, bh = item['box']
-                                    self.apply_mask(frame, bx, by, bw, bh, self.mask_style, item['tag'])
+                    with self.frame_lock:
+                        self.latest_frame = frame
 
-                with self.frame_lock:
-                    self.latest_frame = frame
+                    fps_count += 1
+                    if time.time() - fps_timer >= 1.0:
+                        self.fps = round(fps_count / (time.time() - fps_timer), 1)
+                        fps_count = 0
+                        fps_timer = time.time()
 
-                fps_count += 1
-                if time.time() - fps_timer >= 1.0:
-                    self.fps = round(fps_count / (time.time() - fps_timer), 1)
-                    fps_count = 0
-                    fps_timer = time.time()
-
-                time.sleep(0.016)  # ~60 FPS cap
-            except Exception as e:
-                time.sleep(0.05)
+                    time.sleep(0.016)  # ~60 FPS cap
+                except Exception as e:
+                    print(f'[HDMI Engine] Capture worker error: {e}')
+                    time.sleep(0.05)
 
     def launch_projector_window(self):
         if self.is_projector_open:
@@ -519,7 +666,10 @@ class HDMIShieldEngine:
                 m2 = self.monitors[2]
                 cv2.moveWindow(win_name, m2['left'], m2['top'])
                 cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            else:
+                cv2.resizeWindow(win_name, 960, 540)
 
+            affinity_applied = False
             while self.is_projector_open:
                 with self.frame_lock:
                     if self.latest_frame is not None:
@@ -528,6 +678,11 @@ class HDMIShieldEngine:
                         disp = None
                 if disp is not None:
                     cv2.imshow(win_name, disp)
+                    if not affinity_applied:
+                        proj_hwnd = user32.FindWindowW(None, win_name)
+                        if proj_hwnd:
+                            user32.SetWindowDisplayAffinity(proj_hwnd, WDA_EXCLUDEFROMCAPTURE)
+                            affinity_applied = True
                 key = cv2.waitKey(20) & 0xFF
                 if key == 27 or key == ord('q'):  # ESC to close
                     break
