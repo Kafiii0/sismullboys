@@ -723,13 +723,13 @@ def build_manual_book_docx(output_path):
     add_p("   • Sakelar AI OCR Redaction: Aktif untuk memindai kredensial teks rahasia.")
     add_p("5. Pada aplikasi rapat virtual, pilih jendela keluaran proyektor tersebut saat membagikan layar (share window).")
 
-    img_hdmi_ui = 'scripts/extracted_images/p16_12__X52.png'
+    img_hdmi_ui = 'public/fig_hdmi_shield_wa_censored.png'
     if os.path.exists(img_hdmi_ui):
         p_img = doc.add_paragraph()
         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_img.paragraph_format.space_before = Pt(6)
         p_img.add_run().add_picture(img_hdmi_ui, width=Inches(6.2))
-        add_caption("Gambar 6.2 Antarmuka kontrol panel aplikasi desktop BIFROST HDMI Shield.")
+        add_caption("Gambar 6.2 Pengoperasian BIFROST HDMI Shield saat menyamarkan baris bookmark peramban dan obrolan WhatsApp secara real-time pada keluaran proyektor.")
 
     doc.add_page_break()
 
@@ -752,13 +752,21 @@ def build_manual_book_docx(output_path):
         "pandangan audiens. Tekan tombol Spasi sekali lagi untuk memulihkan kembali tampilan presentasi."
     )
 
+    img_hdmi_normal = 'public/fig_hdmi_shield_normal_tab.png'
+    if os.path.exists(img_hdmi_normal):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.space_before = Pt(4)
+        p_img.add_run().add_picture(img_hdmi_normal, width=Inches(5.6))
+        add_caption("Gambar 6.3 Selektivitas sensor BIFROST HDMI Shield pada tab presentasi normal: konten utama tampil jelas sementara baris bookmark tetap tersensor.")
+
     img_curtain = 'public/fig_antiloop_curtain.png'
     if os.path.exists(img_curtain):
         p_img = doc.add_paragraph()
         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_img.paragraph_format.space_before = Pt(6)
-        p_img.add_run().add_picture(img_curtain, width=Inches(6.2))
-        add_caption("Gambar 6.3 Tampilan tirai privasi otomatis BIFROST HDMI Shield saat jendela rapat virtual terdeteksi.")
+        p_img.paragraph_format.space_before = Pt(4)
+        p_img.add_run().add_picture(img_curtain, width=Inches(5.6))
+        add_caption("Gambar 6.4 Tampilan tirai privasi otomatis BIFROST HDMI Shield saat jendela rapat virtual terdeteksi.")
 
     doc.add_page_break()
 

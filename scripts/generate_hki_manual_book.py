@@ -857,11 +857,11 @@ def build_manual_book_pdf(output_path):
     story.append(Paragraph("   • Sakelar <em>AI OCR Redaction:</em> Aktif untuk memindai kredensial teks rahasia.", bullet_style))
     story.append(Paragraph("5. Pada aplikasi rapat virtual, pilih jendela keluaran proyektor tersebut saat membagikan layar (share window).", bullet_style))
 
-    img_hdmi_ui = 'scripts/extracted_images/p16_12__X52.png'
+    img_hdmi_ui = 'public/fig_hdmi_shield_wa_censored.png'
     if os.path.exists(img_hdmi_ui):
         story.append(Spacer(1, 2 * mm))
-        story.append(Image(img_hdmi_ui, width=155 * mm, height=88 * mm))
-        story.append(Paragraph("Gambar 6.2 Antarmuka kontrol panel aplikasi desktop BIFROST HDMI Shield.", caption_style))
+        story.append(Image(img_hdmi_ui, width=155 * mm, height=86 * mm))
+        story.append(Paragraph("Gambar 6.2 Pengoperasian BIFROST HDMI Shield saat menyamarkan baris bookmark peramban dan obrolan WhatsApp secara real-time pada keluaran proyektor.", caption_style))
 
     story.append(PageBreak())
 
@@ -889,11 +889,17 @@ def build_manual_book_pdf(output_path):
         body_style
     ))
 
+    img_hdmi_normal = 'public/fig_hdmi_shield_normal_tab.png'
+    if os.path.exists(img_hdmi_normal):
+        story.append(Spacer(1, 2 * mm))
+        story.append(Image(img_hdmi_normal, width=145 * mm, height=74 * mm))
+        story.append(Paragraph("Gambar 6.3 Selektivitas sensor BIFROST HDMI Shield pada tab presentasi normal: konten utama tampil jelas sementara baris bookmark tetap tersensor.", caption_style))
+
     img_curtain = 'public/fig_antiloop_curtain.png'
     if os.path.exists(img_curtain):
         story.append(Spacer(1, 2 * mm))
-        story.append(Image(img_curtain, width=155 * mm, height=86 * mm))
-        story.append(Paragraph("Gambar 6.3 Tampilan tirai privasi otomatis BIFROST HDMI Shield saat jendela rapat virtual terdeteksi.", caption_style))
+        story.append(Image(img_curtain, width=145 * mm, height=68 * mm))
+        story.append(Paragraph("Gambar 6.4 Tampilan tirai privasi otomatis BIFROST HDMI Shield saat jendela rapat virtual terdeteksi.", caption_style))
 
     story.append(PageBreak())
 
