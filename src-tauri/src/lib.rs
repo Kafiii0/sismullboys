@@ -58,8 +58,19 @@ fn find_engine_path(app: &tauri::App, engine_name: &str) -> Option<PathBuf> {
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
-            let pkg_name = app.package_info().name.to_lowercase();
-            let is_hdmi = pkg_name.contains("hdmi") || pkg_name.contains("screen") || pkg_name.contains("presentation");
+            let identifier = app.config().identifier.to_lowercase();
+            let product_name = app.config().product_name.as_deref().unwrap_or("").to_lowercase();
+            let current_exe_name = std::env::current_exe()
+                .ok()
+                .and_then(|p| p.file_name().map(|n| n.to_string_lossy().to_lowercase()))
+                .unwrap_or_default();
+
+            let is_hdmi = identifier.contains("hdmi")
+                || product_name.contains("hdmi")
+                || current_exe_name.contains("hdmi")
+                || identifier.contains("screen")
+                || product_name.contains("screen");
+
             let target_port = if is_hdmi { "127.0.0.1:8766" } else { "127.0.0.1:8765" };
             let engine_name = if is_hdmi { "hdmi_engine" } else { "witness_engine" };
             let py_fallback = if is_hdmi { "../desktop/hdmi_engine.py" } else { "../desktop/witness_engine.py" };
