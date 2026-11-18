@@ -6,8 +6,8 @@ import Link from 'next/link';
 import BifrostNavbar from '../../components/BifrostNavbar';
 import BifrostFooter from '../../components/BifrostFooter';
 import {
-  ShieldCheck, AlertTriangle, Stamp, FileCheck2, MapPin, 
-  Clock, User, Hash, Lock, CheckCircle2, XCircle, Download, 
+  ShieldCheck, AlertTriangle, Stamp, FileCheck2, MapPin,
+  Clock, User, Hash, Lock, CheckCircle2, XCircle, Download,
   Upload, ExternalLink, RefreshCw, Eye, Sparkles, Navigation,
   Layers, Check, Copy, ArrowRight, ShieldAlert, Cpu, RotateCcw,
   Sliders, Image as ImageIcon, Smartphone, Camera, Calendar, BadgeCheck,
@@ -94,7 +94,7 @@ function WatermarkStudioContent() {
     setBadgeNumber('');
     try {
       localStorage.removeItem('bifrost_officer_key');
-    } catch (e) {}
+    } catch (e) { }
   };
 
   // -------------------------------------------------------------
@@ -146,10 +146,10 @@ function WatermarkStudioContent() {
     setAddCameraMetadata(null);
     setIsInspectingFile(true);
 
-    const isHeic = file.name?.toLowerCase().endsWith('.heic') || 
-                   file.name?.toLowerCase().endsWith('.heif') ||
-                   file.type?.includes('heic') || 
-                   file.type?.includes('heif');
+    const isHeic = file.name?.toLowerCase().endsWith('.heic') ||
+      file.name?.toLowerCase().endsWith('.heif') ||
+      file.type?.includes('heic') ||
+      file.type?.includes('heif');
 
     if (!isHeic) {
       const url = URL.createObjectURL(file);
@@ -240,7 +240,7 @@ function WatermarkStudioContent() {
       setBadgeNumber(keyBundle.identity.badge_number || '');
       try {
         localStorage.setItem('bifrost_officer_key', JSON.stringify(keyBundle));
-      } catch (e) {}
+      } catch (e) { }
 
       setKeyToast(`Kunci identitas resmi milik "${keyBundle.identity.officer_name}" (${keyBundle.identity.institution_name || 'Institusi Forensik'}) berhasil dimuat & aktif!`);
       setTimeout(() => setKeyToast(null), 5000);
@@ -311,7 +311,7 @@ function WatermarkStudioContent() {
             const privBuf = await window.crypto.subtle.digest('SHA-256', new Uint8Array([...keyKBytes, ...seedBytes]));
             pubHex = Array.from(new Uint8Array(pubBuf)).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
             privHex = Array.from(new Uint8Array(privBuf)).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
-          } catch (_) {}
+          } catch (_) { }
         }
         if (!pubHex) {
           pubHex = Array.from(rhoBytes).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
@@ -391,7 +391,7 @@ function WatermarkStudioContent() {
         try {
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
-        } catch (e) {}
+        } catch (e) { }
       }, 2000);
 
       // Automatically activate key in state & persist to localStorage
@@ -401,7 +401,7 @@ function WatermarkStudioContent() {
       setBadgeNumber(keyBundle.identity.badge_number || '');
       try {
         localStorage.setItem('bifrost_officer_key', JSON.stringify(keyBundle));
-      } catch (e) {}
+      } catch (e) { }
       setIsKeyModalOpen(false);
       setNewOfficerName('');
       setNewInstitutionName('');
@@ -423,10 +423,10 @@ function WatermarkStudioContent() {
     setVerifyError(null);
     setVerifyResult(null);
 
-    const isHeic = file.name?.toLowerCase().endsWith('.heic') || 
-                   file.name?.toLowerCase().endsWith('.heif') ||
-                   file.type?.includes('heic') || 
-                   file.type?.includes('heif');
+    const isHeic = file.name?.toLowerCase().endsWith('.heic') ||
+      file.name?.toLowerCase().endsWith('.heif') ||
+      file.type?.includes('heic') ||
+      file.type?.includes('heif');
 
     if (isHeic) {
       const formData = new FormData();
@@ -599,7 +599,7 @@ function WatermarkStudioContent() {
       <BifrostNavbar />
 
       <main className="flex-1 flex flex-col min-h-0 w-full pt-28 md:pt-32 pb-4 px-3 sm:px-6 max-w-[1600px] mx-auto">
-        
+
         {/* ========================================================================= */}
         {/* COMPACT TOP BAR HEADER (NO OUTER SCREEN SCROLL) */}
         {/* ========================================================================= */}
@@ -609,11 +609,10 @@ function WatermarkStudioContent() {
             <div className="p-1 rounded-xl bg-[#0D0F14] border border-white/[0.08] inline-flex gap-1 shadow-lg">
               <button
                 onClick={() => handleTabChange('add')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'add'
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeTab === 'add'
                     ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
                     : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
-                }`}
+                  }`}
               >
                 <Stamp className="w-3.5 h-3.5" />
                 <span>Add Watermark</span>
@@ -621,11 +620,10 @@ function WatermarkStudioContent() {
 
               <button
                 onClick={() => handleTabChange('verify')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'verify'
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeTab === 'verify'
                     ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
                     : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
-                }`}
+                  }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>Cek Keaslian</span>
@@ -644,13 +642,12 @@ function WatermarkStudioContent() {
             {activeTab === 'verify' && verifyResult && (
               <div className="flex items-center gap-2">
                 <span
-                  className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${
-                    verifyResult.is_authentic
+                  className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${verifyResult.is_authentic
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
                       : verifyResult.has_pqc_watermark
-                      ? 'bg-red-950/80 text-rose-300 border-red-500/40'
-                      : 'bg-amber-950/80 text-amber-300 border-amber-500/40'
-                  }`}
+                        ? 'bg-red-950/80 text-rose-300 border-red-500/40'
+                        : 'bg-amber-950/80 text-amber-300 border-amber-500/40'
+                    }`}
                 >
                   {verifyResult.is_authentic ? (
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -740,12 +737,12 @@ function WatermarkStudioContent() {
         {/* ========================================================================= */}
         {activeTab === 'add' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 flex-1 min-h-0 w-full">
-            
+
             {/* --------------------------------------------------------------------- */}
             {/* SEBELAH KIRI: PILIH / PREVIEW GAMBAR (FIT SCREEN, TIDAK SCROLL) */}
             {/* --------------------------------------------------------------------- */}
             <div className="lg:col-span-7 flex flex-col h-[520px] lg:h-full min-h-0 bg-[#0D0F14] border border-white/[0.08] rounded-2xl overflow-hidden p-3.5 sm:p-4 shadow-xl">
-              
+
               {/* Header Panel Kiri */}
               <div className="shrink-0 flex items-center justify-between pb-3 mb-2 border-b border-white/[0.06]">
                 <div className="flex items-center gap-2">
@@ -754,8 +751,8 @@ function WatermarkStudioContent() {
                     {addResult
                       ? 'Preview Hasil Watermark PQC'
                       : addFile
-                      ? 'Preview Gambar Bukti'
-                      : 'Pilih / Unggah Gambar Bukti'}
+                        ? 'Preview Gambar Bukti'
+                        : 'Pilih / Unggah Gambar Bukti'}
                   </h3>
                 </div>
 
@@ -765,11 +762,10 @@ function WatermarkStudioContent() {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setShowOriginalInAdd(!showOriginalInAdd)}
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${
-                          showOriginalInAdd
+                        className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${showOriginalInAdd
                             ? 'bg-zinc-800 text-white border-white/20'
                             : 'bg-red-600 text-white border-red-500 shadow-md shadow-red-600/30'
-                        }`}
+                          }`}
                       >
                         {showOriginalInAdd ? 'Lihat Hasil PQC' : 'Bandingkan Asli'}
                       </button>
@@ -856,7 +852,7 @@ function WatermarkStudioContent() {
             {/* SEBELAH KANAN: KONFIGURASI METADATA -> LOADING -> HASIL PENANDATANGANAN */}
             {/* --------------------------------------------------------------------- */}
             <div className="lg:col-span-5 flex flex-col h-[600px] lg:h-full min-h-0 bg-[#0D0F14] border border-white/[0.08] rounded-2xl overflow-hidden shadow-xl">
-              
+
               {/* Header Panel Kanan */}
               <div className="shrink-0 p-3.5 sm:p-4 border-b border-white/[0.08] flex items-center justify-between bg-black/20">
                 <div className="flex items-center gap-2">
@@ -877,7 +873,7 @@ function WatermarkStudioContent() {
 
               {/* Body: Scrollable independently */}
               <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-4 custom-scrollbar">
-                
+
                 {/* 1. STATE: PROCESSING / LOADING */}
                 {isProcessingAdd ? (
                   <div className="py-20 text-center space-y-4">
@@ -894,7 +890,7 @@ function WatermarkStudioContent() {
                 ) : addResult ? (
                   /* 2. STATE: HASIL PENANDATANGANAN PQC */
                   <div className="space-y-3.5">
-                    
+
                     {/* Status Certified Banner */}
                     <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/40 space-y-1.5">
                       <div className="flex items-center gap-2">
@@ -929,7 +925,7 @@ function WatermarkStudioContent() {
 
                     {/* Summary Metadata Cards - 4 Pillars of Digital Evidence */}
                     <div className="space-y-2.5 font-mono text-xs">
-                      
+
                       {/* Pillar 1: Perangkat Kamera Fisik Asli (Locked from Hardware EXIF) */}
                       <div className="p-3 rounded-xl bg-black/50 border border-white/[0.04] space-y-1">
                         <div className="flex items-center justify-between">
@@ -937,11 +933,10 @@ function WatermarkStudioContent() {
                             <Camera className="w-3 h-3 text-red-400" />
                             <span>Perangkat Kamera Fisik Asli</span>
                           </span>
-                          <span className={`text-[9px] px-1.5 py-0.2 rounded-full border ${
-                            addResult.has_camera_exif
+                          <span className={`text-[9px] px-1.5 py-0.2 rounded-full border ${addResult.has_camera_exif
                               ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
                               : 'bg-zinc-800 border-white/5 text-zinc-400'
-                          }`}>
+                            }`}>
                             {addResult.has_camera_exif ? '🔒 TERKUNCI EXIF HARDWARE' : 'EXIF TIDAK TERDETEKSI'}
                           </span>
                         </div>
@@ -1062,7 +1057,7 @@ function WatermarkStudioContent() {
                 ) : (
                   /* 3. STATE: FORM KONFIGURASI METADATA */
                   <div className="space-y-4">
-                    
+
                     {!addFile && (
                       <div className="p-3 rounded-xl bg-zinc-900/60 border border-white/[0.08] text-xs text-zinc-400 flex items-center gap-2">
                         <ImageIcon className="w-4 h-4 text-red-400 shrink-0" />
@@ -1075,9 +1070,8 @@ function WatermarkStudioContent() {
                       <div className="p-3.5 rounded-xl bg-gradient-to-br from-black/80 to-zinc-950/80 border border-white/[0.08] shadow-lg space-y-2.5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                              addCameraMetadata?.has_camera_exif ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
-                            }`}>
+                            <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${addCameraMetadata?.has_camera_exif ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                              }`}>
                               <Smartphone className="w-3.5 h-3.5" />
                             </div>
                             <div>
@@ -1221,11 +1215,10 @@ function WatermarkStudioContent() {
                               setLatitude(loc.lat);
                               setLongitude(loc.lon);
                             }}
-                            className={`text-[10px] px-2 py-0.5 rounded-lg border transition-colors ${
-                              locationName === loc.name
+                            className={`text-[10px] px-2 py-0.5 rounded-lg border transition-colors ${locationName === loc.name
                                 ? 'bg-red-950/60 border-red-500/50 text-red-300'
                                 : 'bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:text-white'
-                            }`}
+                              }`}
                           >
                             {loc.name}
                           </button>
@@ -1398,7 +1391,7 @@ function WatermarkStudioContent() {
                         </div>
                       ) : (
                         /* State 2: Kunci Identitas Aktif (Terkunci & Terverifikasi) */
-                        <div 
+                        <div
                           onDragOver={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -1522,11 +1515,10 @@ function WatermarkStudioContent() {
                         <button
                           type="button"
                           onClick={() => setVisualBadge(true)}
-                          className={`p-2.5 rounded-xl border text-left transition-all ${
-                            visualBadge
+                          className={`p-2.5 rounded-xl border text-left transition-all ${visualBadge
                               ? 'bg-red-950/40 border-red-500/50'
                               : 'bg-black/40 border-white/[0.06]'
-                          }`}
+                            }`}
                         >
                           <div className="text-xs font-bold text-white flex items-center justify-between">
                             <span>Dual-Layer</span>
@@ -1538,11 +1530,10 @@ function WatermarkStudioContent() {
                         <button
                           type="button"
                           onClick={() => setVisualBadge(false)}
-                          className={`p-2.5 rounded-xl border text-left transition-all ${
-                            !visualBadge
+                          className={`p-2.5 rounded-xl border text-left transition-all ${!visualBadge
                               ? 'bg-red-950/40 border-red-500/50'
                               : 'bg-black/40 border-white/[0.06]'
-                          }`}
+                            }`}
                         >
                           <div className="text-xs font-bold text-white flex items-center justify-between">
                             <span>Invisible</span>
@@ -1560,11 +1551,10 @@ function WatermarkStudioContent() {
                               key={pos}
                               type="button"
                               onClick={() => setBadgePosition(pos)}
-                              className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded border transition-colors ${
-                                badgePosition === pos
+                              className={`text-[9px] uppercase font-mono px-2 py-0.5 rounded border transition-colors ${badgePosition === pos
                                   ? 'bg-red-600 text-white border-red-500'
                                   : 'bg-black/40 border-white/10 text-zinc-400 hover:text-white'
-                              }`}
+                                }`}
                             >
                               {pos.replace('-', ' ')}
                             </button>
@@ -1585,11 +1575,10 @@ function WatermarkStudioContent() {
                       type="button"
                       disabled={!addFile || isProcessingAdd}
                       onClick={handleApplyWatermark}
-                      className={`w-full py-3 rounded-xl font-bold font-grotesk uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all shadow-xl ${
-                        !addFile || isProcessingAdd
+                      className={`w-full py-3 rounded-xl font-bold font-grotesk uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all shadow-xl ${!addFile || isProcessingAdd
                           ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
                           : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30'
-                      }`}
+                        }`}
                     >
                       <Stamp className="w-3.5 h-3.5" />
                       <span>Terapkan Watermark PQC</span>
@@ -1614,7 +1603,7 @@ function WatermarkStudioContent() {
             {!isVerifyActive && (
               <div className="w-full max-w-3xl mx-auto my-auto space-y-6">
                 <div className="p-8 sm:p-10 rounded-3xl bg-[#0D0F14] border border-white/[0.08] shadow-2xl space-y-6">
-                  
+
                   <div className="flex items-center gap-2.5 pb-4 border-b border-white/[0.06]">
                     <ShieldCheck className="w-5 h-5 text-red-500" />
                     <h2 className="text-base font-bold uppercase tracking-wider font-grotesk text-white">
@@ -1672,10 +1661,10 @@ function WatermarkStudioContent() {
             {/* RESULTS STATE: 2-COLUMN VIEW (UPLOAD BOX IS GONE, LEFT: PREVIEW, RIGHT: SCROLLABLE INFO) */}
             {verifyResult && !isProcessingVerify && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 flex-1 min-h-0 w-full">
-                
+
                 {/* SEBELAH KIRI: PREVIEW GAMBAR (FIT LAYAR, TIDAK SCROLL) */}
                 <div className="lg:col-span-7 flex flex-col h-[520px] lg:h-full min-h-0 bg-[#0D0F14] border border-white/[0.08] rounded-2xl overflow-hidden p-3.5 sm:p-4 shadow-xl">
-                  
+
                   {/* Topbar Controls */}
                   <div className="shrink-0 flex items-center justify-between pb-3 mb-2 border-b border-white/[0.06] gap-2">
                     <div className="flex items-center gap-2">
@@ -1690,11 +1679,10 @@ function WatermarkStudioContent() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setShowHeatmap(!showHeatmap)}
-                          className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${
-                            showHeatmap
+                          className={`text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all ${showHeatmap
                               ? 'bg-red-600 text-white border-red-500 shadow-md shadow-red-600/30'
                               : 'bg-black/50 text-zinc-300 border-white/10 hover:text-white'
-                          }`}
+                            }`}
                         >
                           {showHeatmap ? 'Heatmap Aktif' : 'Lihat Gambar Polos'}
                         </button>
@@ -1752,7 +1740,7 @@ function WatermarkStudioContent() {
 
                 {/* SEBELAH KANAN: INFO GAMBAR (SCROLLABLE INDEPENDENTLY) */}
                 <div className="lg:col-span-5 flex flex-col h-[600px] lg:h-full min-h-0 bg-[#0D0F14] border border-white/[0.08] rounded-2xl overflow-hidden shadow-xl">
-                  
+
                   {/* Panel Header */}
                   <div className="shrink-0 p-3.5 sm:p-4 border-b border-white/[0.08] flex items-center justify-between bg-black/20">
                     <div className="flex items-center gap-2">
@@ -1768,26 +1756,24 @@ function WatermarkStudioContent() {
 
                   {/* Scrollable Information Body */}
                   <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 custom-scrollbar">
-                    
+
                     {/* 1. Main Status Verdict Card */}
                     <div
-                      className={`p-4 rounded-xl border transition-all ${
-                        verifyResult.is_authentic
+                      className={`p-4 rounded-xl border transition-all ${verifyResult.is_authentic
                           ? 'bg-emerald-950/30 border-emerald-500/40'
                           : verifyResult.has_pqc_watermark
-                          ? 'bg-red-950/35 border-red-500/50'
-                          : 'bg-amber-950/30 border-amber-500/40'
-                      }`}
+                            ? 'bg-red-950/35 border-red-500/50'
+                            : 'bg-amber-950/30 border-amber-500/40'
+                        }`}
                     >
                       <div className="flex items-start gap-3">
                         <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                            verifyResult.is_authentic
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${verifyResult.is_authentic
                               ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                               : verifyResult.has_pqc_watermark
-                              ? 'bg-red-500/20 text-rose-400 border border-red-500/30 animate-pulse'
-                              : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                          }`}
+                                ? 'bg-red-500/20 text-rose-400 border border-red-500/30 animate-pulse'
+                                : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                            }`}
                         >
                           {verifyResult.is_authentic ? (
                             <ShieldCheck className="w-5 h-5" />
@@ -1819,11 +1805,10 @@ function WatermarkStudioContent() {
                           <Camera className="w-3.5 h-3.5" />
                           <span>Perangkat / Kamera Asli</span>
                         </div>
-                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full border ${
-                          verifyResult.has_camera_exif
+                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full border ${verifyResult.has_camera_exif
                             ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300'
                             : 'bg-zinc-800 border-white/5 text-zinc-400'
-                        }`}>
+                          }`}>
                           {verifyResult.has_camera_exif ? '🔒 TERKUNCI EXIF HARDWARE' : 'EXIF TIDAK TERDETEKSI'}
                         </span>
                       </div>
@@ -2052,11 +2037,11 @@ function WatermarkStudioContent() {
 
         {/* Modal: Penerbitan Kunci Identitas Forensik Post-Quantum */}
         {isKeyModalOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setIsKeyModalOpen(false)}
           >
-            <div 
+            <div
               className="w-full max-w-lg bg-[#0D0F14] border border-white/[0.12] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
