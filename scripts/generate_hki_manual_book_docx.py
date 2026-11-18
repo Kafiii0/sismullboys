@@ -563,13 +563,21 @@ def build_manual_book_docx(output_path):
         "bahwa berkas tersebut 100% otentik dan belum mengalami manipulasi (tampering)."
     )
 
+    img_wm_studio = 'public/fig_watermark_studio_pqc.png'
+    if os.path.exists(img_wm_studio):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.paragraph_format.space_before = Pt(4)
+        p_img.add_run().add_picture(img_wm_studio, width=Inches(6.0))
+        add_caption("Gambar 4.1 Antarmuka ruang kerja BIFROST Watermark Studio dengan penguncian metadata EXIF perangkat keras dan kunci identitas PQC ML-DSA-65 aktif.")
+
     img_pqc_auth = 'public/sample_pqc_authentic.png'
     img_pqc_tamp = 'public/sample_pqc_tampered.png'
     if os.path.exists(img_pqc_auth) and os.path.exists(img_pqc_tamp):
         t_pqc = doc.add_table(rows=2, cols=2)
         t_pqc.alignment = WD_TABLE_ALIGNMENT.CENTER
-        t_pqc.rows[0].cells[0].paragraphs[0].add_run().add_picture(img_pqc_auth, width=Inches(3.0))
-        t_pqc.rows[0].cells[1].paragraphs[0].add_run().add_picture(img_pqc_tamp, width=Inches(3.0))
+        t_pqc.rows[0].cells[0].paragraphs[0].add_run().add_picture(img_pqc_auth, width=Inches(2.8))
+        t_pqc.rows[0].cells[1].paragraphs[0].add_run().add_picture(img_pqc_tamp, width=Inches(2.8))
         t_pqc.rows[1].cells[0].paragraphs[0].add_run("(a) Berkas Otentik Terverifikasi (Kunci Sah)")
         t_pqc.rows[1].cells[1].paragraphs[0].add_run("(b) Berkas Rusak / Terpalsukan (Tampered)")
         for cell in t_pqc.rows[1].cells:
@@ -577,7 +585,7 @@ def build_manual_book_docx(output_path):
             cell.paragraphs[0].runs[0].font.size = Pt(8)
             cell.paragraphs[0].runs[0].font.italic = True
         format_table_general(t_pqc, [3.2, 3.2])
-        add_caption("Gambar 4.1 Pengujian integritas penandatanganan media pasca-kuantum (PQC) pada BIFROST Watermark Studio.")
+        add_caption("Gambar 4.2 Pengujian integritas penandatanganan media pasca-kuantum (PQC) pada BIFROST Watermark Studio.")
 
     doc.add_page_break()
 

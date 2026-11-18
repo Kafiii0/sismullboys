@@ -664,14 +664,20 @@ def build_manual_book_pdf(output_path):
         body_style
     ))
 
+    img_wm_studio = 'public/fig_watermark_studio_pqc.png'
+    if os.path.exists(img_wm_studio):
+        story.append(Spacer(1, 2 * mm))
+        story.append(Image(img_wm_studio, width=155 * mm, height=70 * mm))
+        story.append(Paragraph("Gambar 4.1 Antarmuka ruang kerja BIFROST Watermark Studio dengan penguncian metadata EXIF perangkat keras dan kunci identitas PQC ML-DSA-65 aktif.", caption_style))
+
     img_pqc_auth = 'public/sample_pqc_authentic.png'
     img_pqc_tamp = 'public/sample_pqc_tampered.png'
     if os.path.exists(img_pqc_auth) and os.path.exists(img_pqc_tamp):
         story.append(Spacer(1, 2 * mm))
         row_pqc = [
             [
-                Image(img_pqc_auth, width=78 * mm, height=56 * mm),
-                Image(img_pqc_tamp, width=78 * mm, height=56 * mm)
+                Image(img_pqc_auth, width=75 * mm, height=50 * mm),
+                Image(img_pqc_tamp, width=75 * mm, height=50 * mm)
             ],
             [
                 Paragraph("(a) Hasil Uji: Berkas Otentik Terverifikasi (Kunci Sah)", caption_style),
@@ -686,7 +692,7 @@ def build_manual_book_pdf(output_path):
             ('TOPPADDING', (0, 0), (-1, -1), 1),
         ]))
         story.append(t_pqc)
-        story.append(Paragraph("Gambar 4.1 Pengujian integritas penandatanganan media pasca-kuantum (PQC) pada BIFROST Watermark Studio.", caption_style))
+        story.append(Paragraph("Gambar 4.2 Pengujian integritas penandatanganan media pasca-kuantum (PQC) pada BIFROST Watermark Studio.", caption_style))
 
     story.append(PageBreak())
 
