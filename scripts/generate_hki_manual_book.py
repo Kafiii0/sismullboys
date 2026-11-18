@@ -757,11 +757,11 @@ def build_manual_book_pdf(output_path):
     story.append(Paragraph("4. <strong>Pengaturan Modulasi Vokal (DSP Audio):</strong> Aktifkan sakelar modulasi suara untuk mengaburkan nada suara asli pembicara.", bullet_style))
     story.append(Paragraph("5. <strong>Tombol Daya Utama (Master Switch):</strong> Klik tombol bulat besar bertuliskan 'MULAI KAMERA' untuk mengaktifkan pemrosesan real-time.", bullet_style))
 
-    img_wit_ui = 'scripts/extracted_images/p13_9__X43.png'
+    img_wit_ui = 'public/fig_witness_cam_ui_live.png'
     if os.path.exists(img_wit_ui):
         story.append(Spacer(1, 2 * mm))
         story.append(Image(img_wit_ui, width=155 * mm, height=88 * mm))
-        story.append(Paragraph("Gambar 5.2 Antarmuka kontrol panel aplikasi desktop BIFROST Witness Cam.", caption_style))
+        story.append(Paragraph("Gambar 5.2 Antarmuka kontrol panel aplikasi desktop BIFROST Witness Cam saat siaran aktif dengan proteksi sensor wajah mosaik.", caption_style))
 
     story.append(PageBreak())
 
@@ -781,11 +781,11 @@ def build_manual_book_pdf(output_path):
     story.append(Paragraph("4. Pilih kamera bernama <strong>BIFROST Encrypted Camera</strong> atau <strong>Virtual Camera</strong>.", bullet_style))
     story.append(Paragraph("5. Tampilan video pengguna pada layar peserta rapat akan secara otomatis terproteksi oleh filter biometrik yang dipilih.", bullet_style))
 
-    img_wit_dev = 'public/fig_witness_cam_virtual_device.png'
+    img_wit_dev = 'public/fig_witness_cam_google_meet.png'
     if os.path.exists(img_wit_dev):
         story.append(Spacer(1, 2 * mm))
-        story.append(Image(img_wit_dev, width=155 * mm, height=86 * mm))
-        story.append(Paragraph("Gambar 5.3 Aliran kamera virtual BIFROST terbaca langsung pada aplikasi konferensi video secara real-time.", caption_style))
+        story.append(Image(img_wit_dev, width=155 * mm, height=83 * mm))
+        story.append(Paragraph("Gambar 5.3 Integrasi kamera virtual DirectShow BIFROST Encrypted Camera pada sesi panggilan rapat Google Meet.", caption_style))
 
     story.append(PageBreak())
 

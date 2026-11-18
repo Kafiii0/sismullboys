@@ -635,13 +635,13 @@ def build_manual_book_docx(output_path):
     add_p("4. Pengaturan Modulasi Vokal (DSP Audio): Aktifkan sakelar modulasi suara untuk mengaburkan nada suara asli pembicara.")
     add_p("5. Tombol Daya Utama (Master Switch): Klik tombol bulat besar bertuliskan 'MULAI KAMERA' untuk mengaktifkan pemrosesan real-time.")
 
-    img_wit_ui = 'scripts/extracted_images/p13_9__X43.png'
+    img_wit_ui = 'public/fig_witness_cam_ui_live.png'
     if os.path.exists(img_wit_ui):
         p_img = doc.add_paragraph()
         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_img.paragraph_format.space_before = Pt(6)
         p_img.add_run().add_picture(img_wit_ui, width=Inches(6.2))
-        add_caption("Gambar 5.2 Antarmuka kontrol panel aplikasi desktop BIFROST Witness Cam.")
+        add_caption("Gambar 5.2 Antarmuka kontrol panel aplikasi desktop BIFROST Witness Cam saat siaran aktif dengan proteksi sensor wajah mosaik.")
 
     doc.add_page_break()
 
@@ -660,13 +660,13 @@ def build_manual_book_docx(output_path):
     add_p("4. Pilih kamera bernama BIFROST Encrypted Camera atau Virtual Camera.")
     add_p("5. Tampilan video pengguna pada layar peserta rapat akan secara otomatis terproteksi oleh filter biometrik yang dipilih.")
 
-    img_wit_dev = 'public/fig_witness_cam_virtual_device.png'
+    img_wit_dev = 'public/fig_witness_cam_google_meet.png'
     if os.path.exists(img_wit_dev):
         p_img = doc.add_paragraph()
         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_img.paragraph_format.space_before = Pt(6)
         p_img.add_run().add_picture(img_wit_dev, width=Inches(6.2))
-        add_caption("Gambar 5.3 Aliran kamera virtual BIFROST terbaca langsung pada aplikasi konferensi video secara real-time.")
+        add_caption("Gambar 5.3 Integrasi kamera virtual DirectShow BIFROST Encrypted Camera pada sesi panggilan rapat Google Meet.")
 
     doc.add_page_break()
 
