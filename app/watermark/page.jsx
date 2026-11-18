@@ -6,6 +6,11 @@ import Link from 'next/link';
 import BifrostNavbar from '../../components/BifrostNavbar';
 import BifrostFooter from '../../components/BifrostFooter';
 import {
+  inspectFileClientSide,
+  applyWatermarkClientSide,
+  verifyWatermarkClientSide
+} from '../../lib/pqc_client_engine';
+import {
   ShieldCheck, AlertTriangle, Stamp, FileCheck2, MapPin,
   Clock, User, Hash, Lock, CheckCircle2, XCircle, Download,
   Upload, ExternalLink, RefreshCw, Eye, Sparkles, Navigation,
@@ -137,7 +142,7 @@ function WatermarkStudioContent() {
   };
 
   // Add File Selection
-  const handleAddFileSelect = (file) => {
+  const handleAddFileSelect = async (file) => {
     if (!file) return;
     setAddFile(file);
     setAddError(null);
@@ -157,31 +162,41 @@ function WatermarkStudioContent() {
     }
 
     // Inspect file for authentic camera hardware EXIF and preview
-    const formData = new FormData();
-    formData.append('file', file);
-    fetch('/api/pqc/inspect-file', { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(data => {
-        if (data.preview_url) {
-          setAddFilePreview(data.preview_url);
+    try {
+      let data = null;
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/pqc/inspect-file', { method: 'POST', body: formData });
+        if (res.ok) {
+          data = await res.json();
         }
-        if (data.camera_metadata) {
-          setAddCameraMetadata(data.camera_metadata);
-          if (data.camera_metadata.hardware_gps_latitude && data.camera_metadata.hardware_gps_longitude) {
-            setLatitude(data.camera_metadata.hardware_gps_latitude);
-            setLongitude(data.camera_metadata.hardware_gps_longitude);
-            if (data.camera_metadata.device_display_name) {
-              setLocationName(`Lokasi GPS Asli Kamera (${data.camera_metadata.device_display_name})`);
-            }
+      } catch (netErr) {
+        console.warn('Inspect backend API unavailable, using client EXIF parser:', netErr);
+      }
+
+      if (!data) {
+        data = await inspectFileClientSide(file);
+      }
+
+      if (data?.preview_url) {
+        setAddFilePreview(data.preview_url);
+      }
+      if (data?.camera_metadata) {
+        setAddCameraMetadata(data.camera_metadata);
+        if (data.camera_metadata.hardware_gps_latitude && data.camera_metadata.hardware_gps_longitude) {
+          setLatitude(data.camera_metadata.hardware_gps_latitude);
+          setLongitude(data.camera_metadata.hardware_gps_longitude);
+          if (data.camera_metadata.device_display_name) {
+            setLocationName(`Lokasi GPS Asli Kamera (${data.camera_metadata.device_display_name})`);
           }
         }
-      })
-      .catch(err => {
-        console.error('File inspect error:', err);
-      })
-      .finally(() => {
-        setIsInspectingFile(false);
-      });
+      }
+    } catch (err) {
+      console.error('File inspect error:', err);
+    } finally {
+      setIsInspectingFile(false);
+    }
   };
 
   const handleResetAdd = () => {
@@ -471,38 +486,64 @@ function WatermarkStudioContent() {
     setAddError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', addFile);
-      formData.append('author_name', officerKey.identity.officer_name);
-      formData.append('institution_name', officerKey.identity.institution_name);
-      if (officerKey.identity.badge_number) {
-        formData.append('badge_number', officerKey.identity.badge_number);
-      }
-      formData.append('private_key_json', JSON.stringify(officerKey.secret_key));
-      formData.append('public_key_json', JSON.stringify(officerKey.public_key));
-      formData.append('location_name', locationName);
-      formData.append('latitude', String(latitude));
-      formData.append('longitude', String(longitude));
-      if (customTimeToggle && customDateTime) {
-        formData.append('custom_timestamp', new Date(customDateTime).toISOString());
-      }
-      formData.append('case_id', caseId);
-      formData.append('visual_badge', String(visualBadge));
-      formData.append('badge_position', badgePosition);
-      formData.append('invisible_only', String(!visualBadge));
-      formData.append('output_format', outputFormat);
+      let data = null;
 
-      const res = await fetch('/api/pqc/watermark', {
-        method: 'POST',
-        body: formData
-      });
+      try {
+        const formData = new FormData();
+        formData.append('file', addFile);
+        formData.append('author_name', officerKey.identity.officer_name);
+        formData.append('institution_name', officerKey.identity.institution_name);
+        if (officerKey.identity.badge_number) {
+          formData.append('badge_number', officerKey.identity.badge_number);
+        }
+        formData.append('private_key_json', JSON.stringify(officerKey.secret_key));
+        formData.append('public_key_json', JSON.stringify(officerKey.public_key));
+        formData.append('location_name', locationName);
+        formData.append('latitude', String(latitude));
+        formData.append('longitude', String(longitude));
+        if (customTimeToggle && customDateTime) {
+          formData.append('custom_timestamp', new Date(customDateTime).toISOString());
+        }
+        formData.append('case_id', caseId);
+        formData.append('visual_badge', String(visualBadge));
+        formData.append('badge_position', badgePosition);
+        formData.append('invisible_only', String(!visualBadge));
+        formData.append('output_format', outputFormat);
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.detail || errData.error || `Error HTTP ${res.status}`);
+        const res = await fetch('/api/pqc/watermark', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          data = await res.json();
+        } else if (res.status !== 404 && res.status < 500) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || errData.error || `Error HTTP ${res.status}`);
+        }
+      } catch (srvErr) {
+        if (srvErr?.message && !srvErr.message.includes('Failed to fetch') && !srvErr.message.includes('NetworkError')) {
+          throw srvErr;
+        }
+        console.warn('Watermark API unavailable, using client-side PQC engine:', srvErr);
       }
 
-      const data = await res.json();
+      if (!data) {
+        data = await applyWatermarkClientSide({
+          file: addFile,
+          officerKey,
+          locationName,
+          latitude,
+          longitude,
+          customTimestamp: (customTimeToggle && customDateTime) ? new Date(customDateTime).toISOString() : null,
+          caseId,
+          visualBadge,
+          badgePosition,
+          outputFormat,
+          cameraMetadata: addCameraMetadata
+        });
+      }
+
       setAddResult(data);
     } catch (err) {
       console.error('PQC Watermarking error:', err);
@@ -521,20 +562,34 @@ function WatermarkStudioContent() {
     setVerifyError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', fileToVerify);
+      let data = null;
 
-      const res = await fetch('/api/pqc/verify', {
-        method: 'POST',
-        body: formData
-      });
+      try {
+        const formData = new FormData();
+        formData.append('file', fileToVerify);
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Error HTTP ${res.status}`);
+        const res = await fetch('/api/pqc/verify', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          data = await res.json();
+        } else if (res.status !== 404 && res.status < 500) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `Error HTTP ${res.status}`);
+        }
+      } catch (srvErr) {
+        if (srvErr?.message && !srvErr.message.includes('Failed to fetch') && !srvErr.message.includes('NetworkError')) {
+          throw srvErr;
+        }
+        console.warn('Verify API unavailable, using client-side PQC verifier:', srvErr);
       }
 
-      const data = await res.json();
+      if (!data) {
+        data = await verifyWatermarkClientSide(fileToVerify);
+      }
+
       setVerifyResult(data);
       if (data.preview_image_url) {
         setVerifyFilePreview(data.preview_image_url);
