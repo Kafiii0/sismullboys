@@ -286,12 +286,12 @@ export default function Home() {
 
                 <div className="flex flex-wrap items-center gap-4 pt-4">
                   <a
-                    href="/downloads/BIFROST_Witness_Cam_Windows.zip"
+                    href="/downloads/BIFROST_Witness_Cam_Setup.exe"
                     download
                     className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs tracking-wider uppercase transition-all shadow-xl shadow-red-600/30 hover:scale-[1.02] active:scale-[0.98] border border-red-400/40"
                   >
                     <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-                    <span>Unduh Versi Desktop (.zip)</span>
+                    <span>Unduh Installer Desktop (.exe)</span>
                   </a>
 
                   <Link
@@ -304,11 +304,11 @@ export default function Home() {
                 </div>
 
                 <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-3 pt-1">
-                  <span>Paket Berisi: <strong>BIFROST_Witness_Cam.exe</strong></span>
+                  <span>Installer Resmi: <strong>BIFROST_Witness_Cam_Setup.exe</strong></span>
                   <span className="text-zinc-600">•</span>
-                  <span>Ukuran: <strong>79.1 MB ZIP</strong></span>
+                  <span>Ukuran: <strong>85.7 MB Setup.exe</strong></span>
                   <span className="text-zinc-600">•</span>
-                  <span>Panduan Instalasi Lengkap</span>
+                  <span>Wizard Instalasi NSIS Otomatis</span>
                 </div>
               </div>
 

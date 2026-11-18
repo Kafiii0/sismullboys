@@ -27,7 +27,7 @@ export default function ProgramsPage() {
       specs: {
         executable: 'BIFROST_Witness_Cam_Setup.exe',
         os: 'Windows 10 / 11 (64-bit)',
-        size: '83.9 MB Installer',
+        size: '85.7 MB Installer',
         type: 'Windows Setup Installer (.exe)'
       },
       downloadUrl: '/downloads/BIFROST_Witness_Cam_Setup.exe',
@@ -52,7 +52,7 @@ export default function ProgramsPage() {
       specs: {
         executable: 'BIFROST_HDMI_Shield_Setup.exe',
         os: 'Windows 10 / 11 (64-bit)',
-        size: '93.5 MB Installer',
+        size: '98.5 MB Installer',
         type: 'Windows Setup Installer (.exe)'
       },
       downloadUrl: '/downloads/BIFROST_HDMI_Shield_Setup.exe',
@@ -178,7 +178,7 @@ export default function ProgramsPage() {
                   <div className="space-y-1.5 text-xs font-mono">
                     <div className="flex justify-between py-1 border-b border-white/[0.04]">
                       <span className="text-zinc-400">Berkas Unduh:</span>
-                      <span className="text-white font-bold">{prog.specs.executable.replace('.exe', '.zip')}</span>
+                      <span className="text-white font-bold">{prog.specs.executable}</span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-white/[0.04]">
                       <span className="text-zinc-400">Ukuran:</span>
@@ -197,12 +197,12 @@ export default function ProgramsPage() {
                       className={`w-full group flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl ${prog.accentBtn} text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-lg hover:scale-[1.01] active:scale-[0.99] border border-white/20`}
                     >
                       <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-                      <span>Unduh ZIP ({prog.specs.size})</span>
+                      <span>Unduh Installer .EXE ({prog.specs.size})</span>
                     </a>
                   </div>
 
                   <p className="text-[11px] font-mono text-zinc-500 text-center">
-                    Ekstrak ZIP lalu klik ganda berkas .exe untuk menjalankan
+                    Jalankan berkas Setup .exe dan ikuti wizard instalasi otomatis
                   </p>
                 </div>
 
