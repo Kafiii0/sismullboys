@@ -85,9 +85,9 @@ export default function WitnessDesktopPage() {
   };
 
   const selectCamera = async (idx) => {
+    setStatus(prev => ({ ...prev, selected_camera_idx: idx }));
     try {
       await fetch(`http://127.0.0.1:8765/camera/select?idx=${idx}`, { method: 'POST' });
-      setStatus(prev => ({ ...prev, selected_camera_idx: idx }));
     } catch (e) {}
   };
 

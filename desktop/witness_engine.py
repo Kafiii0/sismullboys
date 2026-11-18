@@ -338,34 +338,99 @@ class RealtimeVoiceDisguiser:
         self.is_running = False
 
 
+def open_capture_device(idx, target_w=1920, target_h=1080):
+    """Membuka kamera menggunakan backend yang kompatibel (MSMF, ANY, DSHOW)."""
+    # Windows 10/11: CAP_MSMF is primary for physical USB and Integrated Webcams
+    for backend in [cv2.CAP_MSMF, cv2.CAP_ANY, cv2.CAP_DSHOW]:
+        cap = None
+        try:
+            cap = cv2.VideoCapture(idx, backend)
+            if cap and cap.isOpened():
+                try:
+                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, target_w)
+                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, target_h)
+                except Exception:
+                    pass
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    return cap
+                time.sleep(0.05)
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    return cap
+                return cap
+            if cap:
+                cap.release()
+        except Exception:
+            if cap:
+                try:
+                    cap.release()
+                except Exception:
+                    pass
+    return None
+
+
 def scan_available_cameras(max_tested=8):
     ensure_bifrost_vcam_registered()
-    cameras = []
+    
+    # 1. Ambil nama kamera fisik resmi dari Windows PnP (Integrated Camera, USB Camera, dll.)
+    pnp_names = []
+    try:
+        ps_cmd = 'Get-PnpDevice -Class Camera -Status OK | Select-Object -ExpandProperty FriendlyName'
+        res = subprocess.run(['powershell', '-NoProfile', '-Command', ps_cmd], capture_output=True, text=True, timeout=3)
+        if res.returncode == 0:
+            for line in res.stdout.strip().splitlines():
+                l = line.strip()
+                if l and l not in pnp_names and 'bifrost' not in l.lower():
+                    pnp_names.append(l)
+    except Exception:
+        pass
+
+    # 2. Ambil nama perangkat DirectShow (virtual / DroidCam / OBS)
+    dshow_names = []
     try:
         from pygrabber.dshow_graph import FilterGraph
         graph = FilterGraph()
         devices = graph.get_input_devices()
-        for idx, name in enumerate(devices):
-            is_vcam = any(k in name.lower() for k in ['bifrost', 'obs virtual camera', 'virtual', 'vcam', 'cyberlink'])
-            if not is_vcam:
-                cameras.append({'idx': idx, 'name': name, 'raw_name': name, 'is_vcam': False})
+        for d in devices:
+            if not any(k in d.lower() for k in ['bifrost', 'obs virtual camera']):
+                dshow_names.append(d)
     except Exception:
         pass
 
-    if not cameras:
-        for idx in range(max_tested):
-            try:
-                cap = cv2.VideoCapture(idx, cv2.CAP_DSHOW)
-                if not cap.isOpened():
-                    cap = cv2.VideoCapture(idx)
-                if cap.isOpened():
-                    cameras.append({'idx': idx, 'name': f'Kamera Fisik #{idx}', 'raw_name': f'Camera {idx}', 'is_vcam': False})
-                    cap.release()
-            except Exception:
-                pass
+    # 3. Uji indeks OpenCV mana yang dapat dibuka
+    working_indices = []
+    for idx in range(max_tested):
+        cap = open_capture_device(idx, 640, 480)
+        if cap and cap.isOpened():
+            cap.release()
+            working_indices.append(idx)
+
+    cameras = []
+    pnp_idx = 0
+    dshow_idx = 0
+    for idx in working_indices:
+        if pnp_idx < len(pnp_names):
+            name = pnp_names[pnp_idx]
+            pnp_idx += 1
+        elif dshow_idx < len(dshow_names):
+            name = dshow_names[dshow_idx]
+            dshow_idx += 1
+        else:
+            name = f'Kamera Fisik #{idx}'
+
+        is_vcam = any(k in name.lower() for k in ['droidcam', 'virtual', 'vcam'])
+        cameras.append({'idx': idx, 'name': name, 'raw_name': name, 'is_vcam': is_vcam})
+
+    # Prioritaskan USB Camera fisik di urutan pertama, lalu Integrated Camera, lalu virtual/DroidCam
+    cameras.sort(key=lambda c: (
+        1 if c['is_vcam'] else 0,
+        0 if 'usb' in c['name'].lower() else (1 if 'integrated' in c['name'].lower() else 2)
+    ))
 
     if not cameras:
-        cameras.append({'idx': 0, 'name': 'Kamera Fisik Bawaan', 'raw_name': 'Default Camera', 'is_vcam': False})
+        cameras.append({'idx': 0, 'name': 'USB Camera', 'raw_name': 'USB Camera', 'is_vcam': False})
+
     return cameras
 
 
@@ -476,27 +541,18 @@ class WitnessEngine:
         time.sleep(0.15)
         target_w, target_h = self.target_width, self.target_height
 
-        new_cap = None
-        try:
-            new_cap = cv2.VideoCapture(new_idx, cv2.CAP_DSHOW)
-            if not new_cap.isOpened():
-                new_cap.release()
-                new_cap = cv2.VideoCapture(new_idx)
-        except Exception:
-            new_cap = None
+        new_cap = open_capture_device(new_idx, target_w, target_h)
 
         if new_cap and new_cap.isOpened():
-            try:
-                new_cap.set(cv2.CAP_PROP_FRAME_WIDTH, target_w)
-                new_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, target_h)
-            except Exception:
-                pass
             self.cap = new_cap
             self.selected_camera_idx = new_idx
             self._init_virtual_cam(target_w, target_h)
             self.is_streaming = True
             self.capture_thread = threading.Thread(target=self._capture_loop, daemon=True)
             self.capture_thread.start()
+        else:
+            # Tetap pertahankan pilihan kamera pengguna agar tidak kembali otomatis
+            self.selected_camera_idx = new_idx
 
         self._is_switching = False
 
@@ -704,6 +760,7 @@ def set_voice_intensity(val: int):
 
 @app.post("/camera/select")
 def select_camera(idx: int):
+    engine.selected_camera_idx = idx
     threading.Thread(target=engine._switch_camera_worker, args=(idx,), daemon=True).start()
     return {"selected_camera_idx": idx}
 
