@@ -923,10 +923,10 @@ def sanitize_ocr_boxes(screen_frame, ocr_results):
     t_team = doc.add_table(rows=5, cols=4)
     team_rows = [
         ("No.", "Nama Lengkap Pengembang", "NIM", "Peran dan Kontribusi Teknis Utama"),
-        ("1", "Fahri Al Kahfi", "103032500049", "Lead Software Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop."),
-        ("2", "Muhammad Bagus Prabowo", "103032530005", "Frontend & Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP."),
-        ("3", "Anggota Pengembang 3", "103032500021", "Security & Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC)."),
-        ("4", "Anggota Pengembang 4", "103032500078", "Quality Assurance & Documentation: Pengujian fungsionalitas cross-platform, audit kesesuaian ISO/IEC 27037, dan penyusunan buku panduan HKI.")
+        ("1", "Fahri Al Kahfi", "103032500049", "Ketua Tim & Lead Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop."),
+        ("2", "[Nama Anggota 2]", "[NIM Anggota 2]", "Frontend & Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP."),
+        ("3", "[Nama Anggota 3]", "[NIM Anggota 3]", "Security & Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC)."),
+        ("4", "[Nama Anggota 4]", "[NIM Anggota 4]", "Quality Assurance & Documentation: Pengujian fungsionalitas cross-platform, audit kesesuaian ISO/IEC 27037, dan penyusunan buku panduan HKI.")
     ]
     for idx, (no, nama, nim, peran) in enumerate(team_rows):
         r = t_team.rows[idx]
