@@ -186,7 +186,7 @@ def build_manual_book_docx(output_path):
     p_cov_sp = doc.add_paragraph()
     p_cov_sp.paragraph_format.space_before = Pt(20)
 
-    logo_path = 'public/bifrost_cam_logo.png'
+    logo_path = 'public/bifrost_manual_logo.png'
     if os.path.exists(logo_path):
         p_logo = doc.add_paragraph()
         p_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER

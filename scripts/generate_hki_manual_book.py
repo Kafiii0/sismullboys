@@ -227,7 +227,7 @@ def build_manual_book_pdf(output_path):
     # =========================================================================
     story.append(Spacer(1, 15 * mm))
 
-    logo_path = 'public/bifrost_cam_logo.png'
+    logo_path = 'public/bifrost_manual_logo.png'
     if os.path.exists(logo_path):
         story.append(Image(logo_path, width=38 * mm, height=38 * mm))
         story.append(Spacer(1, 8 * mm))
