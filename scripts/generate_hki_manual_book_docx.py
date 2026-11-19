@@ -936,13 +936,14 @@ def sanitize_ocr_boxes(screen_frame, ocr_results):
         "Fakultas Informatika, Universitas Telkom Bandung:"
     )
 
-    t_team = doc.add_table(rows=5, cols=4)
+    t_team = doc.add_table(rows=6, cols=4)
     team_rows = [
         ("No.", "Nama Lengkap Pengembang", "NIM", "Peran dan Kontribusi Teknis Utama"),
-        ("1", "Fahri Al Kahfi", "103032500049", "Ketua Tim & Lead Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop."),
-        ("2", "[Nama Anggota 2]", "[NIM Anggota 2]", "Frontend & Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP."),
-        ("3", "[Nama Anggota 3]", "[NIM Anggota 3]", "Security & Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC)."),
-        ("4", "[Nama Anggota 4]", "[NIM Anggota 4]", "Quality Assurance & Documentation: Pengujian fungsionalitas cross-platform, audit kesesuaian ISO/IEC 27037, dan penyusunan buku panduan HKI.")
+        ("1", "Muhammad Trisnatama", "103032500099", "Multimedia & Compression Engineer: Pengolahan citra digital, pengujian kualitas redaksi media, dan optimasi performa pemrosesan piksel."),
+        ("2", "Muhammad Ghassan Denaprisnyah", "103032530012", "Frontend & Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP."),
+        ("3", "Farhan Haidar Ar-Rasyid", "103032500015", "Security & Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC)."),
+        ("4", "I Gede Arya Yoga Saputra", "103032530026", "Quality Assurance & Documentation: Pengujian fungsionalitas lintas modul, audit kesesuaian standar ISO/IEC 27037, dan penyusunan buku panduan HKI."),
+        ("5", "Fahri Al Kahfi", "103032500049", "Ketua Tim & Lead Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop.")
     ]
     for idx, (no, nama, nim, peran) in enumerate(team_rows):
         r = t_team.rows[idx]
@@ -963,7 +964,7 @@ def sanitize_ocr_boxes(screen_frame, ocr_results):
     t_sign.rows[1].cells[0].paragraphs[0].add_run("\n\n\n")
     t_sign.rows[1].cells[1].paragraphs[0].add_run("\n\n\n")
     
-    r_dosen = t_sign.rows[2].cells[0].paragraphs[0].add_run("(______________________________)\nNIP / NIDN.")
+    r_dosen = t_sign.rows[2].cells[0].paragraphs[0].add_run("Andi Shafira Dyah Kurniasari\nNIP: 26000043")
     r_dosen.font.bold = True
     r_ketua = t_sign.rows[2].cells[1].paragraphs[0].add_run("Fahri Al Kahfi\nNIM: 103032500049")
     r_ketua.font.bold = True

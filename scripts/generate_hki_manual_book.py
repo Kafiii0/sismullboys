@@ -1180,27 +1180,33 @@ def sanitize_ocr_boxes(screen_frame, ocr_results):
         [Paragraph("<strong>No.</strong>", meta_bold_left), Paragraph("<strong>Nama Lengkap Pengembang</strong>", meta_bold_left), Paragraph("<strong>Nomor Induk Mahasiswa (NIM)</strong>", meta_bold_left), Paragraph("<strong>Peran dan Kontribusi Teknis Utama</strong>", meta_bold_left)],
         [
             Paragraph("1", meta_left),
-            Paragraph("Fahri Al Kahfi", meta_bold_left),
-            Paragraph("103032500049", meta_left),
-            Paragraph("Ketua Tim & Lead Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop.", meta_left)
+            Paragraph("Muhammad Trisnatama", meta_bold_left),
+            Paragraph("103032500099", meta_left),
+            Paragraph("Multimedia &amp; Compression Engineer: Pengolahan citra digital, pengujian kualitas redaksi media, dan optimasi performa pemrosesan piksel.", meta_left)
         ],
         [
             Paragraph("2", meta_left),
-            Paragraph("[Nama Anggota 2]", meta_bold_left),
-            Paragraph("[NIM Anggota 2]", meta_left),
-            Paragraph("Frontend & Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP.", meta_left)
+            Paragraph("Muhammad Ghassan Denaprisnyah", meta_bold_left),
+            Paragraph("103032530012", meta_left),
+            Paragraph("Frontend &amp; Integration Engineer: Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, dan pengujian sistem audio DSP.", meta_left)
         ],
         [
             Paragraph("3", meta_left),
-            Paragraph("[Nama Anggota 3]", meta_bold_left),
-            Paragraph("[NIM Anggota 3]", meta_left),
-            Paragraph("Security & Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC).", meta_left)
+            Paragraph("Farhan Haidar Ar-Rasyid", meta_bold_left),
+            Paragraph("103032500015", meta_left),
+            Paragraph("Security &amp; Cryptography Engineer: Perancangan modul verifikasi integritas SHA-256 custody ledger dan implementasi penandatanganan pasca-kuantum (PQC).", meta_left)
         ],
         [
             Paragraph("4", meta_left),
-            Paragraph("[Nama Anggota 4]", meta_bold_left),
-            Paragraph("[NIM Anggota 4]", meta_left),
-            Paragraph("Quality Assurance & Documentation: Pengujian fungsionalitas cross-platform, audit kesesuaian ISO/IEC 27037, dan penyusunan buku panduan HKI.", meta_left)
+            Paragraph("I Gede Arya Yoga Saputra", meta_bold_left),
+            Paragraph("103032530026", meta_left),
+            Paragraph("Quality Assurance &amp; Documentation: Pengujian fungsionalitas lintas modul, audit kesesuaian standar ISO/IEC 27037, dan penyusunan buku panduan HKI.", meta_left)
+        ],
+        [
+            Paragraph("5", meta_left),
+            Paragraph("Fahri Al Kahfi", meta_bold_left),
+            Paragraph("103032500049", meta_left),
+            Paragraph("Ketua Tim &amp; Lead Architect: Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop.", meta_left)
         ]
     ]
 
@@ -1228,7 +1234,7 @@ def sanitize_ocr_boxes(screen_frame, ocr_results):
             Spacer(1, 20 * mm)
         ],
         [
-            Paragraph("<strong>(______________________________)</strong><br/>NIP / NIDN.", meta_style),
+            Paragraph("<strong>Andi Shafira Dyah Kurniasari</strong><br/>NIP: 26000043", meta_style),
             Paragraph("<strong>Fahri Al Kahfi</strong><br/>NIM: 103032500049", meta_style)
         ]
     ]

@@ -8,36 +8,44 @@ import { Users, Award, Shield, Video, Cpu, Radio, BookOpen, GraduationCap } from
 export default function TeamPage() {
   const members = [
     {
-      name: 'Muhammad Ghassan Denaprinsyah',
-      nim: '103032500001',
-      role: 'Lead Modul 1: Akuisisi & Pengolahan',
-      focus: 'Evidence Studio, Screen/Webcam MediaDevices, Regex PII Token Scanner, Solid/Mosaic Redaction, Normalisasi Audio Web Audio API',
-      icon: Video,
-      color: 'from-amber-500 to-orange-500'
-    },
-    {
-      name: 'Muhammad Trisnatama Derdiansyah',
-      nim: '103032500002',
-      role: 'Lead Modul 2: Kompresi Citra & Video',
-      focus: 'Implementasi Algoritma DCT 8x8, Skala Matriks Kuantisasi Q, Zigzag Scanning, RLE, Huffman Codec, Kalkulator PSNR & SSIM',
+      name: 'Muhammad Trisnatama',
+      nim: '103032500099',
+      role: 'Multimedia & Compression Engineer',
+      focus: 'Pengolahan citra digital, pengujian kualitas redaksi media, implementasi algoritma DCT 8x8, dan optimasi performa pemrosesan piksel.',
       icon: Cpu,
       color: 'from-red-500 to-rose-600'
     },
     {
-      name: 'Fahri Al Kahfi',
-      nim: '103032500049',
-      role: 'Lead Modul 3: Keamanan & Kustodi',
-      focus: 'WebCrypto AES-256-GCM AEAD, Rantai Kustodi SHA-256 Manifest, Tanda Tangan ECDSA P-256, Robust DCT Watermarking Frekuensi Tengah',
-      icon: Shield,
-      color: 'from-rose-600 to-red-700'
+      name: 'Muhammad Ghassan Denaprisnyah',
+      nim: '103032530012',
+      role: 'Frontend & Integration Engineer',
+      focus: 'Pengembangan antarmuka Redact Studio, integrasi Next.js Tailwind CSS, MediaDevices, dan pengujian sistem modulasi audio DSP.',
+      icon: Video,
+      color: 'from-amber-500 to-orange-500'
     },
     {
       name: 'Farhan Haidar Ar-Rasyid',
-      nim: '103032500004',
-      role: 'Lead Modul 4: Distribusi & Portal Klien',
-      focus: 'HLS Multi-Bitrate RFC 8216, Simulasi Throttling Jaringan, Signed Expiring URLs, Portal Verifikasi Keaslian Bukti Independen',
+      nim: '103032500015',
+      role: 'Security & Cryptography Engineer',
+      focus: 'Perancangan modul verifikasi integritas SHA-256 custody ledger, distribusi terenkripsi, dan implementasi penandatanganan pasca-kuantum (PQC).',
       icon: Radio,
       color: 'from-red-700 to-zinc-800'
+    },
+    {
+      name: 'I Gede Arya Yoga Saputra',
+      nim: '103032530026',
+      role: 'Quality Assurance & Documentation',
+      focus: 'Pengujian fungsionalitas lintas modul, audit kesesuaian standar privasi UU PDP & ISO/IEC 27037, dan penyusunan buku panduan HKI.',
+      icon: Award,
+      color: 'from-red-600 to-rose-800'
+    },
+    {
+      name: 'Fahri Al Kahfi',
+      nim: '103032500049',
+      role: 'Ketua Tim & Lead Architect',
+      focus: 'Perancangan arsitektur mesin desktop Tauri Rust, implementasi DirectShow virtual camera, deteksi YuNet ONNX, dan logika Anti-Loop HDMI Shield.',
+      icon: Shield,
+      color: 'from-rose-600 to-red-700'
     }
   ];
 
@@ -101,10 +109,10 @@ export default function TeamPage() {
               Supervisi Akademik & Pengampu Mata Kuliah
             </div>
             <div className="text-base font-bold text-white font-mono">
-              Dosen Pengampu Mata Kuliah Sistem Multimedia (CBK2CAB3)
+              Andi Shafira Dyah Kurniasari
             </div>
             <div className="text-xs text-zinc-400 font-sans">
-              Telkom University Bandung · Tahun Ajaran 2025/2026
+              NIP: 26000043 · Dosen Pengampu Mata Kuliah Sistem Multimedia (CBK2CAB3) · Telkom University Bandung
             </div>
           </div>
 
